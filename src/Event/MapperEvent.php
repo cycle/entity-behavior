@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Event;
+namespace Cycle\ORM\Entity\Macros\Event;
 
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;

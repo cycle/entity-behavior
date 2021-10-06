@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Dispatcher;
+namespace Cycle\ORM\Entity\Macros\Dispatcher;
 
 use Cycle\ORM\SchemaInterface;
-use Cycle\SmartMapper\Attribute\Listen;
-use Cycle\SmartMapper\MapperBehaviorInterface;
+use Cycle\ORM\Entity\Macros\Attribute\Listen;
+use Cycle\ORM\Entity\Macros\Event\MapperEvent;
+use Cycle\ORM\Entity\Macros\Exception\Dispatcher\RuntimeException;
+use Cycle\ORM\Entity\Macros\MapperBehaviorInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 final class ListenerProvider implements ListenerProviderInterface
 {
+    public const DEFINITION_CLASS = 0;
+    public const DEFINITION_ARGS = 1;
+
     /**
      * @var array<string, array<string, array<int, callable>>>
      */
@@ -40,7 +45,7 @@ final class ListenerProvider implements ListenerProviderInterface
     private function configure(SchemaInterface $schema): void
     {
         foreach ($schema->getRoles() as $role) {
-            $config = $schema->define($role, MapperBehaviorInterface::SCHEMA_LISTENERS_CONTAINER);
+            $config = $schema->define($role, SchemaInterface::MACROS);
             if (!is_array($config) || $config === []) {
                 continue;
             }
@@ -55,21 +60,25 @@ final class ListenerProvider implements ListenerProviderInterface
 
             $definition = (array)$definition;
 
-            if (!$this->validateDefinition($definition)) {
+            if (!$this->validateMacrosDefinition($definition)) {
                 continue;
             }
-            $class = $definition[MapperBehaviorInterface::DEFINITION_CLASS];
-            $arguments = $definition[MapperBehaviorInterface::DEFINITION_ARGS] ?? [];
+            $class = $definition[self::DEFINITION_CLASS];
+            $arguments = $definition[self::DEFINITION_ARGS] ?? [];
 
-            $events = $this->findListeners($class);
-            if ($events === []) {
-                continue;
-            }
-
+            $events = $this->findListenersInAttributes($class);
             try {
                 $listener = new $class(...$arguments);
+                if ($listener instanceof EventListProviderInterface) {
+                    $events = [...$events, ...$this->getProvidedListeners($listener)];
+                }
             } catch (\Throwable $e) {
                 throw new \Exception("Cann't create listener `$class` for the `$role` role.", 0, $e);
+            }
+
+
+            if ($events === []) {
+                continue;
             }
 
             foreach ($events as [$event, $method]) {
@@ -78,16 +87,48 @@ final class ListenerProvider implements ListenerProviderInterface
         }
     }
 
-    private function validateDefinition(mixed $definition): bool
+    private function validateMacrosDefinition(mixed $definition): bool
     {
-        if (!class_exists($definition[MapperBehaviorInterface::DEFINITION_CLASS], true)) {
+        if (!class_exists($definition[self::DEFINITION_CLASS], true)) {
             return false;
         }
-        if (array_key_exists(MapperBehaviorInterface::DEFINITION_ARGS, $definition)
-            && !is_array($definition[MapperBehaviorInterface::DEFINITION_ARGS])) {
+        if (array_key_exists(self::DEFINITION_ARGS, $definition)
+            && !is_array($definition[self::DEFINITION_ARGS])) {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return array<int, array{string, string}> Array of [event, method]
+     */
+    private function getProvidedListeners(EventListProviderInterface $listener): array
+    {
+        $events = $listener->getEventsList();
+        foreach ($events as $event) {
+            // validate
+            if (!is_array($event) || array_keys($event) !== [0, 1]) {
+                throw new RuntimeException(
+                    sprintf(
+                        'The method %s::getEventsList() should return list of tuples [event-class, listener-method].',
+                        $listener::class
+                    )
+                );
+            }
+            $method = $event[1];
+            $callable = [$listener, $method];
+            if (!\is_callable($callable)) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Cann\'t build callable from instance of `%s` and `%s` method name.',
+                        $listener::class,
+                        $method
+                    )
+                );
+            }
+        }
+
+        return $events;
     }
 
     /**
@@ -95,7 +136,7 @@ final class ListenerProvider implements ListenerProviderInterface
      *
      * @return array<int, array{string, string}> Array of [event, method]
      */
-    private function findListeners(string $class): array
+    private function findListenersInAttributes(string $class): array
     {
         $result = [];
         foreach ((new \ReflectionClass($class))->getMethods() as $method) {
@@ -103,9 +144,8 @@ final class ListenerProvider implements ListenerProviderInterface
                 try {
                     $listen = $attribute->newInstance();
                     assert($listen instanceof Listen);
-                    $result[] = [$listen->event, $method->getName()];
                 } catch (\Throwable $e) {
-                    throw new \Exception(sprintf(
+                    throw new RuntimeException(sprintf(
                             "Cann't instantiate attribute %s in the %s::%s method.",
                             Listen::class,
                             $class,
@@ -113,6 +153,7 @@ final class ListenerProvider implements ListenerProviderInterface
                         ), 0, $e
                     );
                 }
+                $result[] = [$listen->event, $method->getName()];
             }
         }
         return $result;

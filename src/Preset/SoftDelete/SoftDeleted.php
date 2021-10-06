@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Behavior\SoftDelete;
+namespace Cycle\ORM\Entity\Macros\Preset\SoftDelete;
 
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
-use Cycle\SmartMapper\Behavior\BaseModifier;
+use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
@@ -24,8 +24,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
  *      @Attribute("column", type="string")
  * })
  */
-#[\Attribute(\Attribute::TARGET_CLASS)]
-#[NamedArgumentConstructor]
+#[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class SoftDeleted extends BaseModifier
 {
     public function __construct(

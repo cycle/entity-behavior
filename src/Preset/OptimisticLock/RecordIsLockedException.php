@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Behavior\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
 
 use Cycle\ORM\Heap\Node;
 

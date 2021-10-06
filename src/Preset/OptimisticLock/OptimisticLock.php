@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Behavior\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
 
 use Cycle\Schema\Registry;
-use Cycle\SmartMapper\Behavior\BaseModifier;
+use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
@@ -22,14 +22,19 @@ use JetBrains\PhpStorm\ExpectedValues;
  *      @Attribute("column", type="string"),
  * })
  */
-#[\Attribute(\Attribute::TARGET_CLASS)]
-#[NamedArgumentConstructor]
+#[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class OptimisticLock extends BaseModifier
 {
-
+    /**
+     * @param string $field Version field
+     * @param null|string $rule
+     * @param null|string $column
+     */
     public function __construct(
+
         private string $field,
-        #[ExpectedValues(valuesFromClass: self::class)]
+
+        #[ExpectedValues(valuesFromClass: OptimisticLockListener::class)]
         private ?string $rule = 'string',
         ?string $column = null
     ) {
@@ -53,6 +58,7 @@ final class OptimisticLock extends BaseModifier
 
     public function compute(Registry $registry): void
     {
-        $this->addDatetimeColumn($registry, $this->column, $this->field);
+        // todo
+
     }
 }

@@ -1,11 +1,11 @@
-# Cycle ORM _______
+# Cycle ORM Entity Macros
 
 ## Installation
 
 The preferred way to install this package is through [Composer](https://getcomposer.org/download/):
 
 ```bash
-composer require cycle/_______
+composer require cycle/entity-macros
 ```
 
 ## Example

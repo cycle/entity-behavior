@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Behavior;
+namespace Cycle\ORM\Entity\Macros\Preset;
 
+use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
+use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Registry;
 use Cycle\Schema\SchemaModifierInterface;
-use Cycle\SmartMapper\MapperBehaviorInterface;
 
 abstract class BaseModifier implements SchemaModifierInterface
 {
@@ -42,12 +43,12 @@ abstract class BaseModifier implements SchemaModifierInterface
         // todo: compare with default constructor values
         $args = $this->getListenerArgs();
         if ($args === []) {
-            $schema[MapperBehaviorInterface::SCHEMA_LISTENERS_CONTAINER][] = $this->getListenerClass();
+            $schema[SchemaInterface::MACROS][] = $this->getListenerClass();
             return;
         }
-        $schema[MapperBehaviorInterface::SCHEMA_LISTENERS_CONTAINER][] = [
-            MapperBehaviorInterface::DEFINITION_CLASS => $this->getListenerClass(),
-            MapperBehaviorInterface::DEFINITION_ARGS => $args,
+        $schema[SchemaInterface::MACROS][] = [
+            ListenerProvider::DEFINITION_CLASS => $this->getListenerClass(),
+            ListenerProvider::DEFINITION_ARGS => $args,
         ];
     }
 }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Attribute;
+namespace Cycle\ORM\Entity\Macros\Attribute;
 
 use Attribute;
-use Cycle\SmartMapper\Event\MapperEvent;
+use Cycle\ORM\Entity\Macros\Event\MapperEvent;
 
 #[Attribute(flags: Attribute::TARGET_METHOD|Attribute::IS_REPEATABLE)]
 final class Listen

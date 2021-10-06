@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Behavior\Timestamped;
+namespace Cycle\ORM\Entity\Macros\Preset\Timestamped;
 
 use Cycle\ORM\Command\StoreCommandInterface;
-use Cycle\SmartMapper\Attribute\Listen;
-use Cycle\SmartMapper\Event\Mapper\Command\OnCreate;
-use Cycle\SmartMapper\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Macros\Attribute\Listen;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 
 final class TimestampedListener
 {

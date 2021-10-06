@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Behavior\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
 
 use Cycle\ORM\Command\ScopeCarrierInterface;
 use Cycle\ORM\Command\Special\WrappedCommand;
 use Cycle\ORM\Command\StoreCommandInterface;
 use Cycle\ORM\Heap\Node;
-use Cycle\SmartMapper\Attribute\Listen;
-use Cycle\SmartMapper\Event\Mapper\Command\OnDelete;
-use Cycle\SmartMapper\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Macros\Attribute\Listen;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnDelete;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 use DateTimeImmutable;
 use DatetimeInterface;
 use JetBrains\PhpStorm\ExpectedValues;

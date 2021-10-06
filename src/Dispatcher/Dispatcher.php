@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Dispatcher;
+namespace Cycle\ORM\Entity\Macros\Dispatcher;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;

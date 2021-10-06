@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\SmartMapper\Dispatcher;
+namespace Cycle\ORM\Entity\Macros\Dispatcher;
 
 /**
  * Provides events list that should be listened by the behavior Listener
