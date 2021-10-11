@@ -6,7 +6,7 @@ namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
 
 use Cycle\ORM\Heap\Node;
 
-class RecordIsLockedException extends \RuntimeException
+class OptimisticLockException extends \RuntimeException
 {
     public function __construct(Node $node)
     {

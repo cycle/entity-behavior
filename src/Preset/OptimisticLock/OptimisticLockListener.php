@@ -69,7 +69,7 @@ final class OptimisticLockListener
         return WrappedCommand::wrapCommand($command)
             ->withAfterExecution(static function (ScopeCarrierInterface $command) use ($node): void {
                 if ($command->getAffectedRows() === 0) {
-                    throw new RecordIsLockedException($node);
+                    throw new OptimisticLockException($node);
                 }
             });
     }
