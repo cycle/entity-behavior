@@ -1,0 +1,26 @@
+{
+    "name": "cycle/entity-macros",
+    "type": "library",
+    "require": {
+        "php": ">=8.0",
+        "cycle/orm": "2.0.x-dev",
+        "cycle/schema-builder": "2.0.x-dev"
+    },
+    "require-dev": {
+        "ramsey/uuid": "^4.0",
+        "phpunit/phpunit": "^9.5",
+        "spiral/code-style": "^1.0",
+        "vimeo/psalm": "^4.10"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Cycle\\ORM\\Entity\\Macros\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
