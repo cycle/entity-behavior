@@ -8,9 +8,9 @@ use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
 use Cycle\ORM\Entity\Macros\Event\MapperEvent;
 use Cycle\ORM\Entity\Macros\Exception\Dispatcher\RuntimeException;
-use Cycle\ORM\Entity\Macros\MapperBehaviorInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
+// todo: how to replace listener resolver
 final class ListenerProvider implements ListenerProviderInterface
 {
     public const DEFINITION_CLASS = 0;
@@ -75,7 +75,6 @@ final class ListenerProvider implements ListenerProviderInterface
             } catch (\Throwable $e) {
                 throw new \Exception("Cann't create listener `$class` for the `$role` role.", 0, $e);
             }
-
 
             if ($events === []) {
                 continue;

@@ -18,7 +18,8 @@ final class EventDrivenCommandGenerator extends CommandGenerator
 {
     private EventDispatcherInterface $eventDispatcher;
 
-    public function __construct(SchemaInterface $schema)
+    // todo: add custom interface
+    public function __construct(SchemaInterface $schema, ListenerProviderInterface $listenerProvider = null)
     {
         $listenerProvider = new ListenerProvider($schema);
         $this->eventDispatcher = new Dispatcher($listenerProvider);

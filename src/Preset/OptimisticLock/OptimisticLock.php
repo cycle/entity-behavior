@@ -21,9 +21,9 @@ use JetBrains\PhpStorm\ExpectedValues;
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
  * @Attributes({
- *      @Attribute("field", type="string"),
- *      @Attribute("column", type="string"),
- *      @Attribute("column", type="string"),
+ *     @Attribute("field", type="string"),
+ *     @Attribute("column", type="string"),
+ *     @Attribute("column", type="string"),
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]

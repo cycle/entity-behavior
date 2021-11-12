@@ -17,10 +17,10 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
  * @Attributes({
- *      @Attribute("fieldCreatedAt", type="string"),
- *      @Attribute("fieldUpdatedAt", type="string"),
- *      @Attribute("columnCreatedAt", type="string"),
- *      @Attribute("columnUpdatedAt", type="string")
+ *     @Attribute("fieldCreatedAt", type="string"),
+ *     @Attribute("fieldUpdatedAt", type="string"),
+ *     @Attribute("columnCreatedAt", type="string"),
+ *     @Attribute("columnUpdatedAt", type="string")
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
