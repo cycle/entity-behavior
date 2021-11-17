@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\SoftDelete;
+namespace Cycle\ORM\Entity\Macros\Timestamped;
 
 use Cycle\ORM\Command\StoreCommand;
 use Cycle\ORM\Heap\Node;
@@ -19,8 +19,7 @@ final class SoftDeletedListener
     #[Listen(OnDelete::class)]
     public function __invoke(OnDelete $event): void
     {
-        $time = new \DateTimeImmutable();
-        $event->state->register($this->field, $time);
+        $event->state->register($this->field, new \DateTimeImmutable());
 
         // Replace Delete command to Store command
         if (!$event->command instanceof StoreCommand) {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\SoftDelete;
+namespace Cycle\ORM\Entity\Macros\Timestamped;
 
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;

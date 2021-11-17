@@ -18,6 +18,11 @@
             "Cycle\\ORM\\Entity\\Macros\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Cycle\\ORM\\Entity\\Macros\\Tests\\": "tests/Macros"
+        }
+    },
     "config": {
         "sort-packages": true
     },

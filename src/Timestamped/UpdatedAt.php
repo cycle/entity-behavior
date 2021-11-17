@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\Timestamped;
+namespace Cycle\ORM\Entity\Macros\Timestamped;
 
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
@@ -17,40 +17,34 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
  * @Attributes({
- *     @Attribute("fieldCreatedAt", type="string"),
- *     @Attribute("fieldUpdatedAt", type="string"),
- *     @Attribute("columnCreatedAt", type="string"),
- *     @Attribute("columnUpdatedAt", type="string")
+ *     @Attribute("field", type="string"),
+ *     @Attribute("column", type="string")
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class Timestamped extends BaseModifier
+final class UpdatedAt extends BaseModifier
 {
     public function __construct(
-        private string $fieldCreatedAt = 'createdAt',
-        private string $fieldUpdatedAt = 'updatedAt',
-        private string $columnCreatedAt = 'created_at',
-        private string $columnUpdatedAt = 'updated_at',
+        private string $field = 'updatedAt',
+        private string $column = 'updated_at'
     ) {
     }
 
     protected function getListenerClass(): string
     {
-        return TimestampedListener::class;
+        return UpdatedAtListener::class;
     }
 
     protected function getListenerArgs(): array
     {
         return [
-            'fieldCreatedAt' => $this->fieldCreatedAt,
-            'fieldUpdatedAt' => $this->fieldUpdatedAt,
+            'field' => $this->field
         ];
     }
 
     public function compute(Registry $registry): void
     {
-        $this->addDatetimeColumn($registry, $this->columnCreatedAt, $this->fieldCreatedAt);
-        $this->addDatetimeColumn($registry, $this->columnUpdatedAt, $this->fieldUpdatedAt);
+        $this->addDatetimeColumn($registry, $this->column, $this->field);
     }
 
     private function addDatetimeColumn(Registry $registry, string $columnName, string $fieldName): void

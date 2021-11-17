@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros;
 
 use Cycle\ORM\Command\CommandInterface;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Transaction\CommandGenerator;
@@ -13,6 +14,7 @@ use Cycle\ORM\Entity\Macros\Dispatcher\Dispatcher;
 use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 
 final class EventDrivenCommandGenerator extends CommandGenerator
 {
@@ -21,13 +23,19 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     // todo: add custom interface
     public function __construct(SchemaInterface $schema, ListenerProviderInterface $listenerProvider = null)
     {
-        $listenerProvider = new ListenerProvider($schema);
+        $listenerProvider ??= new ListenerProvider($schema);
+
         $this->eventDispatcher = new Dispatcher($listenerProvider);
     }
 
     protected function storeEntity(ORMInterface $orm, Tuple $tuple, bool $isNew): ?CommandInterface
     {
-        $event = new OnCreate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
+        if ($isNew) {
+            $event = new OnCreate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
+        } else {
+            $event = new OnUpdate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
+        }
+
         $event->command = parent::storeEntity($orm, $tuple, $isNew);
 
         $event = $this->eventDispatcher->dispatch($event);
