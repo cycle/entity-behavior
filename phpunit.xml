@@ -4,7 +4,7 @@
          backupGlobals="false"
          colors="true"
          verbose="true"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          failOnRisky="true"
          failOnWarning="true"
          convertErrorsToExceptions="true"
@@ -20,7 +20,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Cycle: Schema Renderer">
+        <testsuite name="Cycle: Cycle ORM Entity Macros">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

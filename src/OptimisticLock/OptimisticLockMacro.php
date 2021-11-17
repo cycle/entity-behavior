@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
@@ -27,7 +27,7 @@ use JetBrains\PhpStorm\ExpectedValues;
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class OptimisticLock extends BaseModifier
+final class OptimisticLockMacro extends BaseModifier
 {
     const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
     /**

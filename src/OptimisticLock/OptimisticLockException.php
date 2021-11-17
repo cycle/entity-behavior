@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 
 use Cycle\ORM\Heap\Node;
 

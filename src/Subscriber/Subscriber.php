@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\Subscriber;
+namespace Cycle\ORM\Entity\Macros\Subscriber;
 
 use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Registry;

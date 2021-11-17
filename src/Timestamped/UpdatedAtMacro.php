@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\SoftDelete;
+namespace Cycle\ORM\Entity\Macros\Timestamped;
 
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
@@ -13,9 +13,6 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * SoftDeleted replaces Delete command with Update command and set current timestamp in the configured field.
- * Keep in mind that SoftDelete behavior doesn't run events related to Update command.
- *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
@@ -25,23 +22,23 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class SoftDeleted extends BaseModifier
+final class UpdatedAtMacro extends BaseModifier
 {
     public function __construct(
-        private string $field = 'deletedAt',
-        private string $column = 'deleted_at',
+        private string $field = 'updatedAt',
+        private string $column = 'updated_at'
     ) {
     }
 
     protected function getListenerClass(): string
     {
-        return SoftDeletedListener::class;
+        return UpdatedAtListener::class;
     }
 
     protected function getListenerArgs(): array
     {
         return [
-            'field' => $this->field,
+            'field' => $this->field
         ];
     }
 
@@ -63,10 +60,7 @@ final class SoftDeleted extends BaseModifier
 
         $field = new Field();
         $field->setColumn($columnName)->setType('datetime')->setTypecast('datetime');
-        $table->column($field->getColumn())
-            ->type($field->getType())
-            ->nullable(true)
-            ->defaultValue(null);
+        $table->column($field->getColumn())->type($field->getType());
         $fields->set($fieldName, $field);
     }
 }

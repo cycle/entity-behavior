@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Preset\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 
 use Cycle\ORM\Command\ScopeCarrierInterface;
 use Cycle\ORM\Command\Special\WrappedCommand;
@@ -12,7 +12,7 @@ use Cycle\ORM\Entity\Macros\Attribute\Listen;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnDelete;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 use DateTimeImmutable;
-use DatetimeInterface;
+use DateTimeInterface;
 use JetBrains\PhpStorm\ExpectedValues;
 
 final class OptimisticLockListener
@@ -74,7 +74,7 @@ final class OptimisticLockListener
             });
     }
 
-    private function getLockingValue(mixed $previousValue): int|string|DatetimeInterface
+    private function getLockingValue(mixed $previousValue): int|string|DateTimeInterface
     {
         return match($this->rule) {
             self::RULE_INCREMENT => (int)$previousValue + 1,
