@@ -27,7 +27,7 @@ use JetBrains\PhpStorm\ExpectedValues;
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class OptimisticLock extends BaseModifier
+final class OptimisticLockMacro extends BaseModifier
 {
     const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
     /**

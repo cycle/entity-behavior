@@ -9,7 +9,7 @@ use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnDelete;
 
-final class SoftDeletedListener
+final class DeletedAtListener
 {
     public function __construct(
         private string $field = 'deletedAt',

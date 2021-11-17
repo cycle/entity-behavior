@@ -13,6 +13,9 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
+ * DeletedAtMacro replaces Delete command with Update command and set current timestamp in the configured field.
+ * Keep in mind that DeletedAtMacro behavior doesn't run events related to Update command.
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
@@ -22,23 +25,23 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class CreatedAt extends BaseModifier
+final class DeletedAtMacro extends BaseModifier
 {
     public function __construct(
-        private string $field = 'createdAt',
-        private string $column = 'created_at'
+        private string $field = 'deletedAt',
+        private string $column = 'deleted_at',
     ) {
     }
 
     protected function getListenerClass(): string
     {
-        return CreatedAtListener::class;
+        return DeletedAtListener::class;
     }
 
     protected function getListenerArgs(): array
     {
         return [
-            'field' => $this->field
+            'field' => $this->field,
         ];
     }
 
@@ -60,7 +63,10 @@ final class CreatedAt extends BaseModifier
 
         $field = new Field();
         $field->setColumn($columnName)->setType('datetime')->setTypecast('datetime');
-        $table->column($field->getColumn())->type($field->getType());
+        $table->column($field->getColumn())
+            ->type($field->getType())
+            ->nullable(true)
+            ->defaultValue(null);
         $fields->set($fieldName, $field);
     }
 }

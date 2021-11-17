@@ -14,16 +14,15 @@ use Cycle\ORM\Entity\Macros\Dispatcher\Dispatcher;
 use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 
 final class EventDrivenCommandGenerator extends CommandGenerator
 {
     private EventDispatcherInterface $eventDispatcher;
 
-    // todo: add custom interface
-    public function __construct(SchemaInterface $schema, ListenerProviderInterface $listenerProvider = null)
+    // todo: add custom listener interface
+    public function __construct(SchemaInterface $schema)
     {
-        $listenerProvider ??= new ListenerProvider($schema);
+        $listenerProvider = new ListenerProvider($schema);
 
         $this->eventDispatcher = new Dispatcher($listenerProvider);
     }

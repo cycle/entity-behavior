@@ -22,17 +22,17 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class UpdatedAt extends BaseModifier
+final class CreatedAtMacro extends BaseModifier
 {
     public function __construct(
-        private string $field = 'updatedAt',
-        private string $column = 'updated_at'
+        private string $field = 'createdAt',
+        private string $column = 'created_at'
     ) {
     }
 
     protected function getListenerClass(): string
     {
-        return UpdatedAtListener::class;
+        return CreatedAtListener::class;
     }
 
     protected function getListenerArgs(): array
