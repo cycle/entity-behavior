@@ -30,8 +30,16 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     protected function storeEntity(ORMInterface $orm, Tuple $tuple, bool $isNew): ?CommandInterface
     {
         if ($isNew) {
+            /**
+             * @psalm-suppress PossiblyNullReference
+             * @psalm-suppress PossiblyNullArgument
+             */
             $event = new OnCreate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
         } else {
+            /**
+             * @psalm-suppress PossiblyNullReference
+             * @psalm-suppress PossiblyNullArgument
+             */
             $event = new OnUpdate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
         }
 
@@ -50,6 +58,10 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     ): ?CommandInterface {
         $parentMapper = $orm->getMapper($parentRole);
 
+        /**
+         * @psalm-suppress PossiblyNullReference
+         * @psalm-suppress PossiblyNullArgument
+         */
         $event = new OnCreate($parentRole, $parentMapper, $tuple->entity, $tuple->node, $tuple->state);
         $event->command = $isNew
             ? $parentMapper->queueCreate($tuple->entity, $tuple->node, $tuple->state)

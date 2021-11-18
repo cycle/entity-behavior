@@ -29,7 +29,7 @@ use JetBrains\PhpStorm\ExpectedValues;
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class OptimisticLockMacro extends BaseModifier
 {
-    const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
+    private const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
     /**
      * @param string $field Version field
      * @param null|string $rule
@@ -37,7 +37,6 @@ final class OptimisticLockMacro extends BaseModifier
      */
     public function __construct(
         private string $field,
-
         #[ExpectedValues(valuesFromClass: OptimisticLockListener::class)]
         private ?string $rule = 'string',
         private ?string $column = null

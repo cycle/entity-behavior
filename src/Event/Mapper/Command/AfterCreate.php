@@ -6,6 +6,7 @@ namespace Cycle\ORM\Entity\Macros\Event\Mapper\Command;
 
 use Cycle\ORM\Entity\Macros\Event\Mapper\QueueCommand;
 
+// todo dispatch or remove this event
 final class AfterCreate extends QueueCommand
 {
 }

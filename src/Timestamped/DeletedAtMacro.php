@@ -13,7 +13,8 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * DeletedAtMacro replaces Delete command with Update command and set current timestamp in the configured field.
+ * DeletedAtMacro implements the soft delete strategy, replaces Delete command with Update command and set current
+ * timestamp in the configured field.
  * Keep in mind that DeletedAtMacro behavior doesn't run events related to Update command.
  *
  * @Annotation

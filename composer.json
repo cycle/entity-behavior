@@ -10,6 +10,7 @@
         "ramsey/uuid": "^4.0",
         "phpunit/phpunit": "^9.5",
         "spiral/code-style": "^1.0",
+        "spiral/tokenizer": "^2.8",
         "vimeo/psalm": "^4.10"
     },
     "license": "MIT",
