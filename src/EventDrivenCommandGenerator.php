@@ -29,19 +29,13 @@ final class EventDrivenCommandGenerator extends CommandGenerator
 
     protected function storeEntity(ORMInterface $orm, Tuple $tuple, bool $isNew): ?CommandInterface
     {
-        if ($isNew) {
-            /**
-             * @psalm-suppress PossiblyNullReference
-             * @psalm-suppress PossiblyNullArgument
-             */
-            $event = new OnCreate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
-        } else {
-            /**
-             * @psalm-suppress PossiblyNullReference
-             * @psalm-suppress PossiblyNullArgument
-             */
-            $event = new OnUpdate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
-        }
+        /**
+         * @psalm-suppress PossiblyNullReference
+         * @psalm-suppress PossiblyNullArgument
+         */
+        $event = $isNew
+            ? new OnCreate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state)
+            : new OnUpdate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
 
         $event->command = parent::storeEntity($orm, $tuple, $isNew);
 
