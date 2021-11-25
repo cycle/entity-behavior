@@ -164,7 +164,7 @@ abstract class OptimisticLockTest extends BaseTest
         $this->assertIsString($comment->versionStr);
 
         // other operation changed version
-        $comment->versionStr = \random_bytes(32);
+        $comment->versionStr = bin2hex(\random_bytes(32));
         $comment->content = 'changed';
 
         $this->expectException(OptimisticLockException::class);

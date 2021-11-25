@@ -83,7 +83,7 @@ final class OptimisticLockListener
         return match ($this->rule) {
             self::RULE_INCREMENT => (int)$previousValue + 1,
             self::RULE_DATETIME => new DateTimeImmutable(),
-            self::RULE_RAND_STR => \random_bytes(32),
+            self::RULE_RAND_STR => bin2hex(\random_bytes(32)),
             default => number_format(microtime(true), 6)
         };
     }

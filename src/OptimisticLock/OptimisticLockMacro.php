@@ -83,12 +83,12 @@ final class OptimisticLockMacro extends BaseModifier
             case OptimisticLockListener::RULE_RAND_STR:
                 $modifier->addStringColumn($this->column, $this->field)
                     ->nullable(false)
-                    ->string(32);
+                    ->string(64);
                 break;
             case OptimisticLockListener::RULE_MICROTIME:
                 $modifier->addStringColumn($this->column, $this->field)
                     ->nullable(false)
-                    ->string(32);
+                    ->string(64);
                 break;
             case OptimisticLockListener::RULE_DATETIME:
                 $modifier->addDatetimeColumn($this->column, $this->field);
