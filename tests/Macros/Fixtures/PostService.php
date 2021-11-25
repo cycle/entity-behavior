@@ -8,8 +8,8 @@ use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 
 class PostService
 {
-    public function __invoke(OnUpdate $event, string $content): void
+    public static function update(OnUpdate $event): void
     {
-        $event->state->register('content', $content);
+        $event->state->register('content', 'modified by service');
     }
 }

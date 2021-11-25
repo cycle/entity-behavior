@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Timestamped;
 
-use Cycle\Schema\Definition\Field;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\ORM\Entity\Macros\Schema\RegistryModifier;
 use Cycle\Schema\Registry;
 use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Doctrine\Common\Annotations\Annotation\Attribute;
@@ -44,23 +45,8 @@ final class CreatedAtMacro extends BaseModifier
 
     public function compute(Registry $registry): void
     {
-        $this->addDatetimeColumn($registry, $this->column, $this->field);
-    }
+        $modifier = new RegistryModifier($registry, $this->role);
 
-    private function addDatetimeColumn(Registry $registry, string $columnName, string $fieldName): void
-    {
-        $entity = $registry->getEntity($this->role);
-        $table = $registry->getTableSchema($entity);
-        $fields = $entity->getFields();
-
-        if ($fields->has($fieldName)) {
-            // todo check field
-            return;
-        }
-
-        $field = new Field();
-        $field->setColumn($columnName)->setType('datetime')->setTypecast('datetime');
-        $table->column($field->getColumn())->type($field->getType());
-        $fields->set($fieldName, $field);
+        $modifier->addDatetimeColumn($this->column, $this->field, false, AbstractColumn::DATETIME_NOW);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros;
 
 use Cycle\ORM\Command\CommandInterface;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnDelete;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\SchemaInterface;
@@ -60,6 +61,21 @@ final class EventDrivenCommandGenerator extends CommandGenerator
         $event->command = $isNew
             ? $parentMapper->queueCreate($tuple->entity, $tuple->node, $tuple->state)
             : $parentMapper->queueUpdate($tuple->entity, $tuple->node, $tuple->state);
+
+        $event = $this->eventDispatcher->dispatch($event);
+
+        return $event->command;
+    }
+
+    protected function deleteEntity(ORMInterface $orm, Tuple $tuple): ?CommandInterface
+    {
+        /**
+         * @psalm-suppress PossiblyNullReference
+         * @psalm-suppress PossiblyNullArgument
+         */
+        $event = new OnDelete($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
+
+        $event->command = parent::deleteEntity($orm, $tuple);
 
         $event = $this->eventDispatcher->dispatch($event);
 

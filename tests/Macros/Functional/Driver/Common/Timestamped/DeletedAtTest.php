@@ -10,15 +10,16 @@ use Cycle\ORM\Entity\Macros\EventDrivenCommandGenerator;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\Post;
 use Cycle\ORM\Entity\Macros\Tests\Traits\TableTrait;
-use Cycle\ORM\Entity\Macros\Timestamped\CreatedAtListener;
+use Cycle\ORM\Entity\Macros\Timestamped\DeletedAtListener;
 use Cycle\ORM\Factory;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\ORM;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Cycle\ORM\Transaction;
 
-abstract class CreatedAtTest extends BaseTest
+abstract class DeletedAtTest extends BaseTest
 {
     use TableTrait;
 
@@ -30,9 +31,8 @@ abstract class CreatedAtTest extends BaseTest
             'posts',
             [
                 'id' => 'primary',
-                'created_at' => 'datetime,nullable',
-                'custom_created_at' => 'datetime,nullable',
-                'content' => 'string,nullable'
+                'deleted_at' => 'datetime,nullable',
+                'custom_deleted_at' => 'datetime,nullable'
             ]
         );
 
@@ -44,23 +44,22 @@ abstract class CreatedAtTest extends BaseTest
                 SchemaInterface::PRIMARY_KEY => 'id',
                 SchemaInterface::COLUMNS => [
                     'id' => 'id',
-                    'createdAt' => 'created_at',
-                    'customCreatedAt' => 'custom_created_at',
-                    'content' => 'content'
+                    'deletedAt' => 'deleted_at',
+                    'customDeletedAt' => 'custom_deleted_at'
                 ],
                 SchemaInterface::MACROS => [
                     [
-                        CreatedAtListener::class
+                        DeletedAtListener::class
                     ],
                     [
-                        CreatedAtListener::class,
-                        ['field' => 'customCreatedAt']
+                        DeletedAtListener::class,
+                        ['field' => 'customDeletedAt']
                     ]
                 ],
                 SchemaInterface::TYPECAST => [
                     'id' => 'int',
-                    'createdAt' => 'datetime',
-                    'customCreatedAt' => 'datetime'
+                    'deletedAt' => 'datetime',
+                    'customDeletedAt' => 'datetime'
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
@@ -78,39 +77,25 @@ abstract class CreatedAtTest extends BaseTest
         );
     }
 
-    public function testCreate(): void
+    public function testDelete(): void
     {
-        $post = new Post();
+        $this->save(new Post());
 
-        $this->save($post);
-
-        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
-        $data = $select->fetchOne();
-        $this->assertNotNull($data->createdAt);
-        $this->assertNotNull($data->customCreatedAt);
-    }
-
-    public function testUpdate(): void
-    {
-        $post = new Post();
-        $this->save($post);
-
-        $this->orm = $this->orm->with(heap: new Heap());
         $select = new Select($this->orm, Post::class);
-
         $post = $select->fetchOne();
 
-        $createdAt = $post->createdAt;
-        $customCreatedAt = $post->customCreatedAt;
-        $post->content = 'test';
+        $this->assertNull($post->deletedAt);
+        $this->assertNull($post->customDeletedAt);
 
-        $this->save($post);
+        $tr = new Transaction($this->orm);
+        $tr->delete($post);
+        $tr->run();
 
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        $this->assertSame(0, $data->createdAt <=> $createdAt);
-        $this->assertSame(0, $data->customCreatedAt <=> $customCreatedAt);
-        $this->assertSame('test', $data->content);
+        $this->assertInstanceOf(Post::class, $data);
+        $this->assertNotNull($data->deletedAt);
+        $this->assertNotNull($data->customDeletedAt);
     }
 }

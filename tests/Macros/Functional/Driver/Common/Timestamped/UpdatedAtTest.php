@@ -84,7 +84,7 @@ abstract class UpdatedAtTest extends BaseTest
 
         $this->save($post);
 
-        $select = new Select($this->orm->withHeap(new Heap()), Post::class);
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
         $this->assertNull($data->updatedAt);
         $this->assertNull($data->customUpdatedAt);
@@ -105,7 +105,7 @@ abstract class UpdatedAtTest extends BaseTest
 
         $this->save($post);
 
-        $select = new Select($this->orm->withHeap(new Heap()), Post::class);
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
         $this->assertGreaterThan(0, $data->updatedAt <=> $updatedAt);

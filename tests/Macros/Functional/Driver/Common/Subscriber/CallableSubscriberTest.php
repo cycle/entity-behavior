@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Listener;
+namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Subscriber;
 
 use Cycle\ORM\Collection\ArrayCollectionFactory;
 use Cycle\ORM\Config\RelationConfig;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 use Cycle\ORM\Entity\Macros\EventDrivenCommandGenerator;
-use Cycle\ORM\Entity\Macros\Listener\ListenerClassListener;
+use Cycle\ORM\Entity\Macros\Subscriber\CallableSubscriberListener;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\PostService;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\Post;
@@ -19,7 +21,7 @@ use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
 
-abstract class ListenerClassTest extends BaseTest
+abstract class CallableSubscriberTest extends BaseTest
 {
     use TableTrait;
 
@@ -34,6 +36,7 @@ abstract class ListenerClassTest extends BaseTest
                 'title' => 'string,nullable',
                 'content' => 'string,nullable',
                 'slug' => 'string,nullable',
+                'last_event' => 'string,nullable',
                 'created_at' => 'datetime,nullable',
                 'updated_at' => 'datetime,nullable'
             ]
@@ -50,22 +53,23 @@ abstract class ListenerClassTest extends BaseTest
                     'title' => 'title',
                     'content' => 'content',
                     'slug' => 'slug',
+                    'lastEvent' => 'last_event',
                     'createdAt' => 'created_at',
                     'updatedAt' => 'updated_at',
                 ],
-                // macros for different events and with different parameters variants
+                // macros for different events
                 SchemaInterface::MACROS => [
                     [
-                        ListenerClassListener::class,
-                        ['class' => PostService::class, 'parameters' => 'modified content']
+                        CallableSubscriberListener::class,
+                        ['callable' => [PostService::class . '::update'], 'events' => [OnUpdate::class]]
                     ],
                     [
-                        ListenerClassListener::class,
-                        ['class' => Post::class, 'method' => 'onCreate']
+                        CallableSubscriberListener::class,
+                        ['callable' => [Post::class, 'onCreate'], 'events' => [OnCreate::class]]
                     ],
                     [
-                        ListenerClassListener::class,
-                        ['class' => Post::class, 'method' => 'touch']
+                        CallableSubscriberListener::class,
+                        ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]]
                     ]
                 ],
                 SchemaInterface::TYPECAST => [
@@ -91,54 +95,54 @@ abstract class ListenerClassTest extends BaseTest
 
     public function testCreate(): void
     {
-        $post = new Post();
-        $post->title = 'TEST';
+        $post = $this->createPost();
 
-        $this->save($post);
-
-        $select = new Select($this->orm->withHeap(new Heap()), Post::class);
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
         $this->assertNotNull($data->createdAt);
         $this->assertNotNull($data->updatedAt);
         $this->assertNull($data->content);
         $this->assertSame('test', $post->slug);
+        $this->assertSame(OnCreate::class, $data->lastEvent);
     }
 
     public function testUpdate(): void
+    {
+        $this->createPost();
+
+        $this->orm = $this->orm->with(heap: new Heap());
+        $select = new Select($this->orm, Post::class);
+
+        $post = $select->fetchOne();
+        $post->title = 'TEST 2';
+        $content = $post->content;
+        $this->save($post);
+
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
+        $data = $select->fetchOne();
+
+        // Triggered OnUpdate event
+        $this->assertNull($content);
+        $this->assertSame('modified by service', $data->content);
+
+        // Not triggered OnCreate event, slug NOT changed.
+        $this->assertSame('test', $data->slug);
+        $this->assertSame('TEST 2', $data->title);
+
+        // Triggered union type event OnCreate|OnUpdate
+        $this->assertNotNull($data->updatedAt);
+        $this->assertNotNull($data->createdAt);
+        $this->assertSame(OnUpdate::class, $data->lastEvent);
+    }
+
+    private function createPost(): Post
     {
         $post = new Post();
         $post->title = 'TEST';
 
         $this->save($post);
 
-        $this->orm = $this->orm->withHeap(new Heap());
-        $select = new Select($this->orm, Post::class);
-
-        $post = $select->fetchOne();
-        $post->title = 'TEST 2';
-
-        $content = $post->content;
-        $createdAt = $post->createdAt;
-        $updatedAt = $post->updatedAt;
-
-        $this->save($post);
-
-        $select = new Select($this->orm->withHeap(new Heap()), Post::class);
-        $data = $select->fetchOne();
-
-        // Triggered OnUpdate event
-        $this->assertNull($content);
-        $this->assertSame('modified content', $data->content);
-
-
-        // Not triggered OnCreate event, slug NOT changed.
-        $this->assertSame('test', $data->slug);
-
-        // Triggered union type event OnCreate|OnUpdate
-        $this->assertSame(0, $data->createdAt <=> $createdAt);
-        $this->assertSame(0, $data->updatedAt <=> $updatedAt);
-
-        $this->assertSame('TEST 2', $data->title);
+        return $post;
     }
 }

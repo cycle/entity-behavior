@@ -84,6 +84,9 @@ final class ListenerProvider implements ListenerProviderInterface
 
             foreach ($events as [$event, $method]) {
                 if ($event === QueueCommand::class) {
+                    $this->listeners[$role][Command\AfterCreate::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\AfterDelete::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\AfterUpdate::class][] = [$listener, $method];
                     $this->listeners[$role][Command\OnCreate::class][] = [$listener, $method];
                     $this->listeners[$role][Command\OnUpdate::class][] = [$listener, $method];
                     $this->listeners[$role][Command\OnDelete::class][] = [$listener, $method];
@@ -154,16 +157,12 @@ final class ListenerProvider implements ListenerProviderInterface
                     $listen = $attribute->newInstance();
                     assert($listen instanceof Listen);
                 } catch (\Throwable $e) {
-                    throw new RuntimeException(
-                        sprintf(
-                            "Cann't instantiate attribute %s in the %s::%s method.",
-                            Listen::class,
-                            $class,
-                            $method->getName()
-                        ),
-                        0,
-                        $e
-                    );
+                    throw new RuntimeException(sprintf(
+                        "Cann't instantiate attribute %s in the %s::%s method.",
+                        Listen::class,
+                        $class,
+                        $method->getName()
+                    ), 0, $e);
                 }
                 $result[] = [$listen->event, $method->getName()];
             }

@@ -7,6 +7,7 @@
         "cycle/schema-builder": "2.0.x-dev"
     },
     "require-dev": {
+        "cycle/annotated": "2.0.x-dev",
         "ramsey/uuid": "^4.0",
         "phpunit/phpunit": "^9.5",
         "spiral/code-style": "^1.0",
