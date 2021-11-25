@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Schema;
 
+use Cycle\Database\ColumnInterface;
+use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
@@ -16,12 +18,8 @@ class RegistryModifier
     ) {
     }
 
-    public function addDatetimeColumn(
-        string $columnName,
-        string $fieldName,
-        bool $nullable = true,
-        mixed $default = null
-    ): void {
+    public function addDatetimeColumn(string $columnName, string $fieldName,): AbstractColumn
+    {
         $entity = $this->registry->getEntity($this->role);
         $table = $this->registry->getTableSchema($entity);
         $fields = $entity->getFields();
@@ -32,16 +30,67 @@ class RegistryModifier
 
             $this->validateColumnName($fieldName, $columnName);
 
-            return;
+            return $table->column($columnName);
         }
 
         $field = new Field();
         $field->setColumn($columnName)->setType('datetime')->setTypecast('datetime');
-        $table->column($field->getColumn())
-            ->type($field->getType())
-            ->nullable($nullable)
-            ->defaultValue($default);
+
+        $table->column($field->getColumn())->type($field->getType());
+
         $fields->set($fieldName, $field);
+
+        return $table->column($field->getColumn());
+    }
+
+    public function addIntegerColumn(string $columnName, string $fieldName): AbstractColumn
+    {
+        $entity = $this->registry->getEntity($this->role);
+        $table = $this->registry->getTableSchema($entity);
+        $fields = $entity->getFields();
+
+        if ($fields->has($fieldName)) {
+            if (!$this->isIntegerColumn($fields->get($fieldName))) {
+                throw new MacrosCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
+            }
+            $this->validateColumnName($fieldName, $columnName);
+
+            return $table->column($columnName);
+        }
+
+        $field = new Field();
+        $field->setColumn($columnName)->setType(ColumnInterface::INT)->setTypecast('int');
+
+        $table->column($field->getColumn())->type($field->getType());
+
+        $fields->set($fieldName, $field);
+
+        return $table->column($field->getColumn());
+    }
+
+    public function addStringColumn(string $columnName, string $fieldName): AbstractColumn
+    {
+        $entity = $this->registry->getEntity($this->role);
+        $table = $this->registry->getTableSchema($entity);
+        $fields = $entity->getFields();
+
+        if ($fields->has($fieldName)) {
+            if (!$this->isStringColumn($fields->get($fieldName))) {
+                throw new MacrosCompilationException(sprintf('Field %s must be of type string.', $fieldName));
+            }
+            $this->validateColumnName($fieldName, $columnName);
+
+            return $table->column($columnName);
+        }
+
+        $field = new Field();
+        $field->setColumn($columnName)->setType(ColumnInterface::STRING);
+
+        $table->column($field->getColumn())->type($field->getType());
+
+        $fields->set($fieldName, $field);
+
+        return $table->column($field->getColumn());
     }
 
     /** @throws MacrosCompilationException */
@@ -65,5 +114,15 @@ class RegistryModifier
     private function isDatetimeColumn(Field $field): bool
     {
         return $field->getType() === 'datetime';
+    }
+
+    private function isIntegerColumn(Field $field): bool
+    {
+        return $field->getType() === ColumnInterface::INT;
+    }
+
+    private function isStringColumn(Field $field): bool
+    {
+        return $field->getType() === ColumnInterface::STRING;
     }
 }

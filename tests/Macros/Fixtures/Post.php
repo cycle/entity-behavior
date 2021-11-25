@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Tests\Fixtures;
 
-use Cycle\Annotated\Annotation\Column;
-use Cycle\Annotated\Annotation\Entity;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
-use Cycle\ORM\Entity\Macros\Timestamped\UpdatedAtMacro;
 
-#[Entity]
-#[UpdatedAtMacro(field: 'dynamicUpdatedAt', column: 'dynamic_updated_at')]
 class Post
 {
-    #[Column(type: 'primary')]
     public int $id;
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $customCreatedAt = null;
@@ -22,7 +16,6 @@ class Post
     public ?\DateTimeImmutable $customUpdatedAt = null;
     public ?\DateTimeImmutable $deletedAt = null;
     public ?\DateTimeImmutable $customDeletedAt = null;
-    public ?\DateTimeImmutable $dynamicUpdatedAt = null;
     public ?string $title = null;
     public ?string $content = null;
     public ?string $slug = null;

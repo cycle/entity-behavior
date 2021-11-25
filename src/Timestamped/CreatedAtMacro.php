@@ -47,6 +47,8 @@ final class CreatedAtMacro extends BaseModifier
     {
         $modifier = new RegistryModifier($registry, $this->role);
 
-        $modifier->addDatetimeColumn($this->column, $this->field, false, AbstractColumn::DATETIME_NOW);
+        $modifier->addDatetimeColumn($this->column, $this->field)
+            ->nullable(false)
+            ->defaultValue(AbstractColumn::DATETIME_NOW);
     }
 }
