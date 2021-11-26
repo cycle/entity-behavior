@@ -42,15 +42,15 @@ final class OptimisticLockListener
     }
 
     #[Listen(OnCreate::class)]
+    public function onCreate(OnCreate $event): void
+    {
+        $event->state->register($this->field, $this->getLockingValue(0));
+    }
+
     #[Listen(OnUpdate::class)]
     #[Listen(OnDelete::class)]
-    public function __invoke(OnCreate|OnDelete|OnUpdate $event): void
+    public function __invoke(OnDelete|OnUpdate $event): void
     {
-        if ($event instanceof OnCreate) {
-            $event->state->register($this->field, $this->getLockingValue(0));
-            return;
-        }
-
         if (!$event->command instanceof ScopeCarrierInterface) {
             return;
         }
