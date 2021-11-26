@@ -12,12 +12,6 @@
         </ignoreFiles>
     </projectFiles>
     <issueHandlers>
-        <MissingPropertyType errorLevel="suppress" />
-        <InvalidAttribute>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </InvalidAttribute>
         <UndefinedAttributeClass>
             <errorLevel type="suppress">
                 <referencedClass name="JetBrains\PhpStorm\ExpectedValues" />
