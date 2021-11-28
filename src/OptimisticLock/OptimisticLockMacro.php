@@ -14,17 +14,13 @@ use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\ExpectedValues;
 
 /**
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
- * @Attributes({
- *     @Attribute("field", type="string"),
- *     @Attribute("rule", type="string"),
- *     @Attribute("column", type="string"),
- * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class OptimisticLockMacro extends BaseModifier
@@ -32,15 +28,16 @@ final class OptimisticLockMacro extends BaseModifier
     private string $column;
 
     /**
-     * @param string $field Version field
-     * @param string $rule
-     * @param null|string $column
+     * @param non-empty-string $field Version property name
+     * @param non-empty-string|null $column Version column name
+     * @param non-empty-string|null $rule
      */
     public function __construct(
         private string $field = 'version',
+        /** @enum({"microtime", "random-string", "increment", "datetime"}) */
         #[ExpectedValues(valuesFromClass: OptimisticLockListener::class)]
-        private ?string $rule = null,
-        ?string $column = null
+        ?string $column = null,
+        private ?string $rule = null
     ) {
         $this->column = $column ?? $field;
     }
@@ -50,6 +47,7 @@ final class OptimisticLockMacro extends BaseModifier
         return OptimisticLockListener::class;
     }
 
+    #[ArrayShape(['field' => "string", 'rule' => "null|string"])]
     protected function getListenerArgs(): array
     {
         return [
