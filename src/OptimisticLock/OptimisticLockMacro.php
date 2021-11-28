@@ -10,8 +10,6 @@ use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
 use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Cycle\ORM\Entity\Macros\Schema\RegistryModifier;
 use Cycle\Schema\Registry;
-use Doctrine\Common\Annotations\Annotation\Attribute;
-use Doctrine\Common\Annotations\Annotation\Attributes;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 use JetBrains\PhpStorm\ArrayShape;
@@ -47,7 +45,7 @@ final class OptimisticLockMacro extends BaseModifier
         return OptimisticLockListener::class;
     }
 
-    #[ArrayShape(['field' => "string", 'rule' => "null|string"])]
+    #[ArrayShape(['field' => 'string', 'rule' => 'null|string'])]
     protected function getListenerArgs(): array
     {
         return [
@@ -106,6 +104,8 @@ final class OptimisticLockMacro extends BaseModifier
 
     /**
      * Compute rule based on column type
+     *
+     * @return non-empty-string
      *
      * @throws MacrosCompilationException
      */
