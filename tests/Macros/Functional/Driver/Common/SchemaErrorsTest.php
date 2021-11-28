@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common;
 use Cycle\Annotated\Entities;
 use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
-use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
+use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\ORM\Schema;
 use Cycle\Schema\Compiler;
 use Cycle\Schema\Generator\GenerateModifiers;
@@ -27,7 +27,7 @@ abstract class SchemaErrorsTest extends BaseTest
     /** @dataProvider errorsProvider */
     public function testErrors(Tokenizer $tokenizer, string $message): void
     {
-        $this->expectException(MacrosCompilationException::class);
+        $this->expectException(MacroCompilationException::class);
         $this->expectExceptionMessageMatches(sprintf('/%s/', $message));
 
         $this->compileWithTokenizer($tokenizer);

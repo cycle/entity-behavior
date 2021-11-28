@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Subscriber;
 
-use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
+use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
@@ -35,11 +35,11 @@ final class CallableSubscriberMacro extends BaseModifier
         }
 
         if ($callable === []) {
-            throw new MacrosCompilationException('Cann\'t build callable from empty array.');
+            throw new MacroCompilationException('Cann\'t build callable from empty array.');
         }
 
         if (!\is_callable($callable)) {
-            throw new MacrosCompilationException(
+            throw new MacroCompilationException(
                 sprintf(
                     'Cann\'t build callable from instance of `%s` and `%s` method name.',
                     $callable[0],

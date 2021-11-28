@@ -65,4 +65,16 @@ abstract class RegistryModifierTest extends BaseTest
         $this->assertSame(ColumnInterface::INT, $fields->get('version')->getType());
         $this->assertSame('version_int', $fields->get('version')->getColumn());
     }
+
+    public function testAddUuidField(): void
+    {
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $entity = $this->registry->getEntity(self::ROLE_TEST);
+        $fields = $entity->getFields();
+
+        $this->assertTrue($fields->has('uuid'));
+        $this->assertSame('uuid', $fields->get('uuid')->getType());
+        $this->assertSame('uuid_column', $fields->get('uuid')->getColumn());
+    }
 }

@@ -17,6 +17,7 @@ use Cycle\ORM\ORM;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Spiral\Core\Container;
 
 abstract class UpdatedAtTest extends BaseTest
 {
@@ -74,7 +75,7 @@ abstract class UpdatedAtTest extends BaseTest
                 new ArrayCollectionFactory()
             ),
             $schema,
-            new EventDrivenCommandGenerator($schema)
+            new EventDrivenCommandGenerator($schema, new Container())
         );
     }
 
