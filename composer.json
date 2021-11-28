@@ -4,7 +4,8 @@
     "require": {
         "php": ">=8.0",
         "cycle/orm": "2.0.x-dev",
-        "cycle/schema-builder": "2.0.x-dev"
+        "cycle/schema-builder": "2.0.x-dev",
+        "yiisoft/injector": "^1.0"
     },
     "require-dev": {
         "cycle/annotated": "2.0.x-dev",
@@ -12,7 +13,8 @@
         "phpunit/phpunit": "^9.5",
         "spiral/code-style": "^1.0",
         "spiral/tokenizer": "^2.8",
-        "vimeo/psalm": "^4.10"
+        "vimeo/psalm": "^4.10",
+        "spiral/core": "^2.9"
     },
     "license": "MIT",
     "autoload": {

@@ -14,6 +14,7 @@ use Cycle\ORM\Transaction\Tuple;
 use Cycle\ORM\Entity\Macros\Dispatcher\Dispatcher;
 use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EventDrivenCommandGenerator extends CommandGenerator
@@ -21,9 +22,9 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     private EventDispatcherInterface $eventDispatcher;
 
     // todo: add custom listener interface
-    public function __construct(SchemaInterface $schema)
+    public function __construct(SchemaInterface $schema, ContainerInterface $container)
     {
-        $listenerProvider = new ListenerProvider($schema);
+        $listenerProvider = new ListenerProvider($schema, $container);
 
         $this->eventDispatcher = new Dispatcher($listenerProvider);
     }

@@ -18,6 +18,7 @@ use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Transaction;
+use Spiral\Core\Container;
 
 abstract class DeletedAtTest extends BaseTest
 {
@@ -73,7 +74,7 @@ abstract class DeletedAtTest extends BaseTest
                 new ArrayCollectionFactory()
             ),
             $schema,
-            new EventDrivenCommandGenerator($schema)
+            new EventDrivenCommandGenerator($schema, new Container())
         );
     }
 

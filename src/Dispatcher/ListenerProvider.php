@@ -10,6 +10,8 @@ use Cycle\ORM\Entity\Macros\Attribute\Listen;
 use Cycle\ORM\Entity\Macros\Event\MapperEvent;
 use Cycle\ORM\Entity\Macros\Event\Mapper\Command;
 use Cycle\ORM\Entity\Macros\Exception\Dispatcher\RuntimeException;
+use Yiisoft\Injector\Injector;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 // todo: how to replace listener resolver
@@ -23,8 +25,10 @@ final class ListenerProvider implements ListenerProviderInterface
      */
     private array $listeners = [];
 
-    public function __construct(SchemaInterface $schema)
-    {
+    public function __construct(
+        SchemaInterface $schema,
+        private ContainerInterface $container
+    ) {
         $this->configure($schema);
     }
 
@@ -65,12 +69,14 @@ final class ListenerProvider implements ListenerProviderInterface
             if (!$this->validateMacrosDefinition($definition)) {
                 continue;
             }
+            /** @psalm-var class-string $class */
             $class = $definition[self::DEFINITION_CLASS];
             $arguments = $definition[self::DEFINITION_ARGS] ?? [];
 
             $events = $this->findListenersInAttributes($class);
             try {
-                $listener = new $class(...$arguments);
+                $listener = (new Injector($this->container))->make($class, $arguments);
+
                 if ($listener instanceof EventListProviderInterface) {
                     $events = [...$events, ...$this->getProvidedListeners($listener)];
                 }
