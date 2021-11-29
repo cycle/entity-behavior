@@ -6,8 +6,8 @@ namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\ORM\Entity\Macros\Common\BaseModifier;
 use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
-use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;

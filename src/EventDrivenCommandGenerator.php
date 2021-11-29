@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros;
 
 use Cycle\ORM\Command\CommandInterface;
-use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Transaction\CommandGenerator;
 use Cycle\ORM\Transaction\Tuple;
 use Cycle\ORM\Entity\Macros\Dispatcher\Dispatcher;
 use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
-use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Macros\Dispatcher\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Macros\Dispatcher\Event\Mapper\Command\OnUpdate;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EventDrivenCommandGenerator extends CommandGenerator

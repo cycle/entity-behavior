@@ -6,7 +6,7 @@ namespace Cycle\ORM\Entity\Macros\Timestamped;
 
 use Cycle\ORM\Command\StoreCommandInterface;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Macros\Dispatcher\Event\Mapper\Command\OnUpdate;
 
 final class UpdatedAtListener
 {

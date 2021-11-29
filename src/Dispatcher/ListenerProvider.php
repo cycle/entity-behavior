@@ -6,7 +6,7 @@ namespace Cycle\ORM\Entity\Macros\Dispatcher;
 
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Event\MapperEvent;
+use Cycle\ORM\Entity\Macros\Dispatcher\Event\MapperEvent;
 use Cycle\ORM\Entity\Macros\Exception\Dispatcher\RuntimeException;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
@@ -91,8 +91,10 @@ final class ListenerProvider implements ListenerProviderInterface
         if (!class_exists($definition[self::DEFINITION_CLASS], true)) {
             return false;
         }
-        if (array_key_exists(self::DEFINITION_ARGS, $definition)
-            && !is_array($definition[self::DEFINITION_ARGS])) {
+        if (
+            array_key_exists(self::DEFINITION_ARGS, $definition) &&
+            !is_array($definition[self::DEFINITION_ARGS])
+        ) {
             return false;
         }
         return true;
@@ -145,12 +147,11 @@ final class ListenerProvider implements ListenerProviderInterface
                     assert($listen instanceof Listen);
                 } catch (\Throwable $e) {
                     throw new RuntimeException(sprintf(
-                            "Cann't instantiate attribute %s in the %s::%s method.",
-                            Listen::class,
-                            $class,
-                            $method->getName()
-                        ), 0, $e
-                    );
+                        "Cann't instantiate attribute %s in the %s::%s method.",
+                        Listen::class,
+                        $class,
+                        $method->getName()
+                    ), 0, $e);
                 }
                 $result[] = [$listen->event, $method->getName()];
             }

@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Timestamped;
 
-use Cycle\Schema\Definition\Field;
+use Cycle\ORM\Entity\Macros\Common\BaseModifier;
+use Cycle\ORM\Entity\Macros\Common\RegistryModifier;
 use Cycle\Schema\Registry;
-use Cycle\ORM\Entity\Macros\Preset\BaseModifier;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * DeletedAtMacro replaces Delete command with Update command and set current timestamp in the configured field.
+ * DeletedAtMacro implements the soft delete strategy, replaces Delete command with Update command and set current
+ * timestamp in the configured field.
  * Keep in mind that DeletedAtMacro behavior doesn't run events related to Update command.
  *
  * @Annotation
@@ -47,26 +48,8 @@ final class DeletedAtMacro extends BaseModifier
 
     public function compute(Registry $registry): void
     {
-        $this->addDatetimeColumn($registry, $this->column, $this->field);
-    }
+        $modifier = new RegistryModifier($registry, $this->role);
 
-    private function addDatetimeColumn(Registry $registry, string $columnName, string $fieldName): void
-    {
-        $entity = $registry->getEntity($this->role);
-        $table = $registry->getTableSchema($entity);
-        $fields = $entity->getFields();
-
-        if ($fields->has($fieldName)) {
-            // todo check field
-            return;
-        }
-
-        $field = new Field();
-        $field->setColumn($columnName)->setType('datetime')->setTypecast('datetime');
-        $table->column($field->getColumn())
-            ->type($field->getType())
-            ->nullable(true)
-            ->defaultValue(null);
-        $fields->set($fieldName, $field);
+        $modifier->addDatetimeColumn($this->column, $this->field);
     }
 }
