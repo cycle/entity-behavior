@@ -31,10 +31,6 @@ final class EventDrivenCommandGenerator extends CommandGenerator
 
     protected function storeEntity(ORMInterface $orm, Tuple $tuple, bool $isNew): ?CommandInterface
     {
-        /**
-         * @psalm-suppress PossiblyNullReference
-         * @psalm-suppress PossiblyNullArgument
-         */
         $event = $isNew
             ? new OnCreate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state)
             : new OnUpdate($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
@@ -54,10 +50,6 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     ): ?CommandInterface {
         $parentMapper = $orm->getMapper($parentRole);
 
-        /**
-         * @psalm-suppress PossiblyNullReference
-         * @psalm-suppress PossiblyNullArgument
-         */
         $event = new OnCreate($parentRole, $parentMapper, $tuple->entity, $tuple->node, $tuple->state);
         $event->command = $isNew
             ? $parentMapper->queueCreate($tuple->entity, $tuple->node, $tuple->state)
@@ -70,10 +62,6 @@ final class EventDrivenCommandGenerator extends CommandGenerator
 
     protected function deleteEntity(ORMInterface $orm, Tuple $tuple): ?CommandInterface
     {
-        /**
-         * @psalm-suppress PossiblyNullReference
-         * @psalm-suppress PossiblyNullArgument
-         */
         $event = new OnDelete($tuple->node->getRole(), $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state);
 
         $event->command = parent::deleteEntity($orm, $tuple);

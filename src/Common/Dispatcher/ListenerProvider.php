@@ -27,9 +27,9 @@ final class ListenerProvider implements ListenerProviderInterface
 
     public function __construct(
         SchemaInterface $schema,
-        private ContainerInterface $container
+        ContainerInterface $container
     ) {
-        $this->configure($schema);
+        $this->configure($schema, new Injector($container));
     }
 
     public function getListenersForEvent(object $event): iterable
@@ -48,18 +48,18 @@ final class ListenerProvider implements ListenerProviderInterface
         return $this->listeners[$role][$event::class];
     }
 
-    private function configure(SchemaInterface $schema): void
+    private function configure(SchemaInterface $schema, Injector $injector): void
     {
         foreach ($schema->getRoles() as $role) {
             $config = $schema->define($role, SchemaInterface::MACROS);
             if (!is_array($config) || $config === []) {
                 continue;
             }
-            $this->resolveListeners($role, $config);
+            $this->resolveListeners($role, $config, $injector);
         }
     }
 
-    private function resolveListeners(string $role, array $config): void
+    private function resolveListeners(string $role, array $config, Injector $injector): void
     {
         foreach ($config as $definition) {
             assert(is_array($definition) || is_string($definition));
@@ -75,7 +75,7 @@ final class ListenerProvider implements ListenerProviderInterface
 
             $events = $this->findListenersInAttributes($class);
             try {
-                $listener = (new Injector($this->container))->make($class, $arguments);
+                $listener = $injector->make($class, $arguments);
 
                 if ($listener instanceof EventListProviderInterface) {
                     $events = [...$events, ...$this->getProvidedListeners($listener)];
