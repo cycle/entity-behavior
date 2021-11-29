@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros\Attribute;
 
 use Attribute;
-use Cycle\ORM\Entity\Macros\Event\MapperEvent;
+use Cycle\ORM\Entity\Macros\Common\Event\MapperEvent;
 
 #[Attribute(flags: Attribute::TARGET_METHOD|Attribute::IS_REPEATABLE)]
 final class Listen

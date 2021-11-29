@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Common;
+namespace Cycle\ORM\Entity\Macros\Common\Schema;
 
-use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
+use Cycle\ORM\Entity\Macros\Common\Dispatcher\ListenerProvider;
 use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Registry;
 use Cycle\Schema\SchemaModifierInterface;

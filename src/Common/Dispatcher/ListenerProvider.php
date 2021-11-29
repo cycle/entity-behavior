@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Dispatcher;
+namespace Cycle\ORM\Entity\Macros\Common\Dispatcher;
 
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Dispatcher\Event\MapperEvent;
+use Cycle\ORM\Entity\Macros\Common\Event\MapperEvent;
 use Cycle\ORM\Entity\Macros\Exception\Dispatcher\RuntimeException;
 use Psr\EventDispatcher\ListenerProviderInterface;
 

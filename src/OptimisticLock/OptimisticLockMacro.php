@@ -6,7 +6,7 @@ namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
-use Cycle\ORM\Entity\Macros\Common\BaseModifier;
+use Cycle\ORM\Entity\Macros\Common\Schema\BaseModifier;
 use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;

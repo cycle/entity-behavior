@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Dispatcher;
+namespace Cycle\ORM\Entity\Macros\Common\Dispatcher;
 
 /**
  * Provides events list that should be listened by the behavior Listener

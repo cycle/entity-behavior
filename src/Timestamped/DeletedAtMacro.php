@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Timestamped;
 
-use Cycle\ORM\Entity\Macros\Common\BaseModifier;
-use Cycle\ORM\Entity\Macros\Common\RegistryModifier;
+use Cycle\ORM\Entity\Macros\Common\Schema\BaseModifier;
+use Cycle\ORM\Entity\Macros\Common\Schema\RegistryModifier;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;

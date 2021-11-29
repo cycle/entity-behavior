@@ -9,10 +9,10 @@ use Cycle\ORM\ORMInterface;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Transaction\CommandGenerator;
 use Cycle\ORM\Transaction\Tuple;
-use Cycle\ORM\Entity\Macros\Dispatcher\Dispatcher;
-use Cycle\ORM\Entity\Macros\Dispatcher\ListenerProvider;
-use Cycle\ORM\Entity\Macros\Dispatcher\Event\Mapper\Command\OnCreate;
-use Cycle\ORM\Entity\Macros\Dispatcher\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Macros\Common\Dispatcher\Dispatcher;
+use Cycle\ORM\Entity\Macros\Common\Dispatcher\ListenerProvider;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EventDrivenCommandGenerator extends CommandGenerator

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Common;
+namespace Cycle\ORM\Entity\Macros\Common\Schema;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;

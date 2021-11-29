@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\ColumnInterface;
-use Cycle\ORM\Entity\Macros\Common\RegistryModifier;
+use Cycle\ORM\Entity\Macros\Common\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Registry;
