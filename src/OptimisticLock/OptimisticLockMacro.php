@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Macros\Common\Schema\BaseModifier;
-use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
+use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
@@ -29,7 +29,7 @@ use JetBrains\PhpStorm\ExpectedValues;
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class OptimisticLockMacro extends BaseModifier
 {
-    const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
+    private const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
     /**
      * @param string $field Version field
      * @param null|string $rule
@@ -37,7 +37,6 @@ final class OptimisticLockMacro extends BaseModifier
      */
     public function __construct(
         private string $field,
-
         #[ExpectedValues(valuesFromClass: OptimisticLockListener::class)]
         private ?string $rule = 'string',
         private ?string $column = null
@@ -53,7 +52,7 @@ final class OptimisticLockMacro extends BaseModifier
     protected function getListenerArgs(): array
     {
         if ($this->rule === null) {
-            throw new MacrosCompilationException();
+            throw new MacroCompilationException();
         }
         return [
             'field' => $this->field,
@@ -77,7 +76,7 @@ final class OptimisticLockMacro extends BaseModifier
             // Check configured column
             $columnName = $fields->get($this->field)->getColumn();
             if ($columnName !== $this->column) {
-                throw new MacrosCompilationException(
+                throw new MacroCompilationException(
                     sprintf(
                         'Ambiguous column name definition. '
                         . 'The `%s` field already linked with the `%s` column but the macros expects `%s`.',
@@ -120,7 +119,7 @@ final class OptimisticLockMacro extends BaseModifier
                 $column->datetime();
                 break;
             default:
-                throw new MacrosCompilationException(
+                throw new MacroCompilationException(
                     sprintf(
                         'Wrong rule `%s` for the %s macros in the `%s.%s` field.',
                         $this->rule,
@@ -144,7 +143,7 @@ final class OptimisticLockMacro extends BaseModifier
         $fields = $entity->getFields();
 
         if (!$fields->has($this->field)) {
-            throw new MacrosCompilationException(
+            throw new MacroCompilationException(
                 sprintf(
                     'Entity has no field `%s` related with any column.',
                     $this->field
@@ -166,7 +165,7 @@ final class OptimisticLockMacro extends BaseModifier
     /**
      * Match column type with rule
      *
-     * @throws MacrosCompilationException
+     * @throws MacroCompilationException
      */
     private function matchColumnWithRule(AbstractColumn $column, string $rule): void
     {
@@ -177,7 +176,7 @@ final class OptimisticLockMacro extends BaseModifier
     /**
      * Compute rule based on column type
      *
-     * @throws MacrosCompilationException
+     * @throws MacroCompilationException
      */
     private function computeRule(AbstractColumn $column): string
     {
@@ -186,7 +185,7 @@ final class OptimisticLockMacro extends BaseModifier
             ColumnInterface::INT => OptimisticLockListener::RULE_INCREMENT,
             ColumnInterface::STRING => OptimisticLockListener::RULE_MICROTIME,
             'datetime' => OptimisticLockListener::RULE_DATETIME,
-            default => throw new MacrosCompilationException('Failed to compute rule based on column type.')
+            default => throw new MacroCompilationException('Failed to compute rule based on column type.')
         };
     }
 }

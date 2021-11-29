@@ -6,7 +6,7 @@ namespace Cycle\ORM\Entity\Macros\Common\Schema;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
-use Cycle\ORM\Entity\Macros\Exception\MacrosCompilationException;
+use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 
@@ -26,7 +26,7 @@ class RegistryModifier
 
         if ($fields->has($fieldName)) {
             if (!$this->isDatetimeColumn($fields->get($fieldName))) {
-                throw new MacrosCompilationException(sprintf('Field %s must be of type datetime.', $fieldName));
+                throw new MacroCompilationException(sprintf('Field %s must be of type datetime.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
 
@@ -51,7 +51,7 @@ class RegistryModifier
 
         if ($fields->has($fieldName)) {
             if (!$this->isIntegerColumn($fields->get($fieldName))) {
-                throw new MacrosCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
+                throw new MacroCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
 
@@ -76,7 +76,7 @@ class RegistryModifier
 
         if ($fields->has($fieldName)) {
             if (!$this->isStringColumn($fields->get($fieldName))) {
-                throw new MacrosCompilationException(sprintf('Field %s must be of type string.', $fieldName));
+                throw new MacroCompilationException(sprintf('Field %s must be of type string.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
 
@@ -93,13 +93,13 @@ class RegistryModifier
         return $table->column($field->getColumn());
     }
 
-    /** @throws MacrosCompilationException */
+    /** @throws MacroCompilationException */
     private function validateColumnName(string $fieldName, string $columnName): void
     {
         $field = $this->registry->getEntity($this->role)->getFields()->get($fieldName);
 
         if ($field->getColumn() !== $columnName) {
-            throw new MacrosCompilationException(
+            throw new MacroCompilationException(
                 sprintf(
                     'Ambiguous column name definition. '
                     . 'The `%s` field already linked with the `%s` column but the macros expects `%s`.',

@@ -6,7 +6,6 @@ namespace Cycle\ORM\Entity\Macros\Exception;
 
 use RuntimeException;
 
-final class MacrosCompilationException extends RuntimeException
+final class MacroCompilationException extends RuntimeException
 {
-
 }

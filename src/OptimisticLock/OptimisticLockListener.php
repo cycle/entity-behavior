@@ -76,7 +76,7 @@ final class OptimisticLockListener
 
     private function getLockingValue(mixed $previousValue): int|string|DateTimeInterface
     {
-        return match($this->rule) {
+        return match ($this->rule) {
             self::RULE_INCREMENT => (int)$previousValue + 1,
             self::RULE_DATETIME => new DateTimeImmutable(),
             self::RULE_RAND_STR => \random_bytes(32),

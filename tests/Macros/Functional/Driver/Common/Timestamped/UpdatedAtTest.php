@@ -17,6 +17,7 @@ use Cycle\ORM\ORM;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Spiral\Core\Container;
 
 abstract class UpdatedAtTest extends BaseTest
 {
@@ -74,7 +75,7 @@ abstract class UpdatedAtTest extends BaseTest
                 new ArrayCollectionFactory()
             ),
             $schema,
-            new EventDrivenCommandGenerator($schema)
+            new EventDrivenCommandGenerator($schema, new Container())
         );
     }
 
@@ -84,7 +85,7 @@ abstract class UpdatedAtTest extends BaseTest
 
         $this->save($post);
 
-        $select = new Select($this->orm->withHeap(new Heap()), Post::class);
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
         $this->assertNull($data->updatedAt);
         $this->assertNull($data->customUpdatedAt);
@@ -105,7 +106,7 @@ abstract class UpdatedAtTest extends BaseTest
 
         $this->save($post);
 
-        $select = new Select($this->orm->withHeap(new Heap()), Post::class);
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
         $this->assertGreaterThan(0, $data->updatedAt <=> $updatedAt);
