@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Event;
+namespace Cycle\ORM\Entity\Macros\Common\Event;
 
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;

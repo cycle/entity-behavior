@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros\Timestamped;
 
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
 
 final class CreatedAtListener
 {

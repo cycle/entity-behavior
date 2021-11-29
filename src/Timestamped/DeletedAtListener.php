@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Macros\Timestamped;
 use Cycle\ORM\Command\StoreCommand;
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Event\Mapper\Command\OnDelete;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
 
 final class DeletedAtListener
 {
