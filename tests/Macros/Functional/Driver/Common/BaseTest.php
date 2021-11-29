@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common;
 
 use Cycle\Database\Config\DatabaseConfig;
-use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Database;
 use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\DriverInterface;
@@ -25,7 +24,7 @@ abstract class BaseTest extends TestCase
     public static array $config;
     protected ?DatabaseManager $dbal = null;
     protected ?ORM $orm = null;
-    private static array $memoizedDrivers = [];
+    private static array $driverCache = [];
 
     public function setUp(): void
     {
@@ -55,32 +54,18 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    /**
-     * @param array{readonly: bool} $options
-     *
-     * @return DriverInterface
-     */
-    private function getDriver(array $options = []): DriverInterface
+    public function getDriver(): DriverInterface
     {
-        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($options));
-
-        if (! isset(self::$memoizedDrivers[$hash])) {
-            /** @var DriverConfig $config */
-            $config = clone self::$config[static::DRIVER];
-
-            // Add readonly options support
-            if (isset($options['readonly']) && $options['readonly'] === true) {
-                $config->readonly = true;
-            }
-
-            $driver = $config->driver::create($config);
-
-            $this->setUpLogger($driver);
-
-            self::$memoizedDrivers[$hash] = $driver;
+        if (isset(static::$driverCache[static::DRIVER])) {
+            return static::$driverCache[static::DRIVER];
         }
 
-        return self::$memoizedDrivers[$hash];
+        $config = self::$config[static::DRIVER];
+        if (!isset($this->driver)) {
+            $this->driver = $config->driver::create($config);
+        }
+
+        return static::$driverCache[static::DRIVER] = $this->driver;
     }
 
     protected function dropDatabase(Database $database = null): void
@@ -108,7 +93,7 @@ abstract class BaseTest extends TestCase
 
     public function withSchema(SchemaInterface $schema): ORM
     {
-        $this->orm = $this->orm->withSchema($schema);
+        $this->orm = $this->orm->with($schema);
 
         return $this->orm;
     }

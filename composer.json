@@ -4,7 +4,8 @@
     "require": {
         "php": ">=8.0",
         "cycle/orm": "2.0.x-dev",
-        "cycle/schema-builder": "2.0.x-dev"
+        "cycle/schema-builder": "2.0.x-dev",
+        "yiisoft/injector": "^1.0"
     },
     "require-dev": {
         "ramsey/uuid": "^4.0",

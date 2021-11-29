@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Common\Dispatcher;
 
+use Cycle\ORM\Entity\Macros\Common\Event\MapperEvent;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\QueueCommand;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Common\Event\MapperEvent;
 use Cycle\ORM\Entity\Macros\Exception\Dispatcher\RuntimeException;
+use Yiisoft\Injector\Injector;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 // todo: how to replace listener resolver
@@ -21,9 +25,11 @@ final class ListenerProvider implements ListenerProviderInterface
      */
     private array $listeners = [];
 
-    public function __construct(SchemaInterface $schema)
-    {
-        $this->configure($schema);
+    public function __construct(
+        SchemaInterface $schema,
+        ContainerInterface $container
+    ) {
+        $this->configure($schema, new Injector($container));
     }
 
     public function getListenersForEvent(object $event): iterable
@@ -42,18 +48,18 @@ final class ListenerProvider implements ListenerProviderInterface
         return $this->listeners[$role][$event::class];
     }
 
-    private function configure(SchemaInterface $schema): void
+    private function configure(SchemaInterface $schema, Injector $injector): void
     {
         foreach ($schema->getRoles() as $role) {
             $config = $schema->define($role, SchemaInterface::MACROS);
             if (!is_array($config) || $config === []) {
                 continue;
             }
-            $this->resolveListeners($role, $config);
+            $this->resolveListeners($role, $config, $injector);
         }
     }
 
-    private function resolveListeners(string $role, array $config): void
+    private function resolveListeners(string $role, array $config, Injector $injector): void
     {
         foreach ($config as $definition) {
             assert(is_array($definition) || is_string($definition));
@@ -63,12 +69,14 @@ final class ListenerProvider implements ListenerProviderInterface
             if (!$this->validateMacrosDefinition($definition)) {
                 continue;
             }
+            /** @psalm-var class-string $class */
             $class = $definition[self::DEFINITION_CLASS];
             $arguments = $definition[self::DEFINITION_ARGS] ?? [];
 
             $events = $this->findListenersInAttributes($class);
             try {
-                $listener = new $class(...$arguments);
+                $listener = $injector->make($class, $arguments);
+
                 if ($listener instanceof EventListProviderInterface) {
                     $events = [...$events, ...$this->getProvidedListeners($listener)];
                 }
@@ -81,7 +89,16 @@ final class ListenerProvider implements ListenerProviderInterface
             }
 
             foreach ($events as [$event, $method]) {
-                $this->listeners[$role][$event][] = [$listener, $method];
+                if ($event === QueueCommand::class) {
+                    $this->listeners[$role][Command\AfterCreate::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\AfterDelete::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\AfterUpdate::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\OnCreate::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\OnUpdate::class][] = [$listener, $method];
+                    $this->listeners[$role][Command\OnDelete::class][] = [$listener, $method];
+                } else {
+                    $this->listeners[$role][$event][] = [$listener, $method];
+                }
             }
         }
     }
