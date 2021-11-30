@@ -62,7 +62,7 @@ abstract class CallableSubscriberTest extends BaseTest
                 SchemaInterface::MACROS => [
                     [
                         CallableSubscriberListener::class,
-                        ['callable' => [PostService::class . '::update'], 'events' => [OnUpdate::class]]
+                        ['callable' => PostService::class . '::update', 'events' => [OnUpdate::class]]
                     ],
                     [
                         CallableSubscriberListener::class,

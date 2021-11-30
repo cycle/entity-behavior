@@ -9,10 +9,14 @@ use Cycle\ORM\Entity\Macros\Common\Event\Mapper\QueueCommand;
 
 final class CallableSubscriberListener
 {
+    /** @var callable */
+    private $callable;
+
     public function __construct(
-        private array $callable,
+        callable $callable,
         private array $events
     ) {
+        $this->callable = $callable;
     }
 
     #[Listen(QueueCommand::class)]
@@ -22,6 +26,6 @@ final class CallableSubscriberListener
             return;
         }
 
-        \call_user_func(count($this->callable) === 1 ? $this->callable[0] : $this->callable, $event);
+        \call_user_func($this->callable, $event);
     }
 }

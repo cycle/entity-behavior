@@ -23,11 +23,11 @@ final class SimpleContainer implements ContainerInterface
     {
         $this->definitions = $definitions;
         $this->factory = $factory ?? static function (string $id): void {
-                throw new class ("No definition or class found for \"$id\".")
-                    extends Exception
-                    implements NotFoundExceptionInterface {
-                };
+            throw new class ("No definition or class found for \"$id\".")
+                extends Exception
+                implements NotFoundExceptionInterface {
             };
+        };
     }
 
     public function get($id): mixed

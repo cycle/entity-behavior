@@ -50,21 +50,7 @@ abstract class ErrorsTest extends BaseTest
                     'exclude' => [],
                 ])),
                 'Ambiguous column name definition. The `updatedAt` field already linked with the `custom_updated_at`'
-            ],
-            'Callable empty array' => [
-                new Tokenizer(new TokenizerConfig([
-                    'directories' => [dirname(__DIR__, 4) . '/Fixtures/Wrong/CallableNotSet'],
-                    'exclude' => [],
-                ])),
-                'Cann\'t build callable from empty array.'
-            ],
-            'Is not callable' => [
-                new Tokenizer(new TokenizerConfig([
-                    'directories' => [dirname(__DIR__, 4) . '/Fixtures/Wrong/CallableInvalid'],
-                    'exclude' => [],
-                ])),
-                'Cann\'t build callable from instance of'
-            ],
+            ]
         ];
     }
 
