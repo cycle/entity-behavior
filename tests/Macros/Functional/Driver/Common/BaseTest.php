@@ -13,12 +13,12 @@ use Cycle\ORM\Collection\ArrayCollectionFactory;
 use Cycle\ORM\Config\RelationConfig;
 use Cycle\ORM\Entity\Macros\EventDrivenCommandGenerator;
 use Cycle\ORM\Entity\Macros\Tests\Traits\Loggable;
+use Cycle\ORM\Entity\Macros\Tests\Utils\SimpleContainer;
 use Cycle\ORM\Factory;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\ORM;
 use Cycle\ORM\Transaction;
 use PHPUnit\Framework\TestCase;
-use Spiral\Core\Container;
 
 abstract class BaseTest extends TestCase
 {
@@ -106,7 +106,7 @@ abstract class BaseTest extends TestCase
                 new ArrayCollectionFactory()
             ),
             $schema,
-            new EventDrivenCommandGenerator($schema, new Container())
+            new EventDrivenCommandGenerator($schema, new SimpleContainer())
         );
 
         return $this->orm;
