@@ -9,11 +9,16 @@ use Cycle\Database\Database;
 use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Handler;
+use Cycle\ORM\Collection\ArrayCollectionFactory;
+use Cycle\ORM\Config\RelationConfig;
+use Cycle\ORM\Entity\Macros\EventDrivenCommandGenerator;
 use Cycle\ORM\Entity\Macros\Tests\Traits\Loggable;
+use Cycle\ORM\Factory;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\ORM;
 use Cycle\ORM\Transaction;
 use PHPUnit\Framework\TestCase;
+use Spiral\Core\Container;
 
 abstract class BaseTest extends TestCase
 {
@@ -93,7 +98,16 @@ abstract class BaseTest extends TestCase
 
     public function withSchema(SchemaInterface $schema): ORM
     {
-        $this->orm = $this->orm->with($schema);
+        $this->orm = new ORM(
+            new Factory(
+                $this->dbal,
+                RelationConfig::getDefault(),
+                null,
+                new ArrayCollectionFactory()
+            ),
+            $schema,
+            new EventDrivenCommandGenerator($schema, new Container())
+        );
 
         return $this->orm;
     }
