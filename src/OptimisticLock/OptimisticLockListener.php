@@ -9,6 +9,7 @@ use Cycle\ORM\Command\Special\WrappedCommand;
 use Cycle\ORM\Command\StoreCommandInterface;
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
+use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
 use DateTimeImmutable;
@@ -35,15 +36,23 @@ final class OptimisticLockListener
     public const RULE_DATETIME = 'datetime';
 
     public function __construct(
-        private string $field = 'deletedAt',
+        private string $field = 'version',
         #[ExpectedValues(valuesFromClass: self::class)]
-        private string $rule = self::RULE_MICROTIME
+        private string $rule = self::RULE_INCREMENT
     ) {
+    }
+
+    #[Listen(OnCreate::class)]
+    public function onCreate(OnCreate $event): void
+    {
+        if (\is_null($event->node->getData()[$this->field])) {
+            $event->state->register($this->field, $this->getLockingValue(0));
+        }
     }
 
     #[Listen(OnUpdate::class)]
     #[Listen(OnDelete::class)]
-    public function __invoke(OnDelete $event): void
+    public function __invoke(OnDelete|OnUpdate $event): void
     {
         if (!$event->command instanceof ScopeCarrierInterface) {
             return;
@@ -55,13 +64,13 @@ final class OptimisticLockListener
     {
         $scopeValue = $node->getInitialData()[$this->field] ?? null;
         if ($scopeValue === null) {
-            throw new \RuntimeException(sprintf('The `%s` field is not set.', $this->field));
+            throw new \RuntimeException(\sprintf('The `%s` field is not set.', $this->field));
         }
 
         // Check if a new lock-value has been assigned
         if ($command instanceof StoreCommandInterface && $node->getData()[$this->field] === $scopeValue) {
             // Generate new value
-            $command->register($this->field, $this->getLockingValue($scopeValue));
+            $node->getState()->register($this->field, $this->getLockingValue($scopeValue));
         }
 
         $command->setScope($this->field, $scopeValue);
@@ -79,8 +88,8 @@ final class OptimisticLockListener
         return match ($this->rule) {
             self::RULE_INCREMENT => (int)$previousValue + 1,
             self::RULE_DATETIME => new DateTimeImmutable(),
-            self::RULE_RAND_STR => \random_bytes(32),
-            default => number_format(microtime(true), 6)
+            self::RULE_RAND_STR => \bin2hex(\random_bytes(16)),
+            default => \number_format(\microtime(true), 6, '.', '')
         };
     }
 }

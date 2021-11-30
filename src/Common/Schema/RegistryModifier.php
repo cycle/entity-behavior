@@ -59,7 +59,7 @@ class RegistryModifier
         }
 
         $field = new Field();
-        $field->setColumn($columnName)->setType(ColumnInterface::INT)->setTypecast('int');
+        $field->setColumn($columnName)->setType('integer')->setTypecast('int');
 
         $table->column($field->getColumn())->type($field->getType());
 
@@ -118,7 +118,7 @@ class RegistryModifier
 
     private function isIntegerColumn(Field $field): bool
     {
-        return $field->getType() === ColumnInterface::INT;
+        return $field->getType() === 'integer';
     }
 
     private function isStringColumn(Field $field): bool

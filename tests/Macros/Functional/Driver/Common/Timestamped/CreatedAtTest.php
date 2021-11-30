@@ -8,7 +8,7 @@ use Cycle\ORM\Collection\ArrayCollectionFactory;
 use Cycle\ORM\Config\RelationConfig;
 use Cycle\ORM\Entity\Macros\EventDrivenCommandGenerator;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\Entity\Macros\Tests\Fixtures\Post;
+use Cycle\ORM\Entity\Macros\Tests\Fixtures\Timestamped\Post;
 use Cycle\ORM\Entity\Macros\Tests\Traits\TableTrait;
 use Cycle\ORM\Entity\Macros\Tests\Utils\SimpleContainer;
 use Cycle\ORM\Entity\Macros\Timestamped\CreatedAtListener;
