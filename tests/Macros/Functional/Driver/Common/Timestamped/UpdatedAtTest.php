@@ -50,9 +50,7 @@ abstract class UpdatedAtTest extends BaseTest
                     'content' => 'content'
                 ],
                 SchemaInterface::MACROS => [
-                    [
-                        UpdatedAtListener::class
-                    ],
+                    UpdatedAtListener::class,
                     [
                         UpdatedAtListener::class,
                         ['field' => 'customUpdatedAt']

@@ -50,9 +50,7 @@ abstract class CreatedAtTest extends BaseTest
                     'content' => 'content'
                 ],
                 SchemaInterface::MACROS => [
-                    [
-                        CreatedAtListener::class
-                    ],
+                    CreatedAtListener::class,
                     [
                         CreatedAtListener::class,
                         ['field' => 'customCreatedAt']

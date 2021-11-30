@@ -25,7 +25,7 @@ final class ClassSubscriberMacro implements SchemaModifierInterface
      */
     public function __construct(
         private string $listener,
-        private mixed $args = null
+        private array $args = []
     ) {
     }
 
@@ -39,7 +39,7 @@ final class ClassSubscriberMacro implements SchemaModifierInterface
 
     public function modifySchema(array &$schema): void
     {
-        $schema[SchemaInterface::MACROS][] = $this->args !== null ? [$this->listener, $this->args] : [$this->listener];
+        $schema[SchemaInterface::MACROS][] = $this->args === [] ? $this->listener : [$this->listener, $this->args];
     }
 
     final public function withRole(string $role): static

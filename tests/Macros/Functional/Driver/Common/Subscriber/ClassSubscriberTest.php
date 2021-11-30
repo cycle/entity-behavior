@@ -81,11 +81,9 @@ abstract class ClassSubscriberTest extends BaseTest
     public function testSchema(): void
     {
         $macro = $this->orm->getSchema()->define(Comment::class, SchemaInterface::MACROS);
-
         $this->assertIsArray($macro);
-        $this->assertIsArray($macro[0]);
-        $this->assertSame(CommentService::class, $macro[0][0]);
-        $this->assertCount(1, $macro[0]);
+        $this->assertSame(CommentService::class, $macro[0]);
+        $this->assertCount(1, $macro);
     }
 
     public function testApply(): void
