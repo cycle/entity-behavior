@@ -12,6 +12,7 @@ use Cycle\ORM\Entity\Macros\Attribute\Listen;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Heap\State;
 use DateTimeImmutable;
 use DateTimeInterface;
 use JetBrains\PhpStorm\ExpectedValues;
@@ -45,7 +46,7 @@ final class OptimisticLockListener
     #[Listen(OnCreate::class)]
     public function onCreate(OnCreate $event): void
     {
-        if (\is_null($event->node->getData()[$this->field])) {
+        if (!isset($event->state->getData()[$this->field])) {
             $event->state->register($this->field, $this->getLockingValue(0));
         }
     }
@@ -57,20 +58,20 @@ final class OptimisticLockListener
         if (!$event->command instanceof ScopeCarrierInterface) {
             return;
         }
-        $event->command = $this->lock($event->node, $event->command);
+        $event->command = $this->lock($event->node, $event->state, $event->command);
     }
 
-    private function lock(Node $node, ScopeCarrierInterface $command): WrappedCommand
+    private function lock(Node $node, State $state, ScopeCarrierInterface $command): WrappedCommand
     {
-        $scopeValue = $node->getInitialData()[$this->field] ?? null;
+        $scopeValue = $node->getData()[$this->field] ?? null;
         if ($scopeValue === null) {
             throw new \RuntimeException(\sprintf('The `%s` field is not set.', $this->field));
         }
 
         // Check if a new lock-value has been assigned
-        if ($command instanceof StoreCommandInterface && $node->getData()[$this->field] === $scopeValue) {
+        if ($command instanceof StoreCommandInterface && $state->getData()[$this->field] === $scopeValue) {
             // Generate new value
-            $node->getState()->register($this->field, $this->getLockingValue($scopeValue));
+            $state->register($this->field, $this->getLockingValue($scopeValue));
         }
 
         $command->setScope($this->field, $scopeValue);
