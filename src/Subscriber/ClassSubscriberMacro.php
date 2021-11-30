@@ -8,24 +8,25 @@ use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Registry;
 use Cycle\Schema\SchemaModifierInterface;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+use Doctrine\Common\Annotations\Annotation\Target;
 
-# todo complete
+/**
+ * @Annotation
+ * @NamedArgumentConstructor()
+ * @Target({"CLASS"})
+ */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class Subscriber implements SchemaModifierInterface
+final class ClassSubscriberMacro implements SchemaModifierInterface
 {
-    /**
-     * @param class-string[] $listeners todo: callable[]?
-     */
-    private array $listener;
-
     private string $role;
 
     /**
-     * @param class-string ...$listener
+     * @psalm-param class-string $listener
      */
-    public function __construct(string ...$listener)
-    {
-        $this->listener = $listener;
+    public function __construct(
+        private string $listener,
+        private array $args = []
+    ) {
     }
 
     public function compute(Registry $registry): void
@@ -38,15 +39,14 @@ final class Subscriber implements SchemaModifierInterface
 
     public function modifySchema(array &$schema): void
     {
-        foreach ($this->listener as $listener) {
-            $schema[SchemaInterface::MACROS][] = $listener;
-        }
+        $schema[SchemaInterface::MACROS][] = $this->args === [] ? $this->listener : [$this->listener, $this->args];
     }
 
     final public function withRole(string $role): static
     {
         $clone = clone $this;
         $clone->role = $role;
+
         return $clone;
     }
 }

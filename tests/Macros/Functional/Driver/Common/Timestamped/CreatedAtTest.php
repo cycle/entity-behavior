@@ -10,6 +10,7 @@ use Cycle\ORM\Entity\Macros\EventDrivenCommandGenerator;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\Post;
 use Cycle\ORM\Entity\Macros\Tests\Traits\TableTrait;
+use Cycle\ORM\Entity\Macros\Tests\Utils\SimpleContainer;
 use Cycle\ORM\Entity\Macros\Timestamped\CreatedAtListener;
 use Cycle\ORM\Factory;
 use Cycle\ORM\Heap\Heap;
@@ -17,7 +18,6 @@ use Cycle\ORM\ORM;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
-use Spiral\Core\Container;
 
 abstract class CreatedAtTest extends BaseTest
 {
@@ -50,9 +50,7 @@ abstract class CreatedAtTest extends BaseTest
                     'content' => 'content'
                 ],
                 SchemaInterface::MACROS => [
-                    [
-                        CreatedAtListener::class
-                    ],
+                    CreatedAtListener::class,
                     [
                         CreatedAtListener::class,
                         ['field' => 'customCreatedAt']
@@ -75,7 +73,7 @@ abstract class CreatedAtTest extends BaseTest
                 new ArrayCollectionFactory()
             ),
             $schema,
-            new EventDrivenCommandGenerator($schema, new Container())
+            new EventDrivenCommandGenerator($schema, new SimpleContainer())
         );
     }
 
@@ -96,7 +94,7 @@ abstract class CreatedAtTest extends BaseTest
         $post = new Post();
         $this->save($post);
 
-        $this->orm = $this->orm->withHeap(new Heap());
+        $this->orm = $this->orm->with(heap: new Heap());
         $select = new Select($this->orm, Post::class);
 
         $post = $select->fetchOne();
