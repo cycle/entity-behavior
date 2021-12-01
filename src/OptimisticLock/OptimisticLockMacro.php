@@ -98,8 +98,6 @@ final class OptimisticLockMacro extends BaseModifier
     {
         $fields = $registry->getEntity($this->role)->getFields();
 
-        $this->column ??= $this->field;
-
         if ($this->rule === null && $fields->has($this->field)) {
             $this->rule = $this->computeRule(
                 $registry->getTableSchema($registry->getEntity($this->role))->column($this->column)
