@@ -61,7 +61,10 @@ final class OptimisticLockMacro extends BaseModifier
     public function compute(Registry $registry): void
     {
         $this->setColumn($registry);
-        $this->addField($registry);
+
+        if ($this->column !== null) {
+            $this->addField($registry);
+        }
     }
 
     public function render(Registry $registry): void

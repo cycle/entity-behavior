@@ -17,6 +17,7 @@ use Cycle\Schema\Compiler;
 use Cycle\Schema\Generator\GenerateModifiers;
 use Cycle\Schema\Generator\GenerateRelations;
 use Cycle\Schema\Generator\GenerateTypecast;
+use Cycle\Schema\Generator\RenderModifiers;
 use Cycle\Schema\Generator\RenderRelations;
 use Cycle\Schema\Generator\RenderTables;
 use Cycle\Schema\Generator\ResetTables;
@@ -44,13 +45,14 @@ abstract class OptimisticLockMacroTest extends BaseTest
             new Entities($tokenizer->classLocator(), $reader),
             new ResetTables(),
             new MergeColumns($reader),
+            new MergeIndexes($reader),
             new GenerateRelations(),
+            new GenerateModifiers(),
             new ValidateEntities(),
             new RenderTables(),
             new RenderRelations(),
-            new MergeIndexes($reader),
+            new RenderModifiers(),
             new GenerateTypecast(),
-            new GenerateModifiers()
         ]);
     }
 
