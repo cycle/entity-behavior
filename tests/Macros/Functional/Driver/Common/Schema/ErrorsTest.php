@@ -4,23 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Schema;
 
-use Cycle\Annotated\Entities;
-use Cycle\Annotated\MergeColumns;
-use Cycle\Annotated\MergeIndexes;
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\Schema;
-use Cycle\Schema\Compiler;
-use Cycle\Schema\Generator\GenerateModifiers;
-use Cycle\Schema\Generator\GenerateRelations;
-use Cycle\Schema\Generator\GenerateTypecast;
-use Cycle\Schema\Generator\RenderModifiers;
-use Cycle\Schema\Generator\RenderRelations;
-use Cycle\Schema\Generator\RenderTables;
-use Cycle\Schema\Generator\ResetTables;
-use Cycle\Schema\Generator\ValidateEntities;
-use Cycle\Schema\Registry;
-use Spiral\Attributes\AttributeReader;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
@@ -53,24 +38,5 @@ abstract class ErrorsTest extends BaseTest
                 'Ambiguous column name definition. The `updatedAt` field already linked with the `custom_updated_at`'
             ]
         ];
-    }
-
-    private function compileWithTokenizer(Tokenizer $tokenizer): void
-    {
-        $reader = new AttributeReader();
-
-        new Schema((new Compiler())->compile(new Registry($this->dbal), [
-            new Entities($tokenizer->classLocator(), $reader),
-            new ResetTables(),
-            new MergeColumns($reader),
-            new MergeIndexes($reader),
-            new GenerateRelations(),
-            new GenerateModifiers(),
-            new ValidateEntities(),
-            new RenderTables(),
-            new RenderRelations(),
-            new RenderModifiers(),
-            new GenerateTypecast(),
-        ]));
     }
 }

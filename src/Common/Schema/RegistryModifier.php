@@ -7,6 +7,7 @@ namespace Cycle\ORM\Entity\Macros\Common\Schema;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
+use Cycle\ORM\Entity\Macros\Uuid\UuidTypecast;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Definition\Map\FieldMap;
 use Cycle\Schema\Registry;
@@ -16,6 +17,7 @@ class RegistryModifier
     private const INT_COLUMN = AbstractColumn::INT;
     private const STRING_COLUMN = AbstractColumn::STRING;
     private const DATETIME_COLUMN = 'datetime';
+    private const UUID_COLUMN = 'uuid';
 
     private FieldMap $fields;
     private AbstractTable $table;
@@ -77,6 +79,30 @@ class RegistryModifier
         return $this->table->column($columnName)->type(self::STRING_COLUMN);
     }
 
+    /** @throws MacroCompilationException */
+    public function addUuidColumn(string $columnName, string $fieldName): AbstractColumn
+    {
+        if ($this->fields->has($fieldName)) {
+            if (!$this->isType(self::UUID_COLUMN, $fieldName, $columnName)) {
+                throw new MacroCompilationException(sprintf('Field %s must be of type uuid.', $fieldName));
+            }
+            $this->validateColumnName($fieldName, $columnName);
+            if ($this->fields->get($fieldName)->getTypecast() === null) {
+                $this->fields->get($fieldName)->setTypecast([UuidTypecast::class, 'cast']);
+            }
+
+            return $this->table->column($columnName);
+        }
+
+        $this->fields->set(
+            $fieldName,
+            (new Field())->setColumn($columnName)->setType('uuid')->setTypecast([UuidTypecast::class, 'cast'])
+        );
+
+        return $this->table->column($columnName)->type(self::UUID_COLUMN);
+    }
+
+
     public function findColumnName(string $fieldName, ?string $columnName): ?string
     {
         if ($columnName !== null) {
@@ -114,6 +140,12 @@ class RegistryModifier
 
         if ($type === self::INT_COLUMN) {
             return $this->table->column($columnName)->getType() === self::INT_COLUMN;
+        }
+
+        if ($type === self::UUID_COLUMN) {
+            return
+                $this->table->column($columnName)->getInternalType() === self::UUID_COLUMN ||
+                $this->fields->get($fieldName)->getType() === self::UUID_COLUMN;
         }
 
         return $this->table->column($columnName)->getType() === $type;
