@@ -98,16 +98,12 @@ final class OptimisticLockMacro extends BaseModifier
     {
         $fields = $registry->getEntity($this->role)->getFields();
 
-        if ($this->rule === null && $fields->has($this->field)) {
-            $this->rule = $this->computeRule(
-                $registry->getTableSchema($registry->getEntity($this->role))->column($this->column)
-            );
-        }
+        assert($this->column !== null);
 
-        // rule not set, field not fount
-        if ($this->rule === null && !$fields->has($this->field)) {
-            $this->rule = OptimisticLockListener::DEFAULT_RULE;
-        }
+        $this->rule ??= $fields->has($this->field)
+            ? $this->computeRule($registry->getTableSchema($registry->getEntity($this->role))->column($this->column))
+            // rule not set, field not fount
+            : OptimisticLockListener::DEFAULT_RULE;
 
         $modifier = new RegistryModifier($registry, $this->role);
 
