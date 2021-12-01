@@ -70,9 +70,9 @@ final class OptimisticLockMacro extends BaseModifier
 
     public function render(Registry $registry): void
     {
-        $modifier = new RegistryModifier($registry, $this->role);
-        $this->column = $modifier->findColumnName($this->field, $this->column);
-        $this->column ??= $this->field;
+        $this->column = (new RegistryModifier($registry, $this->role))
+                ->findColumnName($this->field, $this->column)
+            ?? $this->field;
 
         $this->addField($registry);
     }
