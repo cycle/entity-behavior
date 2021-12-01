@@ -62,7 +62,7 @@ abstract class RegistryModifierTest extends BaseTest
         $fields = $entity->getFields();
 
         $this->assertTrue($fields->has('version'));
-        $this->assertSame(ColumnInterface::INT, $fields->get('version')->getType());
+        $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame('version_int', $fields->get('version')->getColumn());
     }
 }

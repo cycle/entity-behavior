@@ -7,41 +7,41 @@ namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Macros\Common\Schema\BaseModifier;
+use Cycle\ORM\Entity\Macros\Common\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
-use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
-use Doctrine\Common\Annotations\Annotation\Attribute;
-use Doctrine\Common\Annotations\Annotation\Attributes;
+use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\ExpectedValues;
 
 /**
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
- * @Attributes({
- *     @Attribute("field", type="string"),
- *     @Attribute("column", type="string"),
- *     @Attribute("column", type="string"),
- * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class OptimisticLockMacro extends BaseModifier
 {
-    private const DEFAULT_RULE = OptimisticLockListener::RULE_INCREMENT;
+    private const DEFAULT_INT_VERSION = 1;
+    private const STRING_COLUMN_LENGTH = 32;
+
+    private ?string $column = null;
+
     /**
-     * @param string $field Version field
-     * @param null|string $rule
-     * @param null|string $column
+     * @param non-empty-string $field Version property name
+     * @param non-empty-string|null $column Version column name
+     * @param non-empty-string|null $rule
      */
     public function __construct(
-        private string $field,
+        private string $field = 'version',
+        /** @Enum({"microtime", "random-string", "increment", "datetime"}) */
         #[ExpectedValues(valuesFromClass: OptimisticLockListener::class)]
-        private ?string $rule = 'string',
-        private ?string $column = null
+        ?string $column = null,
+        private ?string $rule = null
     ) {
-        $this->column = $column ?? $field;
+        $this->column = $column;
     }
 
     protected function getListenerClass(): string
@@ -49,74 +49,78 @@ final class OptimisticLockMacro extends BaseModifier
         return OptimisticLockListener::class;
     }
 
+    #[ArrayShape(['field' => 'string', 'rule' => 'null|string'])]
     protected function getListenerArgs(): array
     {
-        if ($this->rule === null) {
-            throw new MacroCompilationException();
-        }
         return [
             'field' => $this->field,
-            'rule' => $this->rule,
-            'column' => $this->column,
+            'rule' => $this->rule
         ];
     }
 
     public function compute(Registry $registry): void
     {
-        if ($this->column === null) {
-            return;
+        $modifier = new RegistryModifier($registry, $this->role);
+        $this->column = $modifier->findColumnName($this->field, $this->column);
+
+        if ($this->column !== null) {
+            $this->addField($registry);
         }
+    }
 
-        $entity = $registry->getEntity($this->role);
-        $table = $registry->getTableSchema($entity);
-        $fields = $entity->getFields();
+    public function render(Registry $registry): void
+    {
+        $this->column = (new RegistryModifier($registry, $this->role))
+                ->findColumnName($this->field, $this->column)
+            ?? $this->field;
 
-        // If field-column pair is registered
-        if ($fields->has($this->field)) {
-            // Check configured column
-            $columnName = $fields->get($this->field)->getColumn();
-            if ($columnName !== $this->column) {
-                throw new MacroCompilationException(
-                    sprintf(
-                        'Ambiguous column name definition. '
-                        . 'The `%s` field already linked with the `%s` column but the macros expects `%s`.',
-                        $this->field,
-                        $columnName,
-                        $this->column
-                    )
-                );
-            }
-            $column = $table->column($columnName);
+        $this->addField($registry);
+    }
 
-            // Get rule from column type
-            if ($this->rule === null) {
-                $this->rule = $this->computeRule($column);
-                return;
-            }
-            $this->matchColumnWithRule($table->column($this->column), $this->rule);
+    /**
+     * Compute rule based on column type
+     *
+     * @return non-empty-string
+     *
+     * @throws MacroCompilationException
+     */
+    private function computeRule(AbstractColumn $column): string
+    {
+        return match ($column->getType()) {
+            ColumnInterface::INT => OptimisticLockListener::RULE_INCREMENT,
+            ColumnInterface::STRING => OptimisticLockListener::RULE_MICROTIME,
+            'datetime' => OptimisticLockListener::RULE_DATETIME,
+            default => throw new MacroCompilationException('Failed to compute rule based on column type.')
+        };
+    }
 
-            return;
-        }
+    private function addField(Registry $registry): void
+    {
+        $fields = $registry->getEntity($this->role)->getFields();
 
-        $this->rule ??= self::DEFAULT_RULE;
+        assert($this->column !== null);
 
-        // Create field with type based on rule name
-        $field = new Field();
-        $field->setColumn($this->column);
-        $column = $table->column($field->getColumn());
+        $this->rule ??= $fields->has($this->field)
+            ? $this->computeRule($registry->getTableSchema($registry->getEntity($this->role))->column($this->column))
+            // rule not set, field not fount
+            : OptimisticLockListener::DEFAULT_RULE;
+
+        $modifier = new RegistryModifier($registry, $this->role);
+
         switch ($this->rule) {
             case OptimisticLockListener::RULE_INCREMENT:
-                $field->setType('int')->setTypecast('int');
-                $column->integer();
+                $modifier->addIntegerColumn($this->column, $this->field)
+                    ->nullable(false)
+                    ->defaultValue(self::DEFAULT_INT_VERSION);
                 break;
             case OptimisticLockListener::RULE_RAND_STR:
             case OptimisticLockListener::RULE_MICROTIME:
-                $field->setColumn($this->column)->setType('string');
-                $column->string(32);
+                $modifier->addStringColumn($this->column, $this->field)
+                    ->nullable(false)
+                    ->string(self::STRING_COLUMN_LENGTH);
                 break;
             case OptimisticLockListener::RULE_DATETIME:
-                $field->setColumn($this->column)->setType('datetime')->setTypecast('datetime');
-                $column->datetime();
+                $modifier->addDatetimeColumn($this->column, $this->field);
                 break;
             default:
                 throw new MacroCompilationException(
@@ -129,63 +133,14 @@ final class OptimisticLockMacro extends BaseModifier
                     )
                 );
         }
-
-        $fields->set($this->field, $field);
     }
 
-    public function render(Registry $registry): void
+    private function setColumn(Registry $registry): void
     {
-        if ($this->column !== null) {
-            return;
+        $fields = $registry->getEntity($this->role)->getFields();
+
+        if ($this->column === null && $fields->has($this->field)) {
+            $this->column = $fields->get($this->field)->getColumn();
         }
-        $entity = $registry->getEntity($this->role);
-        $table = $registry->getTableSchema($entity);
-        $fields = $entity->getFields();
-
-        if (!$fields->has($this->field)) {
-            throw new MacroCompilationException(
-                sprintf(
-                    'Entity has no field `%s` related with any column.',
-                    $this->field
-                )
-            );
-        }
-
-        // get column name
-        $this->column = $fields->get($this->field)->getColumn();
-
-        if ($this->rule === null) {
-            $column = $table->column($this->column);
-            $this->rule = $this->computeRule($column);
-            return;
-        }
-        $this->matchColumnWithRule($table->column($this->column), $this->rule);
-    }
-
-    /**
-     * Match column type with rule
-     *
-     * @throws MacroCompilationException
-     */
-    private function matchColumnWithRule(AbstractColumn $column, string $rule): void
-    {
-        // todo
-        $type = $column->getType();
-    }
-
-    /**
-     * Compute rule based on column type
-     *
-     * @throws MacroCompilationException
-     */
-    private function computeRule(AbstractColumn $column): string
-    {
-        // todo getType can be wrong for this task
-        return match ($column->getType()) {
-            ColumnInterface::INT => OptimisticLockListener::RULE_INCREMENT,
-            ColumnInterface::STRING => OptimisticLockListener::RULE_MICROTIME,
-            'datetime' => OptimisticLockListener::RULE_DATETIME,
-            default => throw new MacroCompilationException('Failed to compute rule based on column type.')
-        };
     }
 }

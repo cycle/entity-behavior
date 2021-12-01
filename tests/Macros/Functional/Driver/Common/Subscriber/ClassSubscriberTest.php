@@ -7,9 +7,9 @@ namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Subscriber;
 use Cycle\Annotated\Entities;
 use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
-use Cycle\ORM\Entity\Macros\Tests\Fixtures\Comment;
+use Cycle\ORM\Entity\Macros\Tests\Fixtures\Subscriber\Comment;
+use Cycle\ORM\Entity\Macros\Tests\Fixtures\Subscriber\Post;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\CommentService;
-use Cycle\ORM\Entity\Macros\Tests\Fixtures\Post;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\PostService;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\Entity\Macros\Tests\Traits\TableTrait;
@@ -21,6 +21,7 @@ use Cycle\Schema\Compiler;
 use Cycle\Schema\Generator\GenerateModifiers;
 use Cycle\Schema\Generator\GenerateRelations;
 use Cycle\Schema\Generator\GenerateTypecast;
+use Cycle\Schema\Generator\RenderModifiers;
 use Cycle\Schema\Generator\RenderRelations;
 use Cycle\Schema\Generator\RenderTables;
 use Cycle\Schema\Generator\ResetTables;
@@ -49,21 +50,22 @@ abstract class ClassSubscriberTest extends BaseTest
 
         $reader = new AttributeReader();
         $tokenizer = new Tokenizer(new TokenizerConfig([
-            'directories' => [dirname(__DIR__, 4) . '/Fixtures'],
-            'exclude' => ['Wrong'],
+            'directories' => [dirname(__DIR__, 4) . '/Fixtures/Subscriber'],
+            'exclude' => [],
         ]));
 
         $this->withSchema(new Schema((new Compiler())->compile(new Registry($this->dbal), [
             new Entities($tokenizer->classLocator(), $reader),
             new ResetTables(),
             new MergeColumns($reader),
+            new MergeIndexes($reader),
             new GenerateRelations(),
+            new GenerateModifiers(),
             new ValidateEntities(),
             new RenderTables(),
             new RenderRelations(),
-            new MergeIndexes($reader),
+            new RenderModifiers(),
             new GenerateTypecast(),
-            new GenerateModifiers()
         ])));
     }
 

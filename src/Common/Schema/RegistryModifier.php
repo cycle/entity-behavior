@@ -4,99 +4,92 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Common\Schema;
 
-use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractTable;
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\Schema\Definition\Field;
+use Cycle\Schema\Definition\Map\FieldMap;
 use Cycle\Schema\Registry;
 
 class RegistryModifier
 {
-    public function __construct(
-        private Registry $registry,
-        private string $role
-    ) {
+    private const INT_COLUMN = AbstractColumn::INT;
+    private const STRING_COLUMN = AbstractColumn::STRING;
+    private const DATETIME_COLUMN = 'datetime';
+
+    private FieldMap $fields;
+    private AbstractTable $table;
+
+    public function __construct(Registry $registry, string $role)
+    {
+        $this->fields = $registry->getEntity($role)->getFields();
+        $this->table = $registry->getTableSchema($registry->getEntity($role));
     }
 
     public function addDatetimeColumn(string $columnName, string $fieldName): AbstractColumn
     {
-        $entity = $this->registry->getEntity($this->role);
-        $table = $this->registry->getTableSchema($entity);
-        $fields = $entity->getFields();
-
-        if ($fields->has($fieldName)) {
-            if (!$this->isDatetimeColumn($fields->get($fieldName))) {
+        if ($this->fields->has($fieldName)) {
+            if (!$this->isType(self::DATETIME_COLUMN, $fieldName, $columnName)) {
                 throw new MacroCompilationException(sprintf('Field %s must be of type datetime.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
 
-            return $table->column($columnName);
+            return $this->table->column($columnName);
         }
 
-        $field = new Field();
-        $field->setColumn($columnName)->setType('datetime')->setTypecast('datetime');
+        $this->fields->set(
+            $fieldName,
+            (new Field())->setColumn($columnName)->setType('datetime')->setTypecast('datetime')
+        );
 
-        $table->column($field->getColumn())->type($field->getType());
-
-        $fields->set($fieldName, $field);
-
-        return $table->column($field->getColumn());
+        return $this->table->column($columnName)->type(self::DATETIME_COLUMN);
     }
 
     public function addIntegerColumn(string $columnName, string $fieldName): AbstractColumn
     {
-        $entity = $this->registry->getEntity($this->role);
-        $table = $this->registry->getTableSchema($entity);
-        $fields = $entity->getFields();
-
-        if ($fields->has($fieldName)) {
-            if (!$this->isIntegerColumn($fields->get($fieldName))) {
+        if ($this->fields->has($fieldName)) {
+            if (!$this->isType(self::INT_COLUMN, $fieldName, $columnName)) {
                 throw new MacroCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
 
-            return $table->column($columnName);
+            return $this->table->column($columnName);
         }
 
-        $field = new Field();
-        $field->setColumn($columnName)->setType(ColumnInterface::INT)->setTypecast('int');
+        $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('integer')->setTypecast('int'));
 
-        $table->column($field->getColumn())->type($field->getType());
-
-        $fields->set($fieldName, $field);
-
-        return $table->column($field->getColumn());
+        return $this->table->column($columnName)->type(self::INT_COLUMN);
     }
 
     public function addStringColumn(string $columnName, string $fieldName): AbstractColumn
     {
-        $entity = $this->registry->getEntity($this->role);
-        $table = $this->registry->getTableSchema($entity);
-        $fields = $entity->getFields();
-
-        if ($fields->has($fieldName)) {
-            if (!$this->isStringColumn($fields->get($fieldName))) {
+        if ($this->fields->has($fieldName)) {
+            if (!$this->isType(self::STRING_COLUMN, $fieldName, $columnName)) {
                 throw new MacroCompilationException(sprintf('Field %s must be of type string.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
 
-            return $table->column($columnName);
+            return $this->table->column($columnName);
         }
 
-        $field = new Field();
-        $field->setColumn($columnName)->setType(ColumnInterface::STRING);
+        $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('string'));
 
-        $table->column($field->getColumn())->type($field->getType());
+        return $this->table->column($columnName)->type(self::STRING_COLUMN);
+    }
 
-        $fields->set($fieldName, $field);
+    public function findColumnName(string $fieldName, ?string $columnName): ?string
+    {
+        if ($columnName !== null) {
+            return $columnName;
+        }
 
-        return $table->column($field->getColumn());
+        return $this->fields->has($fieldName) ? $this->fields->get($fieldName)->getColumn() : null;
     }
 
     /** @throws MacroCompilationException */
     private function validateColumnName(string $fieldName, string $columnName): void
     {
-        $field = $this->registry->getEntity($this->role)->getFields()->get($fieldName);
+        $field = $this->fields->get($fieldName);
 
         if ($field->getColumn() !== $columnName) {
             throw new MacroCompilationException(
@@ -111,18 +104,18 @@ class RegistryModifier
         }
     }
 
-    private function isDatetimeColumn(Field $field): bool
+    private function isType(string $type, string $fieldName, string $columnName): bool
     {
-        return $field->getType() === 'datetime';
-    }
+        if ($type === self::DATETIME_COLUMN) {
+            return
+                $this->table->column($columnName)->getInternalType() === self::DATETIME_COLUMN ||
+                $this->fields->get($fieldName)->getType() === self::DATETIME_COLUMN;
+        }
 
-    private function isIntegerColumn(Field $field): bool
-    {
-        return $field->getType() === ColumnInterface::INT;
-    }
+        if ($type === self::INT_COLUMN) {
+            return $this->table->column($columnName)->getType() === self::INT_COLUMN;
+        }
 
-    private function isStringColumn(Field $field): bool
-    {
-        return $field->getType() === ColumnInterface::STRING;
+        return $this->table->column($columnName)->getType() === $type;
     }
 }
