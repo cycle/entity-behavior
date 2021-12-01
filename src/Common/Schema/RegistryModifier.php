@@ -42,7 +42,7 @@ class RegistryModifier
             (new Field())->setColumn($columnName)->setType('datetime')->setTypecast('datetime')
         );
 
-        return $this->table->column($columnName)->type('datetime');
+        return $this->table->column($columnName)->type(self::DATETIME_COLUMN);
     }
 
     public function addIntegerColumn(string $columnName, string $fieldName): AbstractColumn
@@ -58,7 +58,7 @@ class RegistryModifier
 
         $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('integer')->setTypecast('int'));
 
-        return $this->table->column($columnName)->type('integer');
+        return $this->table->column($columnName)->type(self::INT_COLUMN);
     }
 
     public function addStringColumn(string $columnName, string $fieldName): AbstractColumn
@@ -74,7 +74,16 @@ class RegistryModifier
 
         $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('string'));
 
-        return $this->table->column($columnName)->type('string');
+        return $this->table->column($columnName)->type(self::STRING_COLUMN);
+    }
+
+    public function findColumnName(string $fieldName, ?string $columnName): ?string
+    {
+        if ($columnName !== null) {
+            return $columnName;
+        }
+
+        return $this->fields->has($fieldName) ? $this->fields->get($fieldName)->getColumn() : null;
     }
 
     /** @throws MacroCompilationException */

@@ -60,7 +60,8 @@ final class OptimisticLockMacro extends BaseModifier
 
     public function compute(Registry $registry): void
     {
-        $this->setColumn($registry);
+        $modifier = new RegistryModifier($registry, $this->role);
+        $this->column = $modifier->findColumnName($this->field, $this->column);
 
         if ($this->column !== null) {
             $this->addField($registry);
@@ -69,13 +70,9 @@ final class OptimisticLockMacro extends BaseModifier
 
     public function render(Registry $registry): void
     {
-        $this->setColumn($registry);
-
-        if ($this->rule === null && !$registry->getEntity($this->role)->getFields()->has($this->field)) {
-            throw new MacroCompilationException(
-                'The OptimisticLockMacro must be configured with a rule parameter or the existence column name.'
-            );
-        }
+        $modifier = new RegistryModifier($registry, $this->role);
+        $this->column = $modifier->findColumnName($this->field, $this->column);
+        $this->column ??= $this->field;
 
         $this->addField($registry);
     }
@@ -103,15 +100,15 @@ final class OptimisticLockMacro extends BaseModifier
 
         $this->column ??= $this->field;
 
-        // rule not set, field not fount
-        if ($this->rule === null && !$fields->has($this->field)) {
-            return;
-        }
-
-        if ($this->rule === null) {
+        if ($this->rule === null && $fields->has($this->field)) {
             $this->rule = $this->computeRule(
                 $registry->getTableSchema($registry->getEntity($this->role))->column($this->column)
             );
+        }
+
+        // rule not set, field not fount
+        if ($this->rule === null && !$fields->has($this->field)) {
+            $this->rule = OptimisticLockListener::DEFAULT_RULE;
         }
 
         $modifier = new RegistryModifier($registry, $this->role);

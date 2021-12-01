@@ -9,6 +9,7 @@ use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Comment;
+use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\News;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Post;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Product;
@@ -92,6 +93,16 @@ abstract class OptimisticLockMacroTest extends BaseTest
         $this->assertSame('integer', $fields->get('revision')->getType());
 
         // not added new columns
+        $this->assertSame(2, $fields->count());
+    }
+
+    public function testAddDefaultColumAndRule(): void
+    {
+        $fields = $this->registry->getEntity(News::class)->getFields();
+
+        $this->assertTrue($fields->has('version'));
+        $this->assertTrue($fields->hasColumn('version'));
+        $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(2, $fields->count());
     }
 }

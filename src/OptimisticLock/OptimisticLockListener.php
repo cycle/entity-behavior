@@ -19,6 +19,8 @@ use JetBrains\PhpStorm\ExpectedValues;
 
 final class OptimisticLockListener
 {
+    public const DEFAULT_RULE = self::RULE_INCREMENT;
+
     /**
      * Generates current timestamp with microseconds as string
      */
@@ -39,7 +41,7 @@ final class OptimisticLockListener
     public function __construct(
         private string $field = 'version',
         #[ExpectedValues(valuesFromClass: self::class)]
-        private string $rule = self::RULE_INCREMENT
+        private string $rule = self::DEFAULT_RULE
     ) {
     }
 
