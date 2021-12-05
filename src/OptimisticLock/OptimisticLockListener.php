@@ -37,6 +37,10 @@ final class OptimisticLockListener
      * Only for the column of the `datetime` type
      */
     public const RULE_DATETIME = 'datetime';
+    /**
+     * This means that the user manually sets a new version and defines the field
+     */
+    public const RULE_CUSTOM = 'custom';
 
     public function __construct(
         private string $field = 'version',
@@ -48,7 +52,7 @@ final class OptimisticLockListener
     #[Listen(OnCreate::class)]
     public function onCreate(OnCreate $event): void
     {
-        if (!isset($event->state->getData()[$this->field])) {
+        if (!$this->isCustomRule() && !isset($event->state->getData()[$this->field])) {
             $event->state->register($this->field, $this->getLockingValue(0));
         }
     }
@@ -70,8 +74,12 @@ final class OptimisticLockListener
             throw new \RuntimeException(\sprintf('The `%s` field is not set.', $this->field));
         }
 
+        if (!$this->isCustomRule() && $this->isVersionChanged($state, $node)) {
+            throw new ChangedVersionException($scopeValue, $state->getData()[$this->field]);
+        }
+
         // Check if a new lock-value has been assigned
-        if ($command instanceof StoreCommandInterface && $state->getData()[$this->field] === $scopeValue) {
+        if ($this->isNeedNewVersion($command, $state, $node)) {
             // Generate new value
             $state->register($this->field, $this->getLockingValue($scopeValue));
         }
@@ -94,5 +102,22 @@ final class OptimisticLockListener
             self::RULE_RAND_STR => \bin2hex(\random_bytes(16)),
             default => \number_format(\microtime(true), 6, '.', '')
         };
+    }
+
+    private function isVersionChanged(State $state, Node $node): bool
+    {
+        return $state->getData()[$this->field] !== $node->getData()[$this->field];
+    }
+
+    private function isNeedNewVersion(ScopeCarrierInterface $command, State $state, Node $node): bool
+    {
+        return !$this->isCustomRule() &&
+            $command instanceof StoreCommandInterface &&
+            !$this->isVersionChanged($state, $node);
+    }
+
+    private function isCustomRule(): bool
+    {
+        return $this->rule === self::RULE_CUSTOM;
     }
 }

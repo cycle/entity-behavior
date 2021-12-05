@@ -6,11 +6,11 @@ namespace Cycle\ORM\Entity\Macros\Tests\Fixtures\Uuid;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\ORM\Entity\Macros\Uuid\UuidV1Macro;
+use Cycle\ORM\Entity\Macros\Uuid\Uuid1Macro;
 use Ramsey\Uuid\UuidInterface;
 
 #[Entity]
-#[UuidV1Macro]
+#[Uuid1Macro]
 class User
 {
     #[Column(type: 'uuid', primary: true)]

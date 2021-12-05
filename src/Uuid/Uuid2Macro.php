@@ -16,22 +16,22 @@ use Ramsey\Uuid\Type\Integer as IntegerObject;
  * @Target({"CLASS"})
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class UuidV2Macro extends UuidMacro
+final class Uuid2Macro extends UuidMacro
 {
     /**
      * @param int $localDomain
      * @param non-empty-string $field Uuid property name
      * @param non-empty-string|null $column Uuid column name
-     * @param IntegerObject|null $localIdentifier
-     * @param Hexadecimal|null $node
+     * @param IntegerObject|string|null $localIdentifier
+     * @param Hexadecimal|string|null $node
      * @param int|null $clockSeq
      */
     public function __construct(
         private int $localDomain,
         string $field = 'uuid',
         ?string $column = null,
-        private ?IntegerObject $localIdentifier = null,
-        private ?Hexadecimal $node = null,
+        private IntegerObject|string|null $localIdentifier = null,
+        private Hexadecimal|string|null $node = null,
         private ?int $clockSeq = null
     ) {
         $this->field = $field;
@@ -40,14 +40,14 @@ final class UuidV2Macro extends UuidMacro
 
     protected function getListenerClass(): string
     {
-        return UuidV2Listener::class;
+        return Uuid2Listener::class;
     }
 
     #[ArrayShape([
         'field' => 'string',
         'localDomain' => 'int',
-        'localIdentifier' => IntegerObject::class,
-        'node' => Hexadecimal::class,
+        'localIdentifier' => 'string|null',
+        'node' => 'string|null',
         'clockSeq' => 'int|null'
     ])]
     protected function getListenerArgs(): array
@@ -55,8 +55,9 @@ final class UuidV2Macro extends UuidMacro
         return [
             'field' => $this->field,
             'localDomain' => $this->localDomain,
-            'localIdentifier' => $this->localIdentifier,
-            'node' => $this->node,
+            'localIdentifier' => $this->localIdentifier instanceof IntegerObject ?
+                (string) $this->localIdentifier : $this->localIdentifier,
+            'node' => $this->node instanceof Hexadecimal ? (string) $this->node : $this->node,
             'clockSeq' => $this->clockSeq
         ];
     }

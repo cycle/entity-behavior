@@ -6,10 +6,10 @@ namespace Cycle\ORM\Entity\Macros\Tests\Fixtures\Uuid;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\ORM\Entity\Macros\Uuid\UuidV4Macro;
+use Cycle\ORM\Entity\Macros\Uuid\Uuid4Macro;
 
 #[Entity]
-#[UuidV4Macro(field: 'customUuid', column: 'custom_uuid')]
+#[Uuid4Macro(field: 'customUuid', column: 'custom_uuid')]
 class Post
 {
     #[Column(type: 'primary')]

@@ -10,13 +10,13 @@ use Ramsey\Uuid\Type\Hexadecimal;
 use Ramsey\Uuid\Type\Integer as IntegerObject;
 use Ramsey\Uuid\Uuid;
 
-final class UuidV2Listener
+final class Uuid2Listener
 {
     public function __construct(
         private int $localDomain,
         private string $field = 'uuid',
-        private ?IntegerObject $localIdentifier = null,
-        private ?Hexadecimal $node = null,
+        private IntegerObject|string|null $localIdentifier = null,
+        private Hexadecimal|string|null $node = null,
         private ?int $clockSeq = null
     ) {
     }
@@ -24,6 +24,13 @@ final class UuidV2Listener
     #[Listen(OnCreate::class)]
     public function __invoke(OnCreate $event): void
     {
+        if (\is_string($this->localIdentifier)) {
+            $this->localIdentifier = new IntegerObject($this->localIdentifier);
+        }
+        if (\is_string($this->node)) {
+            $this->node = new Hexadecimal($this->node);
+        }
+
         if (!isset($event->state->getData()[$this->field])) {
             $event->state->register(
                 $this->field,

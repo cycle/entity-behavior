@@ -9,7 +9,7 @@ use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-final class UuidV5Listener
+final class Uuid5Listener
 {
     public function __construct(
         private string|UuidInterface $namespace,

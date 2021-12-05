@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Macros\Uuid;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 use JetBrains\PhpStorm\ArrayShape;
-use Ramsey\Uuid\Type\Hexadecimal;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @Annotation
@@ -15,19 +15,19 @@ use Ramsey\Uuid\Type\Hexadecimal;
  * @Target({"CLASS"})
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class UuidV6Macro extends UuidMacro
+final class Uuid5Macro extends UuidMacro
 {
     /**
+     * @param non-empty-string|UuidInterface $namespace
+     * @param non-empty-string $name
      * @param non-empty-string $field Uuid property name
      * @param non-empty-string|null $column Uuid column name
-     * @param Hexadecimal|null $node
-     * @param int|null $clockSeq
      */
     public function __construct(
+        private string|UuidInterface $namespace,
+        private string $name,
         string $field = 'uuid',
-        ?string $column = null,
-        private ?Hexadecimal $node = null,
-        private ?int $clockSeq = null
+        ?string $column = null
     ) {
         $this->field = $field;
         $this->column = $column;
@@ -35,16 +35,16 @@ final class UuidV6Macro extends UuidMacro
 
     protected function getListenerClass(): string
     {
-        return UuidV6Listener::class;
+        return Uuid5Listener::class;
     }
 
-    #[ArrayShape(['field' => 'string', 'node' => Hexadecimal::class, 'clockSeq' => 'int|null'])]
+    #[ArrayShape(['field' => 'string', 'namespace' => 'string', 'name' => 'string'])]
     protected function getListenerArgs(): array
     {
         return [
             'field' => $this->field,
-            'node' => $this->node,
-            'clockSeq' => $this->clockSeq
+            'namespace' => $this->namespace instanceof UuidInterface ? (string) $this->namespace : $this->namespace,
+            'name' => $this->name
         ];
     }
 }

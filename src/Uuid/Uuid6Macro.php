@@ -15,18 +15,18 @@ use Ramsey\Uuid\Type\Hexadecimal;
  * @Target({"CLASS"})
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
-final class UuidV1Macro extends UuidMacro
+final class Uuid6Macro extends UuidMacro
 {
     /**
      * @param non-empty-string $field Uuid property name
      * @param non-empty-string|null $column Uuid column name
-     * @param Hexadecimal|int|string|null $node
+     * @param Hexadecimal|string|null $node
      * @param int|null $clockSeq
      */
     public function __construct(
         string $field = 'uuid',
         ?string $column = null,
-        private Hexadecimal|int|string|null $node = null,
+        private Hexadecimal|string|null $node = null,
         private ?int $clockSeq = null
     ) {
         $this->field = $field;
@@ -35,15 +35,15 @@ final class UuidV1Macro extends UuidMacro
 
     protected function getListenerClass(): string
     {
-        return UuidV1Listener::class;
+        return Uuid6Listener::class;
     }
 
-    #[ArrayShape(['field' => 'string', 'node' => 'int|string|null', 'clockSeq' => 'int|null'])]
+    #[ArrayShape(['field' => 'string', 'node' => 'string|null', 'clockSeq' => 'int|null'])]
     protected function getListenerArgs(): array
     {
         return [
             'field' => $this->field,
-            'node' => $this->node,
+            'node' => $this->node instanceof Hexadecimal ? (string) $this->node : $this->node,
             'clockSeq' => $this->clockSeq
         ];
     }
