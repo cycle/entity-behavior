@@ -7,11 +7,14 @@ namespace Cycle\ORM\Entity\Macros\OptimisticLock;
 use Cycle\ORM\Command\ScopeCarrierInterface;
 use Cycle\ORM\Command\Special\WrappedCommand;
 use Cycle\ORM\Command\StoreCommandInterface;
-use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Entity\Macros\Attribute\Listen;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
 use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\ChangedVersionException;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\OptimisticLockException;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\RecordIsLockedException;
+use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -42,17 +45,23 @@ final class OptimisticLockListener
      */
     public const RULE_CUSTOM = 'custom';
 
+    /**
+     * @var bool Listener uses predefined rule
+     */
+    private bool $isKnownRule;
+
     public function __construct(
         private string $field = 'version',
         #[ExpectedValues(valuesFromClass: self::class)]
         private string $rule = self::DEFAULT_RULE
     ) {
+        $this->isKnownRule = $this->rule !== self::RULE_CUSTOM;
     }
 
     #[Listen(OnCreate::class)]
     public function onCreate(OnCreate $event): void
     {
-        if (!$this->isCustomRule() && !isset($event->state->getData()[$this->field])) {
+        if ($this->isKnownRule && !isset($event->state->getData()[$this->field])) {
             $event->state->register($this->field, $this->getLockingValue(0));
         }
     }
@@ -69,27 +78,32 @@ final class OptimisticLockListener
 
     private function lock(Node $node, State $state, ScopeCarrierInterface $command): WrappedCommand
     {
-        $scopeValue = $node->getData()[$this->field] ?? null;
-        if ($scopeValue === null) {
-            throw new \RuntimeException(\sprintf('The `%s` field is not set.', $this->field));
+        $nodeValue = $node->getData()[$this->field] ?? null;
+        if ($nodeValue === null) {
+            throw new OptimisticLockException(\sprintf('The `%s` field is not set.', $this->field));
         }
 
-        if (!$this->isCustomRule() && $this->isVersionChanged($state, $node)) {
-            throw new ChangedVersionException($scopeValue, $state->getData()[$this->field]);
+        // Process known rule
+        if ($this->isKnownRule) {
+            $stateValue = $state->getData()[$this->field];
+
+            // Check diff between original and current values
+            if (($stateValue <=> $nodeValue) !== 0) {
+                throw new ChangedVersionException($nodeValue, $stateValue);
+            }
+
+            // Store new lock value
+            if ($command instanceof StoreCommandInterface) { // todo: check working with SoftDelete macro
+                $state->register($this->field, $this->getLockingValue($nodeValue));
+            }
         }
 
-        // Check if a new lock-value has been assigned
-        if ($this->isNeedNewVersion($command, $state, $node)) {
-            // Generate new value
-            $state->register($this->field, $this->getLockingValue($scopeValue));
-        }
-
-        $command->setScope($this->field, $scopeValue);
+        $command->setScope($this->field, $nodeValue);
 
         return WrappedCommand::wrapCommand($command)
             ->withAfterExecution(static function (ScopeCarrierInterface $command) use ($node): void {
                 if ($command->getAffectedRows() === 0) {
-                    throw new OptimisticLockException($node);
+                    throw new RecordIsLockedException($node);
                 }
             });
     }
@@ -102,22 +116,5 @@ final class OptimisticLockListener
             self::RULE_RAND_STR => \bin2hex(\random_bytes(16)),
             default => \number_format(\microtime(true), 6, '.', '')
         };
-    }
-
-    private function isVersionChanged(State $state, Node $node): bool
-    {
-        return $state->getData()[$this->field] !== $node->getData()[$this->field];
-    }
-
-    private function isNeedNewVersion(ScopeCarrierInterface $command, State $state, Node $node): bool
-    {
-        return !$this->isCustomRule() &&
-            $command instanceof StoreCommandInterface &&
-            !$this->isVersionChanged($state, $node);
-    }
-
-    private function isCustomRule(): bool
-    {
-        return $this->rule === self::RULE_CUSTOM;
     }
 }

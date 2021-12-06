@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\OptimisticLock\Exception;
 
 use Cycle\ORM\Heap\Node;
 
-class OptimisticLockException extends \RuntimeException
+class RecordIsLockedException extends OptimisticLockException
 {
     public function __construct(Node $node)
     {

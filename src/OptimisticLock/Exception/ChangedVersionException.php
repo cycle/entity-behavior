@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\OptimisticLock;
+namespace Cycle\ORM\Entity\Macros\OptimisticLock\Exception;
 
-class ChangedVersionException extends \RuntimeException
+class ChangedVersionException extends OptimisticLockException
 {
     public function __construct(mixed $old, mixed $new)
     {

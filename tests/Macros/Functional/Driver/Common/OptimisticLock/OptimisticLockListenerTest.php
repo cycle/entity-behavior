@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\OptimisticLock;
 
-use Cycle\ORM\Entity\Macros\OptimisticLock\ChangedVersionException;
-use Cycle\ORM\Entity\Macros\OptimisticLock\OptimisticLockException;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\ChangedVersionException;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\RecordIsLockedException;
 use Cycle\ORM\Entity\Macros\OptimisticLock\OptimisticLockListener;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
@@ -210,7 +210,7 @@ abstract class OptimisticLockListenerTest extends BaseTest
 
         (new Transaction($orm))->persist($data1)->run();
 
-        $this->expectException(OptimisticLockException::class);
+        $this->expectException(RecordIsLockedException::class);
         $this->expectExceptionMessage('The `comment` record is locked.');
         (new Transaction($orm2))->persist($data2)->run();
     }
