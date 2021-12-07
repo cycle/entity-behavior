@@ -10,6 +10,9 @@ use JetBrains\PhpStorm\ArrayShape;
 use Ramsey\Uuid\UuidInterface;
 
 /**
+ * Uses a version 5 (name-based) UUID based on the SHA-1 hash of a
+ * namespace ID and a name
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
@@ -18,9 +21,6 @@ use Ramsey\Uuid\UuidInterface;
 final class Uuid5Macro extends UuidMacro
 {
     /**
-     * Uses a version 5 (name-based) UUID based on the SHA-1 hash of a
-     * namespace ID and a name
-     *
      * @param non-empty-string|UuidInterface $namespace The namespace (must be a valid UUID)
      * @param non-empty-string $name The name to use for creating a UUID
      * @param non-empty-string $field Uuid property name
