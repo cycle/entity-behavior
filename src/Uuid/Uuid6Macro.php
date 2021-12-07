@@ -10,6 +10,9 @@ use JetBrains\PhpStorm\ArrayShape;
 use Ramsey\Uuid\Type\Hexadecimal;
 
 /**
+ * Uses a version 6 (ordered-time) UUID from a host ID, sequence number,
+ * and the current time
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
@@ -20,8 +23,12 @@ final class Uuid6Macro extends UuidMacro
     /**
      * @param non-empty-string $field Uuid property name
      * @param non-empty-string|null $column Uuid column name
-     * @param Hexadecimal|string|null $node
-     * @param int|null $clockSeq
+     * @param Hexadecimal|string|null $node A 48-bit number representing the hardware
+     * @param int|null $clockSeq A 14-bit number used to help avoid duplicates
+     *     that could arise when the clock is set backwards in time or if the
+     *     node ID changes
+     *
+     * @see \Ramsey\Uuid\UuidFactoryInterface::uuid6()
      */
     public function __construct(
         string $field = 'uuid',

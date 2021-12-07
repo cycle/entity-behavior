@@ -18,10 +18,15 @@ use Ramsey\Uuid\UuidInterface;
 final class Uuid5Macro extends UuidMacro
 {
     /**
-     * @param non-empty-string|UuidInterface $namespace
-     * @param non-empty-string $name
+     * Uses a version 5 (name-based) UUID based on the SHA-1 hash of a
+     * namespace ID and a name
+     *
+     * @param non-empty-string|UuidInterface $namespace The namespace (must be a valid UUID)
+     * @param non-empty-string $name The name to use for creating a UUID
      * @param non-empty-string $field Uuid property name
      * @param non-empty-string|null $column Uuid column name
+     *
+     * @see \Ramsey\Uuid\UuidFactoryInterface::uuid5()
      */
     public function __construct(
         private string|UuidInterface $namespace,

@@ -11,6 +11,9 @@ use Ramsey\Uuid\Type\Hexadecimal;
 use Ramsey\Uuid\Type\Integer as IntegerObject;
 
 /**
+ * Uses a version 2 (DCE Security) UUID from a local domain, local
+ * identifier, host ID, clock sequence, and the current time
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})
@@ -19,12 +22,21 @@ use Ramsey\Uuid\Type\Integer as IntegerObject;
 final class Uuid2Macro extends UuidMacro
 {
     /**
-     * @param int $localDomain
+     * @param int $localDomain The local domain to use when generating bytes,
+     *     according to DCE Security
      * @param non-empty-string $field Uuid property name
      * @param non-empty-string|null $column Uuid column name
-     * @param IntegerObject|string|null $localIdentifier
-     * @param Hexadecimal|string|null $node
-     * @param int|null $clockSeq
+     * @param IntegerObject|string|null $localIdentifier The local identifier for the
+     *     given domain; this may be a UID or GID on POSIX systems, if the local
+     *     domain is person or group, or it may be a site-defined identifier
+     *     if the local domain is org
+     * @param Hexadecimal|string|null $node A 48-bit number representing the hardware
+     *     address
+     * @param int|null $clockSeq A 14-bit number used to help avoid duplicates
+     *     that could arise when the clock is set backwards in time or if the
+     *     node ID changes
+     *
+     * @see \Ramsey\Uuid\UuidFactoryInterface::uuid2()
      */
     public function __construct(
         private int $localDomain,
@@ -55,8 +67,9 @@ final class Uuid2Macro extends UuidMacro
         return [
             'field' => $this->field,
             'localDomain' => $this->localDomain,
-            'localIdentifier' => $this->localIdentifier instanceof IntegerObject ?
-                (string) $this->localIdentifier : $this->localIdentifier,
+            'localIdentifier' => $this->localIdentifier instanceof IntegerObject
+                ? (string) $this->localIdentifier
+                : $this->localIdentifier,
             'node' => $this->node instanceof Hexadecimal ? (string) $this->node : $this->node,
             'clockSeq' => $this->clockSeq
         ];
