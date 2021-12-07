@@ -13,13 +13,13 @@ use Cycle\Schema\Registry;
 
 class RegistryModifier
 {
-    private const INT_COLUMN = AbstractColumn::INT;
-    private const STRING_COLUMN = AbstractColumn::STRING;
-    private const DATETIME_COLUMN = 'datetime';
-    private const UUID_COLUMN = 'uuid';
+    protected const INT_COLUMN = AbstractColumn::INT;
+    protected const STRING_COLUMN = AbstractColumn::STRING;
+    protected const DATETIME_COLUMN = 'datetime';
+    protected const UUID_COLUMN = 'uuid';
 
-    private FieldMap $fields;
-    private AbstractTable $table;
+    protected FieldMap $fields;
+    protected AbstractTable $table;
 
     public function __construct(Registry $registry, string $role)
     {
@@ -88,7 +88,7 @@ class RegistryModifier
     }
 
     /** @throws MacroCompilationException */
-    private function validateColumnName(string $fieldName, string $columnName): void
+    protected function validateColumnName(string $fieldName, string $columnName): void
     {
         $field = $this->fields->get($fieldName);
 
@@ -105,7 +105,7 @@ class RegistryModifier
         }
     }
 
-    private function isType(string $type, string $fieldName, string $columnName): bool
+    protected function isType(string $type, string $fieldName, string $columnName): bool
     {
         if ($type === self::DATETIME_COLUMN) {
             return
