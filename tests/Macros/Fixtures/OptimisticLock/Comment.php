@@ -21,4 +21,5 @@ class Comment
     public ?string $versionStr = null;
     public ?\DateTimeImmutable $versionDatetime = null;
     public ?string $versionMicrotime = null;
+    public ?int $versionCustom = null;
 }

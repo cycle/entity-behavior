@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\OptimisticLock;
 
-use Cycle\Annotated\Entities;
-use Cycle\Annotated\MergeColumns;
-use Cycle\Annotated\MergeIndexes;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\News;
@@ -14,17 +11,7 @@ use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Post;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Product;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\Schema\Compiler;
-use Cycle\Schema\Generator\GenerateModifiers;
-use Cycle\Schema\Generator\GenerateRelations;
-use Cycle\Schema\Generator\GenerateTypecast;
-use Cycle\Schema\Generator\RenderModifiers;
-use Cycle\Schema\Generator\RenderRelations;
-use Cycle\Schema\Generator\RenderTables;
-use Cycle\Schema\Generator\ResetTables;
-use Cycle\Schema\Generator\ValidateEntities;
 use Cycle\Schema\Registry;
-use Spiral\Attributes\AttributeReader;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
@@ -36,25 +23,10 @@ abstract class OptimisticLockMacroTest extends BaseTest
     {
         parent::setUp();
 
-        $reader = new AttributeReader();
-        $tokenizer = new Tokenizer(new TokenizerConfig([
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
             'directories' => [dirname(__DIR__, 4) . '/Fixtures/OptimisticLock'],
             'exclude' => [],
-        ]));
-
-        (new Compiler())->compile($this->registry = new Registry($this->dbal), [
-            new Entities($tokenizer->classLocator(), $reader),
-            new ResetTables(),
-            new MergeColumns($reader),
-            new MergeIndexes($reader),
-            new GenerateRelations(),
-            new GenerateModifiers(),
-            new ValidateEntities(),
-            new RenderTables(),
-            new RenderRelations(),
-            new RenderModifiers(),
-            new GenerateTypecast(),
-        ]);
+        ])));
     }
 
     public function testAddIntColumn(): void

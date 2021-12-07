@@ -134,13 +134,4 @@ final class OptimisticLockMacro extends BaseModifier
                 );
         }
     }
-
-    private function setColumn(Registry $registry): void
-    {
-        $fields = $registry->getEntity($this->role)->getFields();
-
-        if ($this->column === null && $fields->has($this->field)) {
-            $this->column = $fields->get($this->field)->getColumn();
-        }
-    }
 }

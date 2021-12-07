@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\OptimisticLock;
 
-use Cycle\ORM\Entity\Macros\OptimisticLock\OptimisticLockException;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\ChangedVersionException;
+use Cycle\ORM\Entity\Macros\OptimisticLock\Exception\RecordIsLockedException;
 use Cycle\ORM\Entity\Macros\OptimisticLock\OptimisticLockListener;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
@@ -31,6 +32,7 @@ abstract class OptimisticLockListenerTest extends BaseTest
                 'version_str' => 'string',
                 'version_datetime' => 'datetime',
                 'version_microtime' => 'string',
+                'version_custom' => 'int,nullable',
                 'content' => 'string,nullable',
             ]
         );
@@ -47,6 +49,7 @@ abstract class OptimisticLockListenerTest extends BaseTest
                     'versionStr' => 'version_str',
                     'versionDatetime' => 'version_datetime',
                     'versionMicrotime' => 'version_microtime',
+                    'versionCustom' => 'version_custom',
                     'content' => 'content'
                 ],
                 SchemaInterface::MACROS => [
@@ -65,11 +68,16 @@ abstract class OptimisticLockListenerTest extends BaseTest
                     [
                         OptimisticLockListener::class,
                         ['field' => 'versionMicrotime', 'rule' => OptimisticLockListener::RULE_MICROTIME]
+                    ],
+                    [
+                        OptimisticLockListener::class,
+                        ['field' => 'versionCustom', 'rule' => OptimisticLockListener::RULE_CUSTOM]
                     ]
                 ],
                 SchemaInterface::TYPECAST => [
                     'id' => 'int',
                     'versionInt' => 'int',
+                    'versionCustom' => 'int',
                     'versionDatetime' => 'datetime'
                 ],
                 SchemaInterface::SCHEMA => [],
@@ -118,6 +126,46 @@ abstract class OptimisticLockListenerTest extends BaseTest
         $this->assertSame('b0b55bb7237bb75611f7df8175e926d1', $comment->versionStr);
     }
 
+    public function testManualVersionControl()
+    {
+        $comment = new Comment();
+        $comment->content = 'test';
+        $comment->versionCustom = 1;
+
+        $this->save($comment);
+
+        $this->orm = $this->orm->with(heap: new Heap());
+        $select = new Select($this->orm, Comment::class);
+
+        $comment = $select->fetchOne();
+        $this->assertSame(1, $comment->versionCustom);
+
+        $comment->versionCustom = 2;
+        $this->save($comment);
+
+        $this->assertSame(2, $comment->versionCustom);
+    }
+
+    public function testExceptionOnChangeVersion()
+    {
+        $comment = new Comment();
+        $comment->content = 'test';
+
+        $this->save($comment);
+
+        $this->orm = $this->orm->with(heap: new Heap());
+        $select = new Select($this->orm, Comment::class);
+
+        $comment = $select->fetchOne();
+        $this->assertSame(1, $comment->versionInt);
+
+        $comment->versionInt = 2;
+
+        $this->expectException(ChangedVersionException::class);
+        $this->expectExceptionMessage('Record version change detected. Old value `1`, a new value `2`');
+        $this->save($comment);
+    }
+
     public function testUpdate(): void
     {
         $comment = new Comment();
@@ -162,7 +210,7 @@ abstract class OptimisticLockListenerTest extends BaseTest
 
         (new Transaction($orm))->persist($data1)->run();
 
-        $this->expectException(OptimisticLockException::class);
+        $this->expectException(RecordIsLockedException::class);
         $this->expectExceptionMessage('The `comment` record is locked.');
         (new Transaction($orm2))->persist($data2)->run();
     }
