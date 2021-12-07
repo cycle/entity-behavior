@@ -17,9 +17,6 @@
         "vimeo/psalm": "^4.13"
     },
     "license": "MIT",
-    "suggest": {
-        "ramsey/uuid": "Required for using UUID macro"
-    },
     "autoload": {
         "psr-4": {
             "Cycle\\ORM\\Entity\\Macros\\": "src/"
