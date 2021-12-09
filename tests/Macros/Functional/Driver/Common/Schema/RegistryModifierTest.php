@@ -6,15 +6,17 @@ namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\ORM\Entity\Macros\Common\Schema\RegistryModifier;
+use Cycle\ORM\Entity\Macros\Tests\Fixtures\CustomTypecast;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\ORM\Parser\Typecast;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Registry;
+use Ramsey\Uuid\Uuid;
 
 abstract class RegistryModifierTest extends BaseTest
 {
     private const ROLE_TEST = 'test';
 
-    protected Registry $registry;
     protected RegistryModifier $modifier;
 
     public function setUp(): void
@@ -64,5 +66,69 @@ abstract class RegistryModifierTest extends BaseTest
         $this->assertTrue($fields->has('version'));
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame('version_int', $fields->get('version')->getColumn());
+    }
+
+    public function testAddUuidField(): void
+    {
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $entity = $this->registry->getEntity(self::ROLE_TEST);
+        $fields = $entity->getFields();
+
+        $this->assertTrue($fields->has('uuid'));
+        $this->assertSame('uuid', $fields->get('uuid')->getType());
+        $this->assertSame('uuid_column', $fields->get('uuid')->getColumn());
+    }
+
+    public function testAddTypecast(): void
+    {
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+        $this->modifier->addIntegerColumn('counter_column', 'counter');
+        $field1 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid');
+        $field2 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('counter');
+
+        $this->modifier->setTypecast($field1, [Uuid::class, 'fromString']);
+        $this->modifier->setTypecast($field2, 'int', CustomTypecast::class);
+
+        // field has custom UUID typecast
+        $this->assertSame([Uuid::class, 'fromString'], $field1->getTypecast());
+        $this->assertSame('int', $field2->getTypecast());
+
+        // entity has default typecast
+        $this->assertSame(
+            [Typecast::class, CustomTypecast::class],
+            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
+        );
+    }
+
+    public function testAddCustomTypecast(): void
+    {
+        $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
+
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+        $field = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid');
+
+        $this->modifier->setTypecast($field, [Uuid::class, 'fromString']);
+
+        // field has custom UUID typecast
+        $this->assertSame([Uuid::class, 'fromString'], $field->getTypecast());
+
+        // entity has default typecast and custom typecast
+        $this->assertSame(
+            [CustomTypecast::class, Typecast::class],
+            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
+        );
+    }
+
+    public function testCustomTypecastNotOverridden(): void
+    {
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $field = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid');
+        $field->setTypecast(['foo', 'bar']);
+
+        $this->modifier->setTypecast($field, [Uuid::class, 'fromString']);
+
+        $this->assertSame(['foo', 'bar'], $field->getTypecast());
     }
 }

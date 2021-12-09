@@ -11,14 +11,11 @@ use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Post;
 use Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock\Product;
 use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\Schema\Registry;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
 abstract class OptimisticLockMacroTest extends BaseTest
 {
-    protected Registry $registry;
-
     public function setUp(): void
     {
         parent::setUp();

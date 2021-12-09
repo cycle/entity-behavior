@@ -7,6 +7,9 @@ namespace Cycle\ORM\Entity\Macros\Common\Schema;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
+use Cycle\ORM\Parser\Typecast;
+use Cycle\ORM\Parser\TypecastInterface;
+use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Definition\Map\FieldMap;
 use Cycle\Schema\Registry;
@@ -20,11 +23,13 @@ class RegistryModifier
 
     protected FieldMap $fields;
     protected AbstractTable $table;
+    protected Entity $entity;
 
     public function __construct(Registry $registry, string $role)
     {
-        $this->fields = $registry->getEntity($role)->getFields();
-        $this->table = $registry->getTableSchema($registry->getEntity($role));
+        $this->entity = $registry->getEntity($role);
+        $this->fields = $this->entity->getFields();
+        $this->table = $registry->getTableSchema($this->entity);
     }
 
     public function addDatetimeColumn(string $columnName, string $fieldName): AbstractColumn
@@ -78,6 +83,25 @@ class RegistryModifier
         return $this->table->column($columnName)->type(self::STRING_COLUMN);
     }
 
+    /**
+     * @throws MacroCompilationException
+     */
+    public function addUuidColumn(string $columnName, string $fieldName): AbstractColumn
+    {
+        if ($this->fields->has($fieldName)) {
+            if (!$this->isType(self::UUID_COLUMN, $fieldName, $columnName)) {
+                throw new MacroCompilationException(sprintf('Field %s must be of type uuid.', $fieldName));
+            }
+            $this->validateColumnName($fieldName, $columnName);
+
+            return $this->table->column($columnName);
+        }
+
+        $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('uuid'));
+
+        return $this->table->column($columnName)->type(self::UUID_COLUMN);
+    }
+
     public function findColumnName(string $fieldName, ?string $columnName): ?string
     {
         if ($columnName !== null) {
@@ -87,7 +111,31 @@ class RegistryModifier
         return $this->fields->has($fieldName) ? $this->fields->get($fieldName)->getColumn() : null;
     }
 
-    /** @throws MacroCompilationException */
+    /**
+     * @param class-string<TypecastInterface> $handler
+     */
+    public function setTypecast(Field $field, array|string|null $rule, string $handler = Typecast::class): Field
+    {
+        if ($field->getTypecast() === null) {
+            $field->setTypecast($rule);
+        }
+
+        $handlers = $this->entity->getTypecast();
+        if ($handlers === null) {
+            $this->entity->setTypecast($handler);
+            return $field;
+        }
+
+        $handlers = (array) $handlers;
+        $handlers[] = $handler;
+        $this->entity->setTypecast(array_unique($handlers));
+
+        return $field;
+    }
+
+    /**
+     * @throws MacroCompilationException
+     */
     protected function validateColumnName(string $fieldName, string $columnName): void
     {
         $field = $this->fields->get($fieldName);

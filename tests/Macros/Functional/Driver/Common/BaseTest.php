@@ -43,6 +43,7 @@ abstract class BaseTest extends TestCase
 
     public static array $config;
     protected ?DatabaseManager $dbal = null;
+    protected ?Registry $registry = null;
     protected ?ORM $orm = null;
     private static array $driverCache = [];
 
