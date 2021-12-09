@@ -83,15 +83,22 @@ abstract class RegistryModifierTest extends BaseTest
     public function testAddTypecast(): void
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
-        $field = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid');
+        $this->modifier->addIntegerColumn('counter_column', 'counter');
+        $field1 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid');
+        $field2 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('counter');
 
-        $this->modifier->setTypecast($field, [Uuid::class, 'fromString']);
+        $this->modifier->setTypecast($field1, [Uuid::class, 'fromString']);
+        $this->modifier->setTypecast($field2, 'int', CustomTypecast::class);
 
         // field has custom UUID typecast
-        $this->assertSame([Uuid::class, 'fromString'], $field->getTypecast());
+        $this->assertSame([Uuid::class, 'fromString'], $field1->getTypecast());
+        $this->assertSame('int', $field2->getTypecast());
 
         // entity has default typecast
-        $this->assertSame([Typecast::class], $this->registry->getEntity(self::ROLE_TEST)->getTypecast());
+        $this->assertSame(
+            [Typecast::class, CustomTypecast::class],
+            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
+        );
     }
 
     public function testAddCustomTypecast(): void

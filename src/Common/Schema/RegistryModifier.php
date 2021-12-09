@@ -8,6 +8,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
 use Cycle\ORM\Parser\Typecast;
+use Cycle\ORM\Parser\TypecastInterface;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Definition\Map\FieldMap;
@@ -82,7 +83,9 @@ class RegistryModifier
         return $this->table->column($columnName)->type(self::STRING_COLUMN);
     }
 
-    /** @throws MacroCompilationException */
+    /**
+     * @throws MacroCompilationException
+     */
     public function addUuidColumn(string $columnName, string $fieldName): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
@@ -108,28 +111,31 @@ class RegistryModifier
         return $this->fields->has($fieldName) ? $this->fields->get($fieldName)->getColumn() : null;
     }
 
-    public function setTypecast(Field $field, callable $typecast): Field
+    /**
+     * @param class-string<TypecastInterface> $handler
+     */
+    public function setTypecast(Field $field, array|string|null $rule, string $handler = Typecast::class): Field
     {
-        if ($field->getTypecast() !== null) {
-            return $field;
+        if ($field->getTypecast() === null) {
+            $field->setTypecast($rule);
         }
-
-        /** @psalm-suppress InvalidArgument */
-        $field->setTypecast($typecast);
 
         $handlers = $this->entity->getTypecast();
         if ($handlers === null) {
-            $this->entity->setTypecast(Typecast::class);
+            $this->entity->setTypecast($handler);
+            return $field;
         }
 
         $handlers = (array) $handlers;
-        $handlers[] = Typecast::class;
+        $handlers[] = $handler;
         $this->entity->setTypecast(array_unique($handlers));
 
         return $field;
     }
 
-    /** @throws MacroCompilationException */
+    /**
+     * @throws MacroCompilationException
+     */
     protected function validateColumnName(string $fieldName, string $columnName): void
     {
         $field = $this->fields->get($fieldName);
