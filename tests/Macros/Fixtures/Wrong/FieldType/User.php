@@ -6,10 +6,10 @@ namespace Cycle\ORM\Entity\Macros\Tests\Fixtures\Wrong\FieldType;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\ORM\Entity\Macros\Timestamped\CreatedAtMacro;
+use Cycle\ORM\Entity\Macros\CreatedAt;
 
 #[Entity]
-#[CreatedAtMacro(field: 'wrongCreatedAt', column: 'wrong_created_at')]
+#[CreatedAt(field: 'wrongCreatedAt', column: 'wrong_created_at')]
 class User
 {
     #[Column(type: 'primary')]

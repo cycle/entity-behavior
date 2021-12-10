@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
-use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseSchemaTest;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
-abstract class ErrorsTest extends BaseTest
+abstract class ErrorsTest extends BaseSchemaTest
 {
     /** @dataProvider errorsProvider */
     public function testErrors(Tokenizer $tokenizer, string $message): void
