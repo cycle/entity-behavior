@@ -43,7 +43,7 @@ final class OptimisticLock
     /**
      * This means that the user manually sets a new version and defines the field
      */
-    public const RULE_CUSTOM = 'custom';
+    public const RULE_MANUAL = 'manual';
 
     /**
      * @var bool Listener uses predefined rule
@@ -55,7 +55,7 @@ final class OptimisticLock
         #[ExpectedValues(valuesFromClass: self::class)]
         private string $rule = self::DEFAULT_RULE
     ) {
-        $this->isKnownRule = $this->rule !== self::RULE_CUSTOM;
+        $this->isKnownRule = $this->rule !== self::RULE_MANUAL;
     }
 
     #[Listen(OnCreate::class)]

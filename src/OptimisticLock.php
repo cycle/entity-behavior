@@ -29,7 +29,7 @@ final class OptimisticLock extends BaseModifier
     public const RULE_RAND_STR = Listener::RULE_RAND_STR;
     public const RULE_INCREMENT = Listener::RULE_INCREMENT;
     public const RULE_DATETIME = Listener::RULE_DATETIME;
-    public const RULE_CUSTOM = Listener::RULE_CUSTOM;
+    public const RULE_MANUAL = Listener::RULE_MANUAL;
 
     private const DEFAULT_INT_VERSION = 1;
     private const STRING_COLUMN_LENGTH = 32;

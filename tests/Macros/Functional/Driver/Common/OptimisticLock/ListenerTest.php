@@ -71,7 +71,7 @@ abstract class ListenerTest extends BaseListenerTest
                     ],
                     [
                         OptimisticLock::class,
-                        ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_CUSTOM]
+                        ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_MANUAL]
                     ]
                 ],
                 SchemaInterface::TYPECAST => [
