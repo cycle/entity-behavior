@@ -10,7 +10,7 @@ use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
 class CommentService
 {
     #[Listen(OnCreate::class)]
-    public function classSubscriberListener(OnCreate $event): void
+    public function eventListener(OnCreate $event): void
     {
     }
 }

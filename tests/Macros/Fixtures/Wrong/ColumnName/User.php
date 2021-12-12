@@ -6,10 +6,10 @@ namespace Cycle\ORM\Entity\Macros\Tests\Fixtures\Wrong\ColumnName;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\ORM\Entity\Macros\Timestamped\UpdatedAtMacro;
+use Cycle\ORM\Entity\Macros\UpdatedAt;
 
 #[Entity]
-#[UpdatedAtMacro(field: 'updatedAt', column: 'updated_at')]
+#[UpdatedAt(field: 'updatedAt', column: 'updated_at')]
 class User
 {
     #[Column(type: 'primary')]

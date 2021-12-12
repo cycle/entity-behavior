@@ -6,11 +6,10 @@ namespace Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\ORM\Entity\Macros\OptimisticLock\OptimisticLockListener;
-use Cycle\ORM\Entity\Macros\OptimisticLock\OptimisticLockMacro;
+use Cycle\ORM\Entity\Macros\OptimisticLock;
 
 #[Entity]
-#[OptimisticLockMacro(rule: OptimisticLockListener::RULE_RAND_STR)]
+#[OptimisticLock(rule: OptimisticLock::RULE_RAND_STR)]
 class Comment
 {
     #[Column(type: 'primary')]
