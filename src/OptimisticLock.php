@@ -25,6 +25,12 @@ use JetBrains\PhpStorm\ExpectedValues;
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class OptimisticLock extends BaseModifier
 {
+    public const RULE_MICROTIME = Listener::RULE_MICROTIME;
+    public const RULE_RAND_STR = Listener::RULE_RAND_STR;
+    public const RULE_INCREMENT = Listener::RULE_INCREMENT;
+    public const RULE_DATETIME = Listener::RULE_DATETIME;
+    public const RULE_CUSTOM = Listener::RULE_CUSTOM;
+
     private const DEFAULT_INT_VERSION = 1;
     private const STRING_COLUMN_LENGTH = 32;
 
@@ -88,9 +94,9 @@ final class OptimisticLock extends BaseModifier
     private function computeRule(AbstractColumn $column): string
     {
         return match ($column->getType()) {
-            ColumnInterface::INT => Listener::RULE_INCREMENT,
-            ColumnInterface::STRING => Listener::RULE_MICROTIME,
-            'datetime' => Listener::RULE_DATETIME,
+            ColumnInterface::INT => self::RULE_INCREMENT,
+            ColumnInterface::STRING => self::RULE_MICROTIME,
+            'datetime' => self::RULE_DATETIME,
             default => throw new MacroCompilationException('Failed to compute rule based on column type.')
         };
     }
@@ -109,18 +115,18 @@ final class OptimisticLock extends BaseModifier
         $modifier = new RegistryModifier($registry, $this->role);
 
         switch ($this->rule) {
-            case Listener::RULE_INCREMENT:
+            case self::RULE_INCREMENT:
                 $modifier->addIntegerColumn($this->column, $this->field)
                     ->nullable(false)
                     ->defaultValue(self::DEFAULT_INT_VERSION);
                 break;
-            case Listener::RULE_RAND_STR:
-            case Listener::RULE_MICROTIME:
+            case self::RULE_RAND_STR:
+            case self::RULE_MICROTIME:
                 $modifier->addStringColumn($this->column, $this->field)
                     ->nullable(false)
                     ->string(self::STRING_COLUMN_LENGTH);
                 break;
-            case Listener::RULE_DATETIME:
+            case self::RULE_DATETIME:
                 $modifier->addDatetimeColumn($this->column, $this->field);
                 break;
             default:

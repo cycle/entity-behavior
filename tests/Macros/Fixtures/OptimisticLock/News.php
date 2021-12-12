@@ -6,10 +6,10 @@ namespace Cycle\ORM\Entity\Macros\Tests\Fixtures\OptimisticLock;
 
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
-use Cycle\ORM\Entity\Macros;
+use Cycle\ORM\Entity\Macros\OptimisticLock;
 
 #[Entity]
-#[Macros\OptimisticLock]
+#[OptimisticLock]
 class News
 {
     #[Column(type: 'primary')]
