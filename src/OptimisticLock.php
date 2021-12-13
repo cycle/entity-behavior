@@ -18,6 +18,9 @@ use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\ExpectedValues;
 
 /**
+ * Implements the Optimistic Lock strategy.
+ * Used to prevent concurrent editing of a record in the database. When entity is locked, the transaction is aborted.
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})

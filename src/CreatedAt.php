@@ -15,6 +15,9 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
+ * CreateadAt behavior will automate adding a creating date to your entity. You can add the behavior to an already
+ * existing created_at field, or the behavior can add the field automatically.
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})

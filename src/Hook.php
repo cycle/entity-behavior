@@ -11,6 +11,8 @@ use Doctrine\Common\Annotations\Annotation\Target;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
+ * Hook allows easy listening for any event using callable.
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})

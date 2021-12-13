@@ -19,7 +19,7 @@ final class UpdatedAt
     public function __invoke(OnUpdate $event): void
     {
         if ($event->command instanceof StoreCommandInterface) {
-            $event->command->registerAppendix($this->field, new \DateTimeImmutable());
+            $event->command->registerAppendix($this->field, $event->dispatchedAt);
         }
     }
 }

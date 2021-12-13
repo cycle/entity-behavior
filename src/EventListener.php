@@ -11,6 +11,8 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
+ * EventListener adds a custom listener to the ORM schema. Allows you to create your own behaviors.
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})

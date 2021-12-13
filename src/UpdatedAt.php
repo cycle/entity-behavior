@@ -14,6 +14,9 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
+ * UpdatedAt behavior will automate adding an updating date to your entity. You can add the behavior to an already
+ * existing updated_at field, or the behavior can add the field automatically.
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})

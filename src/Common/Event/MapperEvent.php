@@ -10,6 +10,8 @@ use Cycle\ORM\MapperInterface;
 
 abstract class MapperEvent
 {
+    public \DateTimeImmutable $dispatchedAt;
+
     public function __construct(
         public string $role,
         public MapperInterface $mapper,
@@ -17,5 +19,6 @@ abstract class MapperEvent
         public Node $node,
         public State $state,
     ) {
+        $this->dispatchedAt = new \DateTimeImmutable();
     }
 }
