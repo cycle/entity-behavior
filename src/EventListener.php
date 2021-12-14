@@ -12,6 +12,19 @@ use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * EventListener adds a custom listener to the ORM schema. Allows you to create your own behaviors.
+ * A custom listener can accept the required dependencies in the constructor, implement one or more methods
+ * that receive the event as the first parameter and can work with him.
+ * The behavior has two parameters:
+ *   - listener - listener class
+ *   - args - array with additional parameters
+ *
+ * A special attribute must be added to the listener methods to indicate which event to listen for.
+ * For example:
+ * #[Listen(OnCreate::class)]
+ * public function method(OnCreate $event): void
+ * {
+ *    //
+ * }
  *
  * @Annotation
  * @NamedArgumentConstructor()

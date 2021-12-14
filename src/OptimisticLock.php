@@ -19,7 +19,19 @@ use JetBrains\PhpStorm\ExpectedValues;
 
 /**
  * Implements the Optimistic Lock strategy.
- * Used to prevent concurrent editing of a record in the database. When entity is locked, the transaction is aborted.
+ * Used to prevent concurrent editing of a record in the database. When an entity is locked, the transaction is aborted.
+ * Please keep in mind, the behavior wraps the command in a special WrappedCommand wrapper.
+ * The behavior has three parameters:
+ *    - field - is a property with the version in the entity
+ *    - column - is a column in the database.
+ *    - rule - the strategy for storing the version of the entity
+ * Rule can be one of several rules (class constants can be used):
+ *    - RULE_MICROTIME - string with microtime value
+ *    - RULE_RAND_STR - random string
+ *    - RULE_INCREMENT - automatically incrementing integer version
+ *    - RULE_DATETIME - datetime of the entity version
+ *    - RULE_MANUAL - manually configured rule
+ * The MANUAL rule provides for the completely manual configuration of an entity property and entity versioning.
  *
  * @Annotation
  * @NamedArgumentConstructor()
