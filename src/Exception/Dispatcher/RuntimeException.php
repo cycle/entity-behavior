@@ -6,5 +6,4 @@ namespace Cycle\ORM\Entity\Macros\Exception\Dispatcher;
 
 final class RuntimeException extends \RuntimeException
 {
-
 }
