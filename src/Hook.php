@@ -11,6 +11,14 @@ use Doctrine\Common\Annotations\Annotation\Target;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
+ * Hook allows easy listening for any event using callable.
+ * The callback function can be a static function in the entity itself or in any other class.
+ * As the first parameter, the callback function accepts an event in which
+ * you can get the entity class and work with him.
+ * The behavior has two parameters:
+ *    - callable - callback function
+ *    - events - string or array. One or several events during which callable will be called
+ *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target({"CLASS"})

@@ -16,6 +16,7 @@ abstract class MapperEvent
         public object $entity,
         public Node $node,
         public State $state,
+        public \DateTimeImmutable $timestamp
     ) {
     }
 }

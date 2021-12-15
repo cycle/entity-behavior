@@ -19,7 +19,7 @@ final class SoftDelete
     #[Listen(OnDelete::class)]
     public function __invoke(OnDelete $event): void
     {
-        $event->state->register($this->field, new \DateTimeImmutable());
+        $event->state->register($this->field, $event->timestamp);
 
         // Replace Delete command to Store command
         if (!$event->command instanceof StoreCommand) {
