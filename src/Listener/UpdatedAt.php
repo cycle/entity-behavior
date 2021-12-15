@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Listener;
+namespace Cycle\ORM\Entity\Behavior\Listener;
 
 use Cycle\ORM\Command\StoreCommandInterface;
-use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Behavior\Attribute\Listen;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnUpdate;
 
 final class UpdatedAt
 {

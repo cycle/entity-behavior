@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros;
+namespace Cycle\ORM\Entity\Behavior;
 
 use Cycle\ORM\Command\CommandInterface;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Transaction\CommandGenerator;
 use Cycle\ORM\Transaction\Tuple;
-use Cycle\ORM\Entity\Macros\Common\Dispatcher\Dispatcher;
-use Cycle\ORM\Entity\Macros\Common\Dispatcher\ListenerProvider;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Behavior\Dispatcher\Dispatcher;
+use Cycle\ORM\Entity\Behavior\Dispatcher\ListenerProvider;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnDelete;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnUpdate;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 

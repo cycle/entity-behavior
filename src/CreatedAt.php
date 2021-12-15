@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros;
+namespace Cycle\ORM\Entity\Behavior;
 
 use Cycle\Database\Schema\AbstractColumn;
-use Cycle\ORM\Entity\Macros\Common\Schema\BaseModifier;
-use Cycle\ORM\Entity\Macros\Common\Schema\RegistryModifier;
-use Cycle\ORM\Entity\Macros\Listener\CreatedAt as Listener;
+use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
+use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
+use Cycle\ORM\Entity\Behavior\Listener\CreatedAt as Listener;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;

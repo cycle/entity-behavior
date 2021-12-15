@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Listener;
+namespace Cycle\ORM\Entity\Behavior\Listener;
 
 use Cycle\ORM\Command\ScopeCarrierInterface;
 use Cycle\ORM\Command\Special\WrappedCommand;
 use Cycle\ORM\Command\StoreCommandInterface;
-use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnCreate;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnUpdate;
-use Cycle\ORM\Entity\Macros\Exception\OptimisticLock\ChangedVersionException;
-use Cycle\ORM\Entity\Macros\Exception\OptimisticLock\OptimisticLockException;
-use Cycle\ORM\Entity\Macros\Exception\OptimisticLock\RecordIsLockedException;
+use Cycle\ORM\Entity\Behavior\Attribute\Listen;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnCreate;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnDelete;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnUpdate;
+use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\ChangedVersionException;
+use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\OptimisticLockException;
+use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\RecordIsLockedException;
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;
 use DateTimeImmutable;
@@ -93,7 +93,7 @@ final class OptimisticLock
             }
 
             // Store new lock value
-            if ($command instanceof StoreCommandInterface) { // todo: check working with SoftDelete macro
+            if ($command instanceof StoreCommandInterface) { // todo: check working with SoftDelete behavior
                 $state->register($this->field, $this->getLockingValue($nodeValue));
             }
         }

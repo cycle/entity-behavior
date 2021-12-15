@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros;
+namespace Cycle\ORM\Entity\Behavior;
 
 use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Registry;

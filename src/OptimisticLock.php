@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros;
+namespace Cycle\ORM\Entity\Behavior;
 
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Schema\AbstractColumn;
-use Cycle\ORM\Entity\Macros\Common\Schema\BaseModifier;
-use Cycle\ORM\Entity\Macros\Common\Schema\RegistryModifier;
-use Cycle\ORM\Entity\Macros\Exception\MacroCompilationException;
-use Cycle\ORM\Entity\Macros\Listener\OptimisticLock as Listener;
+use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
+use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
+use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
+use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock as Listener;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
@@ -104,7 +104,7 @@ final class OptimisticLock extends BaseModifier
      *
      * @return non-empty-string
      *
-     * @throws MacroCompilationException
+     * @throws BehaviorCompilationException
      */
     private function computeRule(AbstractColumn $column): string
     {
@@ -112,7 +112,7 @@ final class OptimisticLock extends BaseModifier
             ColumnInterface::INT => self::RULE_INCREMENT,
             ColumnInterface::STRING => self::RULE_MICROTIME,
             'datetime' => self::RULE_DATETIME,
-            default => throw new MacroCompilationException('Failed to compute rule based on column type.')
+            default => throw new BehaviorCompilationException('Failed to compute rule based on column type.')
         };
     }
 
@@ -145,9 +145,9 @@ final class OptimisticLock extends BaseModifier
                 $modifier->addDatetimeColumn($this->column, $this->field);
                 break;
             default:
-                throw new MacroCompilationException(
+                throw new BehaviorCompilationException(
                     sprintf(
-                        'Wrong rule `%s` for the %s macros in the `%s.%s` field.',
+                        'Wrong rule `%s` for the %s behavior in the `%s.%s` field.',
                         $this->rule,
                         self::class,
                         $this->role,
