@@ -17,6 +17,6 @@ final class CreatedAt
     #[Listen(OnCreate::class)]
     public function __invoke(OnCreate $event): void
     {
-        $event->state->register($this->field, $event->dispatchedAt);
+        $event->state->register($this->field, $event->timestamp);
     }
 }

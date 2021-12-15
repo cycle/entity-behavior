@@ -20,7 +20,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 final class EventDrivenCommandGenerator extends CommandGenerator
 {
     private EventDispatcherInterface $eventDispatcher;
-    private \DateTimeImmutable $generatedAt;
+    private \DateTimeImmutable $timestamp;
 
     // todo: add custom listener interface
     public function __construct(SchemaInterface $schema, ContainerInterface $container)
@@ -35,8 +35,8 @@ final class EventDrivenCommandGenerator extends CommandGenerator
         $role = $tuple->node->getRole();
 
         $event = $isNew
-            ? new OnCreate($role, $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state, $this->generatedAt)
-            : new OnUpdate($role, $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state, $this->generatedAt);
+            ? new OnCreate($role, $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state, $this->timestamp)
+            : new OnUpdate($role, $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state, $this->timestamp);
 
         $event->command = parent::storeEntity($orm, $tuple, $isNew);
 
@@ -53,7 +53,7 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     ): ?CommandInterface {
         $mapper = $orm->getMapper($parentRole);
 
-        $event = new OnCreate($parentRole, $mapper, $tuple->entity, $tuple->node, $tuple->state, $this->generatedAt);
+        $event = new OnCreate($parentRole, $mapper, $tuple->entity, $tuple->node, $tuple->state, $this->timestamp);
         $event->command = $isNew
             ? $mapper->queueCreate($tuple->entity, $tuple->node, $tuple->state)
             : $mapper->queueUpdate($tuple->entity, $tuple->node, $tuple->state);
@@ -66,7 +66,7 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     protected function deleteEntity(ORMInterface $orm, Tuple $tuple): ?CommandInterface
     {
         $role = $tuple->node->getRole();
-        $event = new OnDelete($role, $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state, $this->generatedAt);
+        $event = new OnDelete($role, $tuple->mapper, $tuple->entity, $tuple->node, $tuple->state, $this->timestamp);
 
         $event->command = parent::deleteEntity($orm, $tuple);
 
@@ -77,22 +77,22 @@ final class EventDrivenCommandGenerator extends CommandGenerator
 
     public function generateStoreCommand(ORMInterface $orm, Tuple $tuple): ?CommandInterface
     {
-        $this->generatedAt = new \DateTimeImmutable();
+        $this->timestamp = new \DateTimeImmutable();
 
         $command = parent::generateStoreCommand($orm, $tuple);
 
-        unset($this->generatedAt);
+        unset($this->timestamp);
 
         return $command;
     }
 
     public function generateDeleteCommand(ORMInterface $orm, Tuple $tuple): ?CommandInterface
     {
-        $this->generatedAt = new \DateTimeImmutable();
+        $this->timestamp = new \DateTimeImmutable();
 
         $command = parent::generateDeleteCommand($orm, $tuple);
 
-        unset($this->generatedAt);
+        unset($this->timestamp);
 
         return $command;
     }
