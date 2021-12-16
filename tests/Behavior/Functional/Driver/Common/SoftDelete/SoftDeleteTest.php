@@ -28,6 +28,9 @@ abstract class SoftDeleteTest extends BaseSchemaTest
         $this->assertTrue($fields->has('deletedAt'));
         $this->assertTrue($fields->hasColumn('deleted_at'));
         $this->assertSame('datetime', $fields->get('deletedAt')->getType());
+
+        // No new fields added
+        $this->assertSame(3, $fields->count());
     }
 
     public function testAddedColumn(): void

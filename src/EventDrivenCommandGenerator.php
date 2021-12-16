@@ -45,6 +45,10 @@ final class EventDrivenCommandGenerator extends CommandGenerator
         return $event->command;
     }
 
+    /**
+     * @psalm-param non-empty-string $parentRole
+     * @psalm-suppress MoreSpecificImplementedParamType
+     */
     protected function generateParentStoreCommand(
         ORMInterface $orm,
         Tuple $tuple,

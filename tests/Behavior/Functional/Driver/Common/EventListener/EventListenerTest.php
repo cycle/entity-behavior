@@ -27,20 +27,20 @@ abstract class EventListenerTest extends BaseSchemaTest
 
     public function testSchemaWithArgs(): void
     {
-        $macro = $this->schema->define(Post::class, SchemaInterface::MACROS);
+        $listeners = $this->schema->define(Post::class, SchemaInterface::LISTENERS);
 
-        $this->assertIsArray($macro);
-        $this->assertIsArray($macro[0]);
-        $this->assertSame(PostService::class, $macro[0][0]);
-        $this->assertSame(['foo' => 'modified by EventListener', 'bar' => ['baz']], $macro[0][1]);
-        $this->assertCount(2, $macro[0]);
+        $this->assertIsArray($listeners);
+        $this->assertIsArray($listeners[0]);
+        $this->assertSame(PostService::class, $listeners[0][0]);
+        $this->assertSame(['foo' => 'modified by EventListener', 'bar' => ['baz']], $listeners[0][1]);
+        $this->assertCount(2, $listeners[0]);
     }
 
     public function testSchema(): void
     {
-        $macro = $this->schema->define(Comment::class, SchemaInterface::MACROS);
-        $this->assertIsArray($macro);
-        $this->assertSame(CommentService::class, $macro[0]);
-        $this->assertCount(1, $macro);
+        $listeners = $this->schema->define(Comment::class, SchemaInterface::LISTENERS);
+        $this->assertIsArray($listeners);
+        $this->assertSame(CommentService::class, $listeners[0]);
+        $this->assertCount(1, $listeners);
     }
 }

@@ -43,10 +43,10 @@ abstract class BaseModifier implements SchemaModifierInterface
         // todo: compare with default constructor values
         $args = $this->getListenerArgs();
         if ($args === []) {
-            $schema[SchemaInterface::MACROS][] = $this->getListenerClass();
+            $schema[SchemaInterface::LISTENERS][] = $this->getListenerClass();
             return;
         }
-        $schema[SchemaInterface::MACROS][] = [
+        $schema[SchemaInterface::LISTENERS][] = [
             ListenerProvider::DEFINITION_CLASS => $this->getListenerClass(),
             ListenerProvider::DEFINITION_ARGS => $args,
         ];

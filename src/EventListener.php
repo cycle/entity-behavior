@@ -54,7 +54,7 @@ final class EventListener implements SchemaModifierInterface
 
     public function modifySchema(array &$schema): void
     {
-        $schema[SchemaInterface::MACROS][] = $this->args === [] ? $this->listener : [$this->listener, $this->args];
+        $schema[SchemaInterface::LISTENERS][] = $this->args === [] ? $this->listener : [$this->listener, $this->args];
     }
 
     final public function withRole(string $role): static

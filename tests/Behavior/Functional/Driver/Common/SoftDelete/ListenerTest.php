@@ -44,7 +44,7 @@ abstract class ListenerTest extends BaseListenerTest
                     'customDeletedAt' => 'custom_deleted_at',
                     'content' => 'content'
                 ],
-                SchemaInterface::MACROS => [
+                SchemaInterface::LISTENERS => [
                     SoftDelete::class,
                     [
                         SoftDelete::class,

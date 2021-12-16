@@ -8,6 +8,11 @@ use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;
 use Cycle\ORM\MapperInterface;
 
+/**
+ * @internal
+ *
+ * Don't listen to this event
+ */
 abstract class MapperEvent
 {
     public function __construct(

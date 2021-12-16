@@ -36,10 +36,13 @@ use Doctrine\Common\Annotations\Annotation\Target;
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class CreatedAt extends BaseModifier
 {
+    private ?string $column = null;
+
     public function __construct(
         private string $field = 'createdAt',
-        private string $column = 'created_at'
+        ?string $column = null
     ) {
+        $this->column = $column;
     }
 
     protected function getListenerClass(): string
@@ -57,6 +60,20 @@ final class CreatedAt extends BaseModifier
     public function compute(Registry $registry): void
     {
         $modifier = new RegistryModifier($registry, $this->role);
+        $this->column = $modifier->findColumnName($this->field, $this->column);
+
+        if ($this->column !== null) {
+            $modifier->addDatetimeColumn($this->column, $this->field)
+                ->nullable(false)
+                ->defaultValue(AbstractColumn::DATETIME_NOW);
+        }
+    }
+
+    public function render(Registry $registry): void
+    {
+        $modifier = new RegistryModifier($registry, $this->role);
+
+        $this->column = $modifier->findColumnName($this->field, $this->column) ?? $this->field;
 
         $modifier->addDatetimeColumn($this->column, $this->field)
             ->nullable(false)
