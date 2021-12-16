@@ -13,7 +13,7 @@ If you want to help but don't know where to start:
 * TODOs
 * Updating to latest dev-dependencies (PHPUnit, Mockery, etc)
 * Quality recommendations and improvements
-* Check [Open Issues](https://github.com/cycle/entity-macros/issues)
+* Check [Open Issues](https://github.com/cycle/entity-behavior/issues)
 * More tests are always welcome
 * Typos
 

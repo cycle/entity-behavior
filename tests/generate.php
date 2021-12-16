@@ -11,26 +11,26 @@ ini_set('display_errors', '1');
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $tokenizer = new Tokenizer\Tokenizer(new Tokenizer\Config\TokenizerConfig([
-    'directories' => [__DIR__ . '/Macros/Functional/Driver/Common'],
+    'directories' => [__DIR__ . '/Behavior/Functional/Driver/Common'],
     'exclude' => [],
 ]));
 
 $databases = [
     'sqlite' => [
-        'namespace' => 'Cycle\ORM\Entity\Macros\Tests\Functional\Driver\SQLite',
-        'directory' => __DIR__ . '/Macros/Functional/Driver/SQLite/',
+        'namespace' => 'Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\SQLite',
+        'directory' => __DIR__ . '/Behavior/Functional/Driver/SQLite/',
     ],
     'mysql' => [
-        'namespace' => 'Cycle\ORM\Entity\Macros\Tests\Functional\Driver\MySQL',
-        'directory' => __DIR__ . '/Macros/Functional/Driver/MySQL/',
+        'namespace' => 'Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\MySQL',
+        'directory' => __DIR__ . '/Behavior/Functional/Driver/MySQL/',
     ],
     'postgres' => [
-        'namespace' => 'Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Postgres',
-        'directory' => __DIR__ . '/Macros/Functional/Driver/Postgres/',
+        'namespace' => 'Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Postgres',
+        'directory' => __DIR__ . '/Behavior/Functional/Driver/Postgres/',
     ],
     'sqlserver' => [
-        'namespace' => 'Cycle\ORM\Entity\Macros\Tests\Functional\Driver\SQLServer',
-        'directory' => __DIR__ . '/Macros/Functional/Driver/SQLServer/',
+        'namespace' => 'Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\SQLServer',
+        'directory' => __DIR__ . '/Behavior/Functional/Driver/SQLServer/',
     ],
 ];
 
@@ -38,7 +38,7 @@ echo "Generating test classes for all database types...\n";
 
 $classes = $tokenizer
     ->classLocator()
-    ->getClasses(\Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest::class);
+    ->getClasses(\Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest::class);
 
 foreach ($classes as $class) {
     foreach ($class->getMethods() as $method) {
@@ -51,9 +51,9 @@ foreach ($classes as $class) {
     if (
         !$class->isAbstract()
         // Has abstract methods
-        || $class->getName() == \Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseTest::class
-        || $class->getName() == \Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseListenerTest::class
-        || $class->getName() == \Cycle\ORM\Entity\Macros\Tests\Functional\Driver\Common\BaseSchemaTest::class
+        || $class->getName() == \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest::class
+        || $class->getName() == \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest::class
+        || $class->getName() == \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest::class
     ) {
         continue;
     }
@@ -61,7 +61,7 @@ foreach ($classes as $class) {
     echo "Found {$class->getName()}\n";
 
     $path = str_replace(
-        [str_replace('\\', '/', __DIR__), 'Macros/Functional/Driver/Common/'],
+        [str_replace('\\', '/', __DIR__), 'Behavior/Functional/Driver/Common/'],
         '',
         str_replace('\\', '/', $class->getFileName())
     );
@@ -73,7 +73,7 @@ foreach ($classes as $class) {
         $dir = pathinfo($filename, PATHINFO_DIRNAME);
 
         $namespace = str_replace(
-            'Cycle\\ORM\\Entity\\Macros\\Tests\\Functional\\Driver\\Common',
+            'Cycle\\ORM\\Entity\\Behavior\\Tests\\Functional\\Driver\\Common',
             $details['namespace'],
             $class->getNamespaceName()
         );

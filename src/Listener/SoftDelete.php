@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\Entity\Macros\Listener;
+namespace Cycle\ORM\Entity\Behavior\Listener;
 
 use Cycle\ORM\Command\StoreCommand;
 use Cycle\ORM\Heap\Node;
-use Cycle\ORM\Entity\Macros\Attribute\Listen;
-use Cycle\ORM\Entity\Macros\Common\Event\Mapper\Command\OnDelete;
+use Cycle\ORM\Entity\Behavior\Attribute\Listen;
+use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnDelete;
 
 final class SoftDelete
 {
