@@ -65,7 +65,8 @@ final class SoftDelete extends BaseModifier
         $this->column = $modifier->findColumnName($this->field, $this->column);
 
         if ($this->column !== null) {
-            $modifier->addDatetimeColumn($this->column, $this->field);
+            $modifier->addDatetimeColumn($this->column, $this->field)
+                ->nullable(true);
         }
     }
 
@@ -75,6 +76,7 @@ final class SoftDelete extends BaseModifier
 
         $this->column = $modifier->findColumnName($this->field, $this->column) ?? $this->field;
 
-        $modifier->addDatetimeColumn($this->column, $this->field);
+        $modifier->addDatetimeColumn($this->column, $this->field)
+            ->nullable(true);
     }
 }

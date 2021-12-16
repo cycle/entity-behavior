@@ -46,8 +46,7 @@ final class EventDrivenCommandGenerator extends CommandGenerator
     }
 
     /**
-     * @psalm-param non-empty-string $parentRole
-     * @psalm-suppress MoreSpecificImplementedParamType
+     * @param non-empty-string $parentRole
      */
     protected function generateParentStoreCommand(
         ORMInterface $orm,
