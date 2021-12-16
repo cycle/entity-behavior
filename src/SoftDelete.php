@@ -38,10 +38,13 @@ use Doctrine\Common\Annotations\Annotation\Target;
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class SoftDelete extends BaseModifier
 {
+    private ?string $column = null;
+
     public function __construct(
         private string $field = 'deletedAt',
-        private string $column = 'deleted_at',
+        ?string $column = null
     ) {
+        $this->column = $column;
     }
 
     protected function getListenerClass(): string
@@ -59,7 +62,21 @@ final class SoftDelete extends BaseModifier
     public function compute(Registry $registry): void
     {
         $modifier = new RegistryModifier($registry, $this->role);
+        $this->column = $modifier->findColumnName($this->field, $this->column);
 
-        $modifier->addDatetimeColumn($this->column, $this->field);
+        if ($this->column !== null) {
+            $modifier->addDatetimeColumn($this->column, $this->field)
+                ->nullable(true);
+        }
+    }
+
+    public function render(Registry $registry): void
+    {
+        $modifier = new RegistryModifier($registry, $this->role);
+
+        $this->column = $modifier->findColumnName($this->field, $this->column) ?? $this->field;
+
+        $modifier->addDatetimeColumn($this->column, $this->field)
+            ->nullable(true);
     }
 }

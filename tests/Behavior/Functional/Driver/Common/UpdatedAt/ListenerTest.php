@@ -43,7 +43,7 @@ abstract class ListenerTest extends BaseListenerTest
                     'customUpdatedAt' => 'custom_updated_at',
                     'content' => 'content'
                 ],
-                SchemaInterface::MACROS => [
+                SchemaInterface::LISTENERS => [
                     UpdatedAt::class,
                     [
                         UpdatedAt::class,

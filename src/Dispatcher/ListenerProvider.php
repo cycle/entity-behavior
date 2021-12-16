@@ -51,7 +51,7 @@ final class ListenerProvider implements ListenerProviderInterface
     private function configure(SchemaInterface $schema, Injector $injector): void
     {
         foreach ($schema->getRoles() as $role) {
-            $config = $schema->define($role, SchemaInterface::MACROS);
+            $config = $schema->define($role, SchemaInterface::LISTENERS);
             if (!is_array($config) || $config === []) {
                 continue;
             }
@@ -66,7 +66,7 @@ final class ListenerProvider implements ListenerProviderInterface
 
             $definition = (array)$definition;
 
-            if (!$this->validateMacrosDefinition($definition)) {
+            if (!$this->validateBehaviorDefinition($definition)) {
                 continue;
             }
             /** @psalm-var class-string $class */
@@ -90,9 +90,6 @@ final class ListenerProvider implements ListenerProviderInterface
 
             foreach ($events as [$event, $method]) {
                 if ($event === QueueCommand::class) {
-                    $this->listeners[$role][Command\AfterCreate::class][] = [$listener, $method];
-                    $this->listeners[$role][Command\AfterDelete::class][] = [$listener, $method];
-                    $this->listeners[$role][Command\AfterUpdate::class][] = [$listener, $method];
                     $this->listeners[$role][Command\OnCreate::class][] = [$listener, $method];
                     $this->listeners[$role][Command\OnUpdate::class][] = [$listener, $method];
                     $this->listeners[$role][Command\OnDelete::class][] = [$listener, $method];
@@ -103,7 +100,7 @@ final class ListenerProvider implements ListenerProviderInterface
         }
     }
 
-    private function validateMacrosDefinition(mixed $definition): bool
+    private function validateBehaviorDefinition(mixed $definition): bool
     {
         if (!class_exists($definition[self::DEFINITION_CLASS], true)) {
             return false;

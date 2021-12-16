@@ -52,7 +52,7 @@ abstract class ListenerTest extends BaseListenerTest
                     'versionCustom' => 'version_custom',
                     'content' => 'content'
                 ],
-                SchemaInterface::MACROS => [
+                SchemaInterface::LISTENERS => [
                     [
                         OptimisticLock::class,
                         ['field' => 'versionInt']

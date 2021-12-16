@@ -26,25 +26,25 @@ abstract class HookTest extends BaseSchemaTest
         ])));
     }
 
-    public function testAddMacro(): void
+    public function testAddListener(): void
     {
-        $macro = $this->schema->define(Post::class, SchemaInterface::MACROS);
+        $listeners = $this->schema->define(Post::class, SchemaInterface::LISTENERS);
 
-        $this->assertIsArray($macro);
-        $this->assertCount(2, $macro);
-        $this->assertIsArray($macro[0]);
-        $this->assertIsArray($macro[1]);
+        $this->assertIsArray($listeners);
+        $this->assertCount(2, $listeners);
+        $this->assertIsArray($listeners[0]);
+        $this->assertIsArray($listeners[1]);
 
-        $this->assertSame(Hook::class, $macro[0][0]);
+        $this->assertSame(Hook::class, $listeners[0][0]);
         $this->assertSame(
             ['callable' => [PostService::class, 'update'], 'events' => [OnUpdate::class]],
-            $macro[0][1]
+            $listeners[0][1]
         );
 
-        $this->assertSame(Hook::class, $macro[1][0]);
+        $this->assertSame(Hook::class, $listeners[1][0]);
         $this->assertSame(
             ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]],
-            $macro[1][1]
+            $listeners[1][1]
         );
     }
 }

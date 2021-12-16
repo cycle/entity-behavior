@@ -15,6 +15,8 @@ class Post
 {
     #[Column(type: 'primary')]
     public int $id;
+
+    #[Column(type: 'datetime', nullable: true)]
     public ?\DateTimeImmutable $deletedAt = null;
     public ?\DateTimeImmutable $customDeletedAt = null;
     public ?string $content = null;

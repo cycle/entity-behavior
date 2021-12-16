@@ -28,6 +28,9 @@ abstract class UpdatedAtTest extends BaseSchemaTest
         $this->assertTrue($fields->has('updatedAt'));
         $this->assertTrue($fields->hasColumn('updated_at'));
         $this->assertSame('datetime', $fields->get('updatedAt')->getType());
+
+        // No new fields added
+        $this->assertSame(3, $fields->count());
     }
 
     public function testAddedColumn(): void

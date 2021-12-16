@@ -37,7 +37,7 @@ abstract class ListenerTest extends BaseListenerTest
                 SchemaInterface::TABLE => 'posts',
                 SchemaInterface::PRIMARY_KEY => 'id',
                 SchemaInterface::COLUMNS => ['id', 'title', 'content'],
-                SchemaInterface::MACROS => [
+                SchemaInterface::LISTENERS => [
                     [
                         PostService::class,
                         ['foo' => 'modified by EventListener', 'bar' => ['baz']]

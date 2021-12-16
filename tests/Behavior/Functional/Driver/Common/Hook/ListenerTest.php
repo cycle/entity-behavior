@@ -52,8 +52,8 @@ abstract class ListenerTest extends BaseListenerTest
                     'createdAt' => 'created_at',
                     'updatedAt' => 'updated_at',
                 ],
-                // macros for different events
-                SchemaInterface::MACROS => [
+                // listeners for different events
+                SchemaInterface::LISTENERS => [
                     [
                         Hook::class,
                         ['callable' => PostService::class . '::update', 'events' => [OnUpdate::class]]
