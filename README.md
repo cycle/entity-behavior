@@ -1,4 +1,9 @@
 # Cycle ORM Entity Behavior
+[![Latest Stable Version](https://poser.pugx.org/cycle/entity-behavior/version)](https://packagist.org/packages/cycle/entity-behavior)
+[![Build Status](https://github.com/cycle/entity-behavior/workflows/build/badge.svg)](https://github.com/cycle/entity-behavior/actions)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cycle/entity-behavior/badges/quality-score.png?b=1.x)](https://scrutinizer-ci.com/g/cycle/entity-behavior/?branch=1.x)
+[![Codecov](https://codecov.io/gh/cycle/entity-behavior/graph/badge.svg)](https://codecov.io/gh/cycle/entity-behavior)
+<a href="https://discord.gg/TFeEmCs"><img src="https://img.shields.io/badge/discord-chat-magenta.svg"></a>
 
 The package provides a collection of attributes that add behaviors to Cycle ORM entities. It also provides a convenient
 API to create custom behavior attributes.

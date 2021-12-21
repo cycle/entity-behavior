@@ -20,7 +20,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Cycle: Cycle ORM Entity Behavior">
+        <testsuite name="Cycle ORM Entity Behavior">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
