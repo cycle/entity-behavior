@@ -3,6 +3,7 @@
     "type": "library",
     "require": {
         "php": ">=8.0",
+        "psr/event-dispatcher": "^1",
         "cycle/orm": "2.0.x-dev",
         "cycle/schema-builder": "2.0.x-dev",
         "psr/container": "^1.0|^2.0",
