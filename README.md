@@ -39,12 +39,12 @@ That's it. Now you can use all benefits of this package.
 
 ### Available behaviors
 
-- [UUID](https://cycle-orm.dev/docs/en/entity-behaviors/uuid.md)
-- [CreatedAt and UpdatedAt](https://cycle-orm.dev/docs/en/entity-behaviors/timestamps.md)
-- [SoftDelete](https://cycle-orm.dev/docs/en/entity-behaviors/soft-delete.md)
-- [OptimisticLock](https://cycle-orm.dev/docs/en/entity-behaviors/optimistic-lock.md)
-- [Hook](https://cycle-orm.dev/docs/en/entity-behaviors/hooks.md)
-- [EventListener](https://cycle-orm.dev/docs/en/entity-behaviors/event-listener.md)
+- [UUID](https://cycle-orm.dev/docs/entity-behaviors-uuid)
+- [CreatedAt and UpdatedAt](https://cycle-orm.dev/docs/entity-behaviors-timestamps)
+- [SoftDelete](https://cycle-orm.dev/docs/entity-behaviors-soft-delete)
+- [OptimisticLock](https://cycle-orm.dev/docs/entity-behaviors-optimistic-lock)
+- [Hook](https://cycle-orm.dev/docs/entity-behaviors-hooks)
+- [EventListener](https://cycle-orm.dev/docs/entity-behaviors-event-listener)
 
 ## License:
 
