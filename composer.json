@@ -10,7 +10,7 @@
         "yiisoft/injector": "^1.0"
     },
     "require-dev": {
-        "cycle/annotated": "2.0.x-dev",
+        "cycle/annotated": "^2.0",
         "ramsey/uuid": "^4.0",
         "phpunit/phpunit": "^9.5",
         "spiral/tokenizer": "^2.8",
