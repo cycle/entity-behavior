@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Behavior\Event;
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;
 use Cycle\ORM\MapperInterface;
-use Cycle\ORM\Select\Source;
+use Cycle\ORM\Select\SourceInterface;
 
 /**
  * @internal
@@ -22,7 +22,7 @@ abstract class MapperEvent
         public object $entity,
         public Node $node,
         public State $state,
-        public Source $source,
+        public SourceInterface $source,
         public \DateTimeImmutable $timestamp
     ) {
     }
