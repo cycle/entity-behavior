@@ -14,9 +14,10 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * UpdatedAt behavior will automate adding an updating date to your entity. The behavior has two parameters:
+ * UpdatedAt behavior will automate adding an updating date to your entity. The behavior has three parameters:
  *    - field - is a property in the entity
- *    - column - is a column in the database.
+ *    - column - is a column in the database
+ *    - nullable - if this parameter is set to false, will be set initial value when an entity is creating
  * Behavior requires a field with the DateTime type.
  * A property in an entity and a field in the database can be added in several ways:
  *   - Can be added by a behavior automatically.
@@ -29,7 +30,8 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * @Target({"CLASS"})
  * @Attributes({
  *     @Attribute("field", type="string"),
- *     @Attribute("column", type="string")
+ *     @Attribute("column", type="string"),
+ *     @Attribute("nullable", type="boolean")
  * })
  */
 #[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
@@ -39,7 +41,8 @@ final class UpdatedAt extends BaseModifier
 
     public function __construct(
         private string $field = 'updatedAt',
-        ?string $column = null
+        ?string $column = null,
+        private bool $nullable = false
     ) {
         $this->column = $column;
     }
@@ -52,7 +55,8 @@ final class UpdatedAt extends BaseModifier
     protected function getListenerArgs(): array
     {
         return [
-            'field' => $this->field
+            'field' => $this->field,
+            'nullable' => $this->nullable
         ];
     }
 

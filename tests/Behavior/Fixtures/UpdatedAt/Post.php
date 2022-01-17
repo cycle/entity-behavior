@@ -19,5 +19,6 @@ class Post
     #[Column(type: 'datetime', nullable: true)]
     public ?\DateTimeImmutable $updatedAt = null;
     public ?\DateTimeImmutable $customUpdatedAt = null;
+    public \DateTimeImmutable $notNullableUpdatedAt;
     public ?string $content = null;
 }

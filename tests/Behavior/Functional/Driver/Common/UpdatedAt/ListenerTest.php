@@ -27,6 +27,7 @@ abstract class ListenerTest extends BaseListenerTest
                 'id' => 'primary',
                 'updated_at' => 'datetime,nullable',
                 'custom_updated_at' => 'datetime,nullable',
+                'not_nullable_updated_at' => 'datetime',
                 'content' => 'string,nullable'
             ]
         );
@@ -41,19 +42,28 @@ abstract class ListenerTest extends BaseListenerTest
                     'id' => 'id',
                     'updatedAt' => 'updated_at',
                     'customUpdatedAt' => 'custom_updated_at',
+                    'notNullableUpdatedAt' => 'not_nullable_updated_at',
                     'content' => 'content'
                 ],
                 SchemaInterface::LISTENERS => [
-                    UpdatedAt::class,
                     [
                         UpdatedAt::class,
-                        ['field' => 'customUpdatedAt']
+                        ['nullable' => true]
+                    ],
+                    [
+                        UpdatedAt::class,
+                        ['field' => 'customUpdatedAt', 'nullable' => true]
+                    ],
+                    [
+                        UpdatedAt::class,
+                        ['field' => 'notNullableUpdatedAt']
                     ]
                 ],
                 SchemaInterface::TYPECAST => [
                     'id' => 'int',
                     'updatedAt' => 'datetime',
-                    'customUpdatedAt' => 'datetime'
+                    'customUpdatedAt' => 'datetime',
+                    'notNullableUpdatedAt' => 'datetime'
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
@@ -71,6 +81,18 @@ abstract class ListenerTest extends BaseListenerTest
         $data = $select->fetchOne();
         $this->assertNull($data->updatedAt);
         $this->assertNull($data->customUpdatedAt);
+    }
+
+    public function testCreateNotNullable(): void
+    {
+        $post = new Post();
+
+        $this->save($post);
+
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
+        $data = $select->fetchOne();
+
+        $this->assertInstanceOf(\DateTimeImmutable::class, $data->notNullableUpdatedAt);
     }
 
     public function testUpdate(): void
