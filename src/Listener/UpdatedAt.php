@@ -28,7 +28,7 @@ final class UpdatedAt
     #[Listen(OnCreate::class)]
     public function onCreate(OnCreate $event): void
     {
-        if ($this->nullable === false && !isset($event->state->getData()[$this->field])) {
+        if (!$this->nullable) {
             $event->state->register($this->field, $event->timestamp);
         }
     }

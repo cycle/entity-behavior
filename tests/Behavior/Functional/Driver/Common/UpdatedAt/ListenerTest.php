@@ -56,7 +56,7 @@ abstract class ListenerTest extends BaseListenerTest
                     ],
                     [
                         UpdatedAt::class,
-                        ['field' => 'notNullableUpdatedAt']
+                        ['field' => 'notNullableUpdatedAt', 'nullable' => false]
                     ]
                 ],
                 SchemaInterface::TYPECAST => [
@@ -89,7 +89,8 @@ abstract class ListenerTest extends BaseListenerTest
 
         $this->save($post);
 
-        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
+        $this->orm->getHeap()->clean();
+        $select = new Select($this->orm, Post::class);
         $data = $select->fetchOne();
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $data->notNullableUpdatedAt);
