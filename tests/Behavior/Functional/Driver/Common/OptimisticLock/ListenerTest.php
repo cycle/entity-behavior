@@ -8,11 +8,13 @@ use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\ChangedVersionException;
 use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\RecordIsLockedException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Author;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest;
 use Cycle\ORM\Entity\Behavior\Tests\Traits\TableTrait;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
+use Cycle\ORM\Relation;
 use Cycle\ORM\Select;
 use Cycle\ORM\Transaction;
 
@@ -34,6 +36,8 @@ abstract class ListenerTest extends BaseListenerTest
                 'version_microtime' => 'string',
                 'version_custom' => 'int,nullable',
                 'content' => 'string,nullable',
+                'author_first_name' => 'string',
+                'author_last_name' => 'string',
             ]
         );
 
@@ -81,8 +85,25 @@ abstract class ListenerTest extends BaseListenerTest
                     'versionDatetime' => 'datetime'
                 ],
                 SchemaInterface::SCHEMA => [],
-                SchemaInterface::RELATIONS => [],
+                SchemaInterface::RELATIONS => [
+                    'author' => [
+                        Relation::TYPE => Relation::EMBEDDED,
+                        Relation::TARGET => Author::class,
+                        Relation::LOAD => Relation::LOAD_EAGER,
+                        Relation::SCHEMA => [],
+                    ]
+                ],
             ],
+            Author::class => [
+                SchemaInterface::ENTITY => Author::class,
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'comments',
+                SchemaInterface::PRIMARY_KEY => ['id'],
+                SchemaInterface::COLUMNS => [
+                    'first_name' => 'author_first_name',
+                    'last_name' => 'author_last_name',
+                ],
+            ]
         ]));
     }
 
@@ -95,7 +116,7 @@ abstract class ListenerTest extends BaseListenerTest
 
         $this->orm = $this->orm->with(heap: new Heap());
         $select = new Select($this->orm, Comment::class);
-
+        
         $comment = $select->fetchOne();
 
         $this->assertSame(1, $comment->versionInt);
