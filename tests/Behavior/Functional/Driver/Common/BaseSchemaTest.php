@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common;
 
 use Cycle\Annotated\Entities;
+use Cycle\Annotated\Embeddings;
 use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
 use Cycle\ORM\Schema;
@@ -31,8 +32,11 @@ abstract class BaseSchemaTest extends BaseTest
     {
         $reader = new AttributeReader();
 
+        $classLocator = $tokenizer->classLocator();
+
         $this->schema = new Schema((new Compiler())->compile($this->registry = new Registry($this->dbal), [
-            new Entities($tokenizer->classLocator(), $reader),
+            new Embeddings($classLocator, $reader),
+            new Entities($classLocator, $reader),
             new ResetTables(),
             new MergeColumns($reader),
             new MergeIndexes($reader),

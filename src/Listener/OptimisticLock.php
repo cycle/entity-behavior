@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Listener;
 
 use Cycle\ORM\Command\ScopeCarrierInterface;
-use Cycle\ORM\Command\Special\WrappedCommand;
+use Cycle\ORM\Command\Special\WrappedStoreCommand;
 use Cycle\ORM\Command\StoreCommandInterface;
 use Cycle\ORM\Entity\Behavior\Attribute\Listen;
 use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnCreate;
@@ -76,7 +76,7 @@ final class OptimisticLock
         $event->command = $this->lock($event->node, $event->state, $event->command);
     }
 
-    private function lock(Node $node, State $state, ScopeCarrierInterface $command): WrappedCommand
+    private function lock(Node $node, State $state, ScopeCarrierInterface $command): WrappedStoreCommand
     {
         $nodeValue = $node->getData()[$this->field] ?? null;
         if ($nodeValue === null) {
@@ -100,7 +100,7 @@ final class OptimisticLock
 
         $command->setScope($this->field, $nodeValue);
 
-        return WrappedCommand::wrapCommand($command)
+        return WrappedStoreCommand::wrapCommand($command)
             ->withAfterExecution(static function (ScopeCarrierInterface $command) use ($node): void {
                 if ($command->getAffectedRows() === 0) {
                     throw new RecordIsLockedException($node);
