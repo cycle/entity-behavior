@@ -19,14 +19,17 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EventDrivenCommandGenerator extends CommandGenerator
 {
-    private EventDispatcherInterface $eventDispatcher;
     private \DateTimeImmutable $timestamp;
 
-    public function __construct(SchemaInterface $schema, ContainerInterface $container)
-    {
-        $listenerProvider = new ListenerProvider($schema, $container);
-
-        $this->eventDispatcher = new Dispatcher($listenerProvider);
+    public function __construct(
+        SchemaInterface $schema,
+        ContainerInterface $container,
+        private ?EventDispatcherInterface $eventDispatcher = null
+    ) {
+        if ($eventDispatcher === null) {
+            $listenerProvider = new ListenerProvider($schema, $container);
+            $this->eventDispatcher = new Dispatcher($listenerProvider);
+        }
     }
 
     protected function storeEntity(ORMInterface $orm, Tuple $tuple, bool $isNew): ?CommandInterface
