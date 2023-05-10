@@ -19,6 +19,18 @@ use Cycle\Schema\Registry;
  */
 class RegistryModifier
 {
+    protected const DEFINITION = '/(?P<type>[a-z]+)(?: *\((?P<options>[^\)]+)\))?/i';
+    protected const INTEGER_TYPES = [
+        'int',
+        'smallint',
+        'tinyint',
+        'bigint',
+        'integer',
+        'tinyInteger',
+        'smallInteger',
+        'bigInteger',
+    ];
+    protected const DATETIME_TYPES = ['datetime', 'datetime2'];
     protected const INT_COLUMN = AbstractColumn::INT;
     protected const STRING_COLUMN = AbstractColumn::STRING;
     protected const DATETIME_COLUMN = 'datetime';
@@ -38,7 +50,7 @@ class RegistryModifier
     public function addDatetimeColumn(string $columnName, string $fieldName): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
-            if (!$this->isType(self::DATETIME_COLUMN, $fieldName, $columnName)) {
+            if (!static::isDatetimeType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type datetime.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
@@ -57,7 +69,7 @@ class RegistryModifier
     public function addIntegerColumn(string $columnName, string $fieldName): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
-            if (!$this->isType(self::INT_COLUMN, $fieldName, $columnName)) {
+            if (!static::isIntegerType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
@@ -73,7 +85,7 @@ class RegistryModifier
     public function addStringColumn(string $columnName, string $fieldName): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
-            if (!$this->isType(self::STRING_COLUMN, $fieldName, $columnName)) {
+            if (!static::isStringType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type string.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
@@ -92,7 +104,7 @@ class RegistryModifier
     public function addUuidColumn(string $columnName, string $fieldName): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
-            if (!$this->isType(self::UUID_COLUMN, $fieldName, $columnName)) {
+            if (!static::isUuidType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type uuid.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
@@ -156,6 +168,9 @@ class RegistryModifier
         }
     }
 
+    /**
+     * @deprecated since v1.2
+     */
     protected function isType(string $type, string $fieldName, string $columnName): bool
     {
         if ($type === self::DATETIME_COLUMN) {
@@ -175,5 +190,33 @@ class RegistryModifier
         }
 
         return $this->table->column($columnName)->getType() === $type;
+    }
+
+    public static function isIntegerType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return \in_array($matches['type'], self::INTEGER_TYPES, true);
+    }
+
+    public static function isDatetimeType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return \in_array($matches['type'], self::DATETIME_TYPES, true);
+    }
+
+    public static function isStringType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return $matches['type'] === 'string';
+    }
+
+    public static function isUuidType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return $matches['type'] === 'uuid';
     }
 }

@@ -18,6 +18,7 @@ abstract class RegistryModifierTest extends BaseTest
     private const ROLE_TEST = 'test';
 
     protected RegistryModifier $modifier;
+    protected Registry $registry;
 
     public function setUp(): void
     {

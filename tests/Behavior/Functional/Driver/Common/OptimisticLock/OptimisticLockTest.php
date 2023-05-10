@@ -10,6 +10,7 @@ use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\News;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Product;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\WithAllParameters;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
@@ -56,6 +57,18 @@ abstract class OptimisticLockTest extends BaseSchemaTest
     public function testExistColumn(): void
     {
         $fields = $this->registry->getEntity(Product::class)->getFields();
+
+        $this->assertTrue($fields->has('revision'));
+        $this->assertTrue($fields->hasColumn('revision_field'));
+        $this->assertSame('integer', $fields->get('revision')->getType());
+
+        // not added new columns
+        $this->assertSame(2, $fields->count());
+    }
+
+    public function testExistColumnAndAllOptimisticLockParameters(): void
+    {
+        $fields = $this->registry->getEntity(WithAllParameters::class)->getFields();
 
         $this->assertTrue($fields->has('revision'));
         $this->assertTrue($fields->hasColumn('revision_field'));
