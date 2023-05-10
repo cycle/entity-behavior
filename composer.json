@@ -11,10 +11,10 @@
     },
     "require-dev": {
         "cycle/annotated": "^3.0",
-        "ramsey/uuid": "^4.0",
+        "ramsey/uuid": "^4.5",
         "phpunit/phpunit": "^9.5",
-        "spiral/tokenizer": "^2.8",
-        "vimeo/psalm": "^4.13"
+        "spiral/tokenizer": "^2.8 || ^3.0",
+        "vimeo/psalm": "^5.11"
     },
     "license": "MIT",
     "autoload": {
