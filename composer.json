@@ -1,5 +1,6 @@
 {
     "name": "cycle/entity-behavior",
+    "description": "Provides a collection of attributes that add behaviors to Cycle ORM entities",
     "type": "library",
     "require": {
         "php": ">=8.0",
