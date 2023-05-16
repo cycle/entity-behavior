@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior;
 
-use Cycle\Database\ColumnInterface;
-use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock as Listener;
+use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
@@ -58,9 +57,9 @@ final class OptimisticLock extends BaseModifier
      */
     public function __construct(
         private string $field = 'version',
+        ?string $column = null,
         /** @Enum({"microtime", "random-string", "increment", "datetime"}) */
         #[ExpectedValues(valuesFromClass: Listener::class)]
-        ?string $column = null,
         private ?string $rule = null
     ) {
         $this->column = $column;
@@ -106,12 +105,14 @@ final class OptimisticLock extends BaseModifier
      *
      * @throws BehaviorCompilationException
      */
-    private function computeRule(AbstractColumn $column): string
+    private function computeRule(Field $field): string
     {
-        return match ($column->getType()) {
-            ColumnInterface::INT => self::RULE_INCREMENT,
-            ColumnInterface::STRING => self::RULE_MICROTIME,
-            'datetime' => self::RULE_DATETIME,
+        $type = $field->getType();
+
+        return match (true) {
+            RegistryModifier::isIntegerType($type) => self::RULE_INCREMENT,
+            RegistryModifier::isStringType($type) => self::RULE_MICROTIME,
+            RegistryModifier::isDatetimeType($type) => self::RULE_DATETIME,
             default => throw new BehaviorCompilationException('Failed to compute rule based on column type.')
         };
     }
@@ -123,7 +124,7 @@ final class OptimisticLock extends BaseModifier
         assert($this->column !== null);
 
         $this->rule ??= $fields->has($this->field)
-            ? $this->computeRule($registry->getTableSchema($registry->getEntity($this->role))->column($this->column))
+            ? $this->computeRule($fields->get($this->field))
             // rule not set, field not fount
             : Listener::DEFAULT_RULE;
 

@@ -20,6 +20,7 @@ abstract class BaseTest extends TestCase
 
     public static array $config;
     protected ?DatabaseManager $dbal = null;
+    protected ?DriverInterface $driver = null;
     private static array $driverCache = [];
 
     public function setUp(): void
