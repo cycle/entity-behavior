@@ -115,7 +115,7 @@ abstract class RegistryModifierTest extends BaseTest
         // field has custom UUID typecast
         $this->assertSame([Uuid::class, 'fromString'], $field->getTypecast());
 
-        // entity has custom typecast
+        // entity has default typecast and custom typecast
         $this->assertSame(
             [CustomTypecast::class, Typecast::class],
             $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
