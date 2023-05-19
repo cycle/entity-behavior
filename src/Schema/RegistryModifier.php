@@ -140,7 +140,7 @@ class RegistryModifier
         }
 
         $defaultHandlers = $this->defaults[SchemaInterface::TYPECAST_HANDLER] ?? [];
-        if (!is_array($defaultHandlers)) {
+        if (!\is_array($defaultHandlers)) {
             $defaultHandlers = [$defaultHandlers];
         }
 
@@ -149,7 +149,7 @@ class RegistryModifier
             $handlers = [$handlers];
         }
 
-        if (!\in_array($handler, $handlers, true) && !in_array($handler, $defaultHandlers, true)) {
+        if (!\in_array($handler, $handlers, true) && !\in_array($handler, $defaultHandlers, true)) {
             $this->entity->setTypecast(\array_merge($handlers, [$handler]));
         }
 
