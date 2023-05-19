@@ -9,6 +9,7 @@ use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CustomTypecast;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\Parser\Typecast;
+use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Registry;
 use Ramsey\Uuid\Uuid;
@@ -102,7 +103,7 @@ abstract class RegistryModifierTest extends BaseTest
         );
     }
 
-    public function testAddCustomTypecast(): void
+    public function testAddTypecastEntityWithTypecast(): void
     {
         $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
 
@@ -119,6 +120,25 @@ abstract class RegistryModifierTest extends BaseTest
             [CustomTypecast::class, Typecast::class],
             $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
         );
+    }
+
+    public function testAddTypecastShouldBeSkipped(): void
+    {
+        $this->registry->getEntity(self::ROLE_TEST);
+
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+        $this->registry->getDefaults()->offsetSet(SchemaInterface::TYPECAST_HANDLER, Typecast::class);
+
+        $this->assertNull($this->registry->getEntity(self::ROLE_TEST)->getTypecast());
+    }
+
+    public function testAddTypecastShouldBeDuplicated(): void
+    {
+        $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
+
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $this->assertSame(CustomTypecast::class, $this->registry->getEntity(self::ROLE_TEST)->getTypecast());
     }
 
     public function testCustomTypecastNotOverridden(): void
