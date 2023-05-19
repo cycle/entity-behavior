@@ -9,6 +9,7 @@ use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CustomTypecast;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\Parser\Typecast;
+use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Registry;
 use Ramsey\Uuid\Uuid;
@@ -95,14 +96,14 @@ abstract class RegistryModifierTest extends BaseTest
         $this->assertSame([Uuid::class, 'fromString'], $field1->getTypecast());
         $this->assertSame('int', $field2->getTypecast());
 
-        // entity has default typecast
+        // registry has default typecasts
         $this->assertSame(
             [Typecast::class, CustomTypecast::class],
-            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
+            $this->registry->getDefaults()[SchemaInterface::TYPECAST_HANDLER]
         );
     }
 
-    public function testAddCustomTypecast(): void
+    public function testAddTypecastEntityWithTypecast(): void
     {
         $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
 
@@ -114,9 +115,15 @@ abstract class RegistryModifierTest extends BaseTest
         // field has custom UUID typecast
         $this->assertSame([Uuid::class, 'fromString'], $field->getTypecast());
 
-        // entity has default typecast and custom typecast
+        // registry has default typecast
         $this->assertSame(
-            [CustomTypecast::class, Typecast::class],
+            [Typecast::class],
+            $this->registry->getDefaults()[SchemaInterface::TYPECAST_HANDLER]
+        );
+
+        // entity has custom typecast
+        $this->assertSame(
+            CustomTypecast::class,
             $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
         );
     }

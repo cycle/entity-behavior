@@ -9,6 +9,8 @@ use Cycle\Database\Schema\AbstractTable;
 use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Parser\Typecast;
 use Cycle\ORM\Parser\TypecastInterface;
+use Cycle\ORM\SchemaInterface;
+use Cycle\Schema\Defaults;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Definition\Map\FieldMap;
@@ -39,12 +41,14 @@ class RegistryModifier
     protected FieldMap $fields;
     protected AbstractTable $table;
     protected Entity $entity;
+    protected Defaults $defaults;
 
     public function __construct(Registry $registry, string $role)
     {
         $this->entity = $registry->getEntity($role);
         $this->fields = $this->entity->getFields();
         $this->table = $registry->getTableSchema($this->entity);
+        $this->defaults = $registry->getDefaults();
     }
 
     public function addDatetimeColumn(string $columnName, string $fieldName): AbstractColumn
@@ -135,15 +139,13 @@ class RegistryModifier
             $field->setTypecast($rule);
         }
 
-        $handlers = $this->entity->getTypecast();
-        if ($handlers === null) {
-            $this->entity->setTypecast($handler);
-            return $field;
+        $handlers = $this->defaults[SchemaInterface::TYPECAST_HANDLER] ?? [];
+        if (!is_array($handlers)) {
+            $handlers = [$handlers];
         }
-
-        $handlers = (array) $handlers;
         $handlers[] = $handler;
-        $this->entity->setTypecast(array_unique($handlers));
+
+        $this->defaults[SchemaInterface::TYPECAST_HANDLER] = \array_unique($handlers);
 
         return $field;
     }
