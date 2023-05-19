@@ -139,13 +139,19 @@ class RegistryModifier
             $field->setTypecast($rule);
         }
 
-        $handlers = $this->defaults[SchemaInterface::TYPECAST_HANDLER] ?? [];
+        $defaultHandlers = $this->defaults[SchemaInterface::TYPECAST_HANDLER] ?? [];
+        if (!is_array($defaultHandlers)) {
+            $defaultHandlers = [$defaultHandlers];
+        }
+
+        $handlers = $this->entity->getTypecast() ?? [];
         if (!is_array($handlers)) {
             $handlers = [$handlers];
         }
-        $handlers[] = $handler;
 
-        $this->defaults[SchemaInterface::TYPECAST_HANDLER] = \array_unique($handlers);
+        if (!\in_array($handler, $handlers, true) && !in_array($handler, $defaultHandlers, true)) {
+            $this->entity->setTypecast(\array_merge($handlers, [$handler]));
+        }
 
         return $field;
     }

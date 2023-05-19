@@ -96,10 +96,10 @@ abstract class RegistryModifierTest extends BaseTest
         $this->assertSame([Uuid::class, 'fromString'], $field1->getTypecast());
         $this->assertSame('int', $field2->getTypecast());
 
-        // registry has default typecasts
+        // entity has default typecast
         $this->assertSame(
             [Typecast::class, CustomTypecast::class],
-            $this->registry->getDefaults()[SchemaInterface::TYPECAST_HANDLER]
+            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
         );
     }
 
@@ -115,17 +115,30 @@ abstract class RegistryModifierTest extends BaseTest
         // field has custom UUID typecast
         $this->assertSame([Uuid::class, 'fromString'], $field->getTypecast());
 
-        // registry has default typecast
-        $this->assertSame(
-            [Typecast::class],
-            $this->registry->getDefaults()[SchemaInterface::TYPECAST_HANDLER]
-        );
-
         // entity has custom typecast
         $this->assertSame(
-            CustomTypecast::class,
+            [CustomTypecast::class, Typecast::class],
             $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
         );
+    }
+
+    public function testAddTypecastShouldBeSkipped(): void
+    {
+        $this->registry->getEntity(self::ROLE_TEST);
+
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+        $this->registry->getDefaults()->offsetSet(SchemaInterface::TYPECAST_HANDLER, Typecast::class);
+
+        $this->assertNull($this->registry->getEntity(self::ROLE_TEST)->getTypecast());
+    }
+
+    public function testAddTypecastShouldBeDuplicated(): void
+    {
+        $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
+
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $this->assertSame(CustomTypecast::class, $this->registry->getEntity(self::ROLE_TEST)->getTypecast());
     }
 
     public function testCustomTypecastNotOverridden(): void
