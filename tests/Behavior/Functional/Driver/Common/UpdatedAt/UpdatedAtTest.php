@@ -6,6 +6,7 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\UpdatedAt;
 
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\UpdatedAt\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
+use Cycle\ORM\SchemaInterface;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
@@ -28,6 +29,10 @@ abstract class UpdatedAtTest extends BaseSchemaTest
         $this->assertTrue($fields->has('updatedAt'));
         $this->assertTrue($fields->hasColumn('updated_at'));
         $this->assertSame('datetime', $fields->get('updatedAt')->getType());
+        $this->assertSame(
+            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            $fields->get('updatedAt')->getGenerated()
+        );
 
         // No new fields added
         $this->assertSame(3, $fields->count());
@@ -40,5 +45,9 @@ abstract class UpdatedAtTest extends BaseSchemaTest
         $this->assertTrue($fields->has('newField'));
         $this->assertTrue($fields->hasColumn('new_field'));
         $this->assertSame('datetime', $fields->get('newField')->getType());
+        $this->assertSame(
+            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            $fields->get('newField')->getGenerated()
+        );
     }
 }

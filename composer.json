@@ -5,8 +5,8 @@
     "require": {
         "php": ">=8.0",
         "psr/event-dispatcher": "^1",
-        "cycle/orm": "^2.0",
-        "cycle/schema-builder": "^2.5",
+        "cycle/orm": "^2.7",
+        "cycle/schema-builder": "^2.8",
         "psr/container": "^1.0|^2.0",
         "yiisoft/injector": "^1.0"
     },

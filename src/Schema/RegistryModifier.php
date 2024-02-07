@@ -51,53 +51,64 @@ class RegistryModifier
         $this->defaults = $registry->getDefaults();
     }
 
-    public function addDatetimeColumn(string $columnName, string $fieldName): AbstractColumn
+    public function addDatetimeColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isDatetimeType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type datetime.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
 
             return $this->table->column($columnName);
         }
 
-        $this->fields->set(
-            $fieldName,
-            (new Field())->setColumn($columnName)->setType('datetime')->setTypecast('datetime')
-        );
+        $field = (new Field())
+            ->setColumn($columnName)
+            ->setType('datetime')
+            ->setTypecast('datetime')
+            ->setGenerated($generated);
+        $this->fields->set($fieldName, $field);
 
         return $this->table->column($columnName)->type(self::DATETIME_COLUMN);
     }
 
-    public function addIntegerColumn(string $columnName, string $fieldName): AbstractColumn
+    public function addIntegerColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isIntegerType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
 
             return $this->table->column($columnName);
         }
 
-        $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('integer')->setTypecast('int'));
+        $field = (new Field())
+            ->setColumn($columnName)
+            ->setType('integer')
+            ->setTypecast('int')
+            ->setGenerated($generated);
+        $this->fields->set($fieldName, $field);
 
         return $this->table->column($columnName)->type(self::INT_COLUMN);
     }
 
-    public function addStringColumn(string $columnName, string $fieldName): AbstractColumn
+    public function addStringColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isStringType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type string.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
 
             return $this->table->column($columnName);
         }
 
-        $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('string'));
+        $field = (new Field())->setColumn($columnName)->setType('string')->setGenerated($generated);
+        $this->fields->set($fieldName, $field);
 
         return $this->table->column($columnName)->type(self::STRING_COLUMN);
     }
@@ -105,18 +116,20 @@ class RegistryModifier
     /**
      * @throws BehaviorCompilationException
      */
-    public function addUuidColumn(string $columnName, string $fieldName): AbstractColumn
+    public function addUuidColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isUuidType($this->fields->get($fieldName)->getType())) {
                 throw new BehaviorCompilationException(sprintf('Field %s must be of type uuid.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
 
             return $this->table->column($columnName);
         }
 
-        $this->fields->set($fieldName, (new Field())->setColumn($columnName)->setType('uuid'));
+        $field = (new Field())->setColumn($columnName)->setType('uuid')->setGenerated($generated);
+        $this->fields->set($fieldName, $field);
 
         return $this->table->column($columnName)->type(self::UUID_COLUMN);
     }

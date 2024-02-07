@@ -7,6 +7,7 @@ namespace Cycle\ORM\Entity\Behavior;
 use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Listener\SoftDelete as Listener;
+use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
@@ -76,7 +77,7 @@ final class SoftDelete extends BaseModifier
 
         $this->column = $modifier->findColumnName($this->field, $this->column) ?? $this->field;
 
-        $modifier->addDatetimeColumn($this->column, $this->field)
+        $modifier->addDatetimeColumn($this->column, $this->field, SchemaInterface::GENERATED_PHP_UPDATE)
             ->nullable(true);
     }
 }

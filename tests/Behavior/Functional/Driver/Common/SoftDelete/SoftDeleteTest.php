@@ -6,6 +6,7 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\SoftDelete;
 
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\SoftDelete\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
+use Cycle\ORM\SchemaInterface;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
@@ -28,6 +29,7 @@ abstract class SoftDeleteTest extends BaseSchemaTest
         $this->assertTrue($fields->has('deletedAt'));
         $this->assertTrue($fields->hasColumn('deleted_at'));
         $this->assertSame('datetime', $fields->get('deletedAt')->getType());
+        $this->assertSame(SchemaInterface::GENERATED_PHP_UPDATE, $fields->get('deletedAt')->getGenerated());
 
         // No new fields added
         $this->assertSame(3, $fields->count());
@@ -40,5 +42,6 @@ abstract class SoftDeleteTest extends BaseSchemaTest
         $this->assertTrue($fields->has('newField'));
         $this->assertTrue($fields->hasColumn('new_field'));
         $this->assertSame('datetime', $fields->get('newField')->getType());
+        $this->assertSame(SchemaInterface::GENERATED_PHP_UPDATE, $fields->get('newField')->getGenerated());
     }
 }
