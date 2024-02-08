@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Behavior;
 use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Listener\UpdatedAt as Listener;
-use Cycle\ORM\SchemaInterface;
+use Cycle\ORM\Schema\GeneratedField;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
@@ -80,7 +80,7 @@ final class UpdatedAt extends BaseModifier
         $modifier->addDatetimeColumn(
             $this->column,
             $this->field,
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
         );
     }
 }

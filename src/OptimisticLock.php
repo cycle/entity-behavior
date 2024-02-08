@@ -8,7 +8,7 @@ use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock as Listener;
-use Cycle\ORM\SchemaInterface;
+use Cycle\ORM\Schema\GeneratedField;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Enum;
@@ -137,7 +137,7 @@ final class OptimisticLock extends BaseModifier
                     ->addIntegerColumn(
                         $this->column,
                         $this->field,
-                        SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE
+                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
                     )
                     ->nullable(false)
                     ->defaultValue(self::DEFAULT_INT_VERSION);
@@ -148,7 +148,7 @@ final class OptimisticLock extends BaseModifier
                     ->addStringColumn(
                         $this->column,
                         $this->field,
-                        SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE
+                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
                     )
                     ->nullable(false)
                     ->string(self::STRING_COLUMN_LENGTH);
@@ -157,7 +157,7 @@ final class OptimisticLock extends BaseModifier
                 $modifier->addDatetimeColumn(
                     $this->column,
                     $this->field,
-                    SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE
+                    GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
                 );
                 break;
             default:

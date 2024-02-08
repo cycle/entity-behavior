@@ -12,7 +12,7 @@ use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Product;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\WithAllParameters;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
-use Cycle\ORM\SchemaInterface;
+use Cycle\ORM\Schema\GeneratedField;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
@@ -36,7 +36,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('version'));
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('version')->getGenerated()
         );
     }
@@ -49,7 +49,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('version'));
         $this->assertSame(AbstractColumn::STRING, $fields->get('version')->getType());
         $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('version')->getGenerated()
         );
     }
@@ -62,7 +62,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('version'));
         $this->assertSame('datetime', $fields->get('version')->getType());
         $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('version')->getGenerated()
         );
     }
@@ -75,7 +75,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('revision_field'));
         $this->assertSame('integer', $fields->get('revision')->getType());
         $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('revision')->getGenerated()
         );
 
@@ -91,7 +91,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('revision_field'));
         $this->assertSame('integer', $fields->get('revision')->getType());
         $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('revision')->getGenerated()
         );
 
@@ -107,7 +107,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('version'));
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT | SchemaInterface::GENERATED_PHP_UPDATE,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('version')->getGenerated()
         );
 

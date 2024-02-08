@@ -6,7 +6,7 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\CreatedAt;
 
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CreatedAt\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
-use Cycle\ORM\SchemaInterface;
+use Cycle\ORM\Schema\GeneratedField;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
@@ -29,10 +29,7 @@ abstract class CreatedAtTest extends BaseSchemaTest
         $this->assertTrue($fields->has('createdAt'));
         $this->assertTrue($fields->hasColumn('created_at'));
         $this->assertSame('datetime', $fields->get('createdAt')->getType());
-        $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT,
-            $fields->get('createdAt')->getGenerated()
-        );
+        $this->assertSame(GeneratedField::BEFORE_INSERT, $fields->get('createdAt')->getGenerated());
 
         // No new fields added
         $this->assertSame(3, $fields->count());
@@ -45,9 +42,6 @@ abstract class CreatedAtTest extends BaseSchemaTest
         $this->assertTrue($fields->has('newField'));
         $this->assertTrue($fields->hasColumn('new_field'));
         $this->assertSame('datetime', $fields->get('newField')->getType());
-        $this->assertSame(
-            SchemaInterface::GENERATED_PHP_INSERT,
-            $fields->get('newField')->getGenerated()
-        );
+        $this->assertSame(GeneratedField::BEFORE_INSERT, $fields->get('newField')->getGenerated());
     }
 }
