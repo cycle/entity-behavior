@@ -8,6 +8,7 @@ use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock as Listener;
+use Cycle\ORM\Schema\GeneratedField;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Enum;
@@ -132,18 +133,32 @@ final class OptimisticLock extends BaseModifier
 
         switch ($this->rule) {
             case self::RULE_INCREMENT:
-                $modifier->addIntegerColumn($this->column, $this->field)
+                $modifier
+                    ->addIntegerColumn(
+                        $this->column,
+                        $this->field,
+                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+                    )
                     ->nullable(false)
                     ->defaultValue(self::DEFAULT_INT_VERSION);
                 break;
             case self::RULE_RAND_STR:
             case self::RULE_MICROTIME:
-                $modifier->addStringColumn($this->column, $this->field)
+                $modifier
+                    ->addStringColumn(
+                        $this->column,
+                        $this->field,
+                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+                    )
                     ->nullable(false)
                     ->string(self::STRING_COLUMN_LENGTH);
                 break;
             case self::RULE_DATETIME:
-                $modifier->addDatetimeColumn($this->column, $this->field);
+                $modifier->addDatetimeColumn(
+                    $this->column,
+                    $this->field,
+                    GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+                );
                 break;
             default:
                 throw new BehaviorCompilationException(

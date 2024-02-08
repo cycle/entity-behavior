@@ -8,6 +8,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Listener\CreatedAt as Listener;
+use Cycle\ORM\Schema\GeneratedField;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
@@ -63,7 +64,7 @@ final class CreatedAt extends BaseModifier
         $this->column = $modifier->findColumnName($this->field, $this->column);
 
         if ($this->column !== null) {
-            $modifier->addDatetimeColumn($this->column, $this->field)
+            $modifier->addDatetimeColumn($this->column, $this->field, GeneratedField::BEFORE_INSERT)
                 ->nullable(false)
                 ->defaultValue(AbstractColumn::DATETIME_NOW);
         }
@@ -75,7 +76,7 @@ final class CreatedAt extends BaseModifier
 
         $this->column = $modifier->findColumnName($this->field, $this->column) ?? $this->field;
 
-        $modifier->addDatetimeColumn($this->column, $this->field)
+        $modifier->addDatetimeColumn($this->column, $this->field, GeneratedField::BEFORE_INSERT)
             ->nullable(false)
             ->defaultValue(AbstractColumn::DATETIME_NOW);
     }

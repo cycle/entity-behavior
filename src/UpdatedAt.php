@@ -7,6 +7,7 @@ namespace Cycle\ORM\Entity\Behavior;
 use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Listener\UpdatedAt as Listener;
+use Cycle\ORM\Schema\GeneratedField;
 use Cycle\Schema\Registry;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 use Doctrine\Common\Annotations\Annotation\Attributes;
@@ -76,6 +77,10 @@ final class UpdatedAt extends BaseModifier
 
         $this->column = $modifier->findColumnName($this->field, $this->column) ?? $this->field;
 
-        $modifier->addDatetimeColumn($this->column, $this->field);
+        $modifier->addDatetimeColumn(
+            $this->column,
+            $this->field,
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+        );
     }
 }
