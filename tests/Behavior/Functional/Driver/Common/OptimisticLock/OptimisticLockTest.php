@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\OptimisticLock;
 
-use Cycle\Database\Schema\AbstractColumn;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\News;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Page;
