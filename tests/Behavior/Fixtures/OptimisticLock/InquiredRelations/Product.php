@@ -11,15 +11,18 @@ use Cycle\ORM\Entity\Behavior\OptimisticLock;
 use Modules\Catalog\Domain\Entity\BoxItem;
 use Shared\Infrastructure\ValueObject\Sort;
 
-#[Entity]
-#[OptimisticLock(field: OptimisticLock::RULE_INCREMENT)]
+#[Entity(table: 'products')]
+#[OptimisticLock(field: 'revision', rule: OptimisticLock::RULE_INCREMENT)]
 class Product
 {
     #[Column(type: 'primary')]
     public int $id;
 
-    #[Column(type: 'string')]
+    #[Column(type: 'string', nullable: true)]
     public ?string $name=null;
+
+    #[Column(type: 'integer', name: 'parent_id', nullable: true)]
+    public ?int $parentId = null;
 
     #[HasMany(
         target: ProductBox::class,
@@ -27,6 +30,7 @@ class Product
         outerKey: 'parentId'
     )]
     public array $boxItems = [];
+
     #[Column(type: 'integer', name: 'revision')]
     public int $revision;
 

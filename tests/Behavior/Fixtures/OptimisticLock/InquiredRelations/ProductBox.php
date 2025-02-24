@@ -10,11 +10,20 @@ use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Cycle\ORM\Entity\Behavior\OptimisticLock;
 use Modules\Catalog\Domain\Entity\Element;
 
-#[Entity]
+#[Entity(table: 'product_boxes')]
 class ProductBox
 {
     #[Column(type: 'primary')]
     public int $id;
+
+    #[Column(type: 'integer', name: 'parent_id')]
+    public int $parentId;
+
+    #[Column(type: 'integer', name: 'box_item_id')]
+    public int $boxItemId;
+
+    #[Column(type: 'integer')]
+    public int $count;
 
     #[BelongsTo(
         target: Product::class,
@@ -23,18 +32,12 @@ class ProductBox
     )]
     public Product $parent;
 
-    public int $parentId;
-
     #[BelongsTo(
         target: Product::class,
         innerKey: 'boxItemId',
         outerKey: 'id'
     )]
     public Product $boxItem;
-
-    public int $boxItemId;
-
-    public int $count;
 
     public function __construct(
          Product $parent,
