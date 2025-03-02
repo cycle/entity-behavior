@@ -7,7 +7,7 @@
   </file>
   <file src="src/Dispatcher/ListenerProvider.php">
     <DocblockTypeContradiction>
-      <code><![CDATA[!is_array($event)]]></code>
+      <code><![CDATA[!\is_array($event)]]></code>
     </DocblockTypeContradiction>
     <MixedArgument>
       <code><![CDATA[$arguments]]></code>
@@ -23,7 +23,7 @@
       <code><![CDATA[$role]]></code>
     </MixedAssignment>
     <RedundantConditionGivenDocblockType>
-      <code><![CDATA[assert($listen instanceof Listen)]]></code>
+      <code><![CDATA[\assert($listen instanceof Listen)]]></code>
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Event/Mapper/Command/OnCreate.php">
