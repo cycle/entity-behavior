@@ -17,6 +17,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $drivers = [
     'sqlite'    => new Database\Config\SQLiteDriverConfig(
         queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ]
     ),
     'mysql'     => new Database\Config\MySQLDriverConfig(
         connection: new Database\Config\MySQL\TcpConnectionConfig(
@@ -26,7 +29,10 @@ $drivers = [
             user: 'root',
             password: 'root',
         ),
-        queryCache: true
+        queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
     'postgres' => new Database\Config\PostgresDriverConfig(
         connection: new Database\Config\Postgres\TcpConnectionConfig(
@@ -38,6 +44,9 @@ $drivers = [
         ),
         schema: 'public',
         queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
     'sqlserver' => new Database\Config\SQLServerDriverConfig(
         connection: new Database\Config\SQLServer\TcpConnectionConfig(
@@ -47,7 +56,10 @@ $drivers = [
             user: 'SA',
             password: 'SSpaSS__1'
         ),
-        queryCache: true
+        queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
 ];
 

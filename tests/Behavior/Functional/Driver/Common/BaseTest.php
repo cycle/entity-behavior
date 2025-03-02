@@ -25,8 +25,11 @@ abstract class BaseTest extends TestCase
 
     public function setUp(): void
     {
+        $this->setUpLogger($this->getDriver());
         if (self::$config['debug'] ?? false) {
             $this->enableProfiling();
+        } else {
+            $this->disableProfiling();
         }
 
         $this->dbal = new DatabaseManager(new DatabaseConfig());
