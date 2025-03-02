@@ -7,8 +7,6 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\InquiredRelati
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
-use Cycle\ORM\Entity\Behavior\OptimisticLock;
-use Modules\Catalog\Domain\Entity\Element;
 
 #[Entity(table: 'product_boxes')]
 class ProductBox
@@ -36,13 +34,14 @@ class ProductBox
     #[BelongsTo(
         target: Product::class,
         innerKey: 'boxItemId',
-        outerKey: 'id'
+        outerKey: 'id',
+        fkCreate: false,
     )]
     public Product $boxItem;
 
     public function __construct(
-         Product $parent,
-         Product $boxItem,
+        Product $parent,
+        Product $boxItem,
     ) {
         $this->parent = $parent;
         $this->boxItem = $boxItem;
