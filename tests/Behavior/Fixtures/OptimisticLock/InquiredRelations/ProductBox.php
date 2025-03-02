@@ -36,13 +36,14 @@ class ProductBox
     #[BelongsTo(
         target: Product::class,
         innerKey: 'boxItemId',
-        outerKey: 'id'
+        outerKey: 'id',
+        fkCreate: false,
     )]
     public Product $boxItem;
 
     public function __construct(
-         Product $parent,
-         Product $boxItem,
+        Product $parent,
+        Product $boxItem,
     ) {
         $this->parent = $parent;
         $this->boxItem = $boxItem;

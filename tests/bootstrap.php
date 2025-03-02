@@ -66,7 +66,7 @@ $drivers = [
 
 $db = getenv('DB') ?: null;
 \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest::$config = [
-        'debug' => getenv('DB_DEBUG') ?: true,
+        'debug' => getenv('DB_DEBUG') ?: false,
     ] + ($db === null
         ? $drivers
         : array_intersect_key($drivers, array_flip((array)$db))
