@@ -28,7 +28,8 @@ class ProductBox
     #[BelongsTo(
         target: Product::class,
         innerKey: 'parentId',
-        outerKey: 'id'
+        outerKey: 'id',
+        fkCreate: false,
     )]
     public Product $parent;
 
