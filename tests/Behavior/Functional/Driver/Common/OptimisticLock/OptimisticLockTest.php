@@ -18,16 +18,6 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class OptimisticLockTest extends BaseSchemaTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
-            'directories' => [dirname(__DIR__, 4) . '/Fixtures/OptimisticLock'],
-            'exclude' => [],
-        ])));
-    }
-
     public function testAddIntColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
@@ -37,7 +27,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
     }
 
@@ -50,7 +40,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame(ColumnInterface::STRING, $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
     }
 
@@ -63,7 +53,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('datetime', $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
     }
 
@@ -76,7 +66,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('revision')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('revision')->getGenerated()
+            $fields->get('revision')->getGenerated(),
         );
 
         // not added new columns
@@ -92,7 +82,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('revision')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('revision')->getGenerated()
+            $fields->get('revision')->getGenerated(),
         );
 
         // not added new columns
@@ -108,9 +98,19 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
 
         $this->assertSame(2, $fields->count());
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/OptimisticLock'],
+            'exclude' => [],
+        ])));
     }
 }

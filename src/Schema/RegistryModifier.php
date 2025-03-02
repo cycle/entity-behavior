@@ -51,11 +51,39 @@ class RegistryModifier
         $this->defaults = $registry->getDefaults();
     }
 
+    public static function isIntegerType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return \in_array($matches['type'], self::INTEGER_TYPES, true);
+    }
+
+    public static function isDatetimeType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return \in_array($matches['type'], self::DATETIME_TYPES, true);
+    }
+
+    public static function isStringType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return $matches['type'] === 'string';
+    }
+
+    public static function isUuidType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return $matches['type'] === 'uuid';
+    }
+
     public function addDatetimeColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isDatetimeType($this->fields->get($fieldName)->getType())) {
-                throw new BehaviorCompilationException(sprintf('Field %s must be of type datetime.', $fieldName));
+                throw new BehaviorCompilationException(\sprintf('Field %s must be of type datetime.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
             $this->fields->get($fieldName)->setGenerated($generated);
@@ -77,7 +105,7 @@ class RegistryModifier
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isIntegerType($this->fields->get($fieldName)->getType())) {
-                throw new BehaviorCompilationException(sprintf('Field %s must be of type integer.', $fieldName));
+                throw new BehaviorCompilationException(\sprintf('Field %s must be of type integer.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
             $this->fields->get($fieldName)->setGenerated($generated);
@@ -99,7 +127,7 @@ class RegistryModifier
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isStringType($this->fields->get($fieldName)->getType())) {
-                throw new BehaviorCompilationException(sprintf('Field %s must be of type string.', $fieldName));
+                throw new BehaviorCompilationException(\sprintf('Field %s must be of type string.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
             $this->fields->get($fieldName)->setGenerated($generated);
@@ -120,7 +148,7 @@ class RegistryModifier
     {
         if ($this->fields->has($fieldName)) {
             if (!static::isUuidType($this->fields->get($fieldName)->getType())) {
-                throw new BehaviorCompilationException(sprintf('Field %s must be of type uuid.', $fieldName));
+                throw new BehaviorCompilationException(\sprintf('Field %s must be of type uuid.', $fieldName));
             }
             $this->validateColumnName($fieldName, $columnName);
             $this->fields->get($fieldName)->setGenerated($generated);
@@ -158,7 +186,7 @@ class RegistryModifier
         }
 
         $handlers = $this->entity->getTypecast() ?? [];
-        if (!is_array($handlers)) {
+        if (!\is_array($handlers)) {
             $handlers = [$handlers];
         }
 
@@ -178,13 +206,13 @@ class RegistryModifier
 
         if ($field->getColumn() !== $columnName) {
             throw new BehaviorCompilationException(
-                sprintf(
+                \sprintf(
                     'Ambiguous column name definition. '
                     . 'The `%s` field already linked with the `%s` column but the behavior expects `%s`.',
                     $fieldName,
                     $field->getColumn(),
-                    $columnName
-                )
+                    $columnName,
+                ),
             );
         }
     }
@@ -211,33 +239,5 @@ class RegistryModifier
         }
 
         return $this->table->column($columnName)->getType() === $type;
-    }
-
-    public static function isIntegerType(string $type): bool
-    {
-        \preg_match(self::DEFINITION, $type, $matches);
-
-        return \in_array($matches['type'], self::INTEGER_TYPES, true);
-    }
-
-    public static function isDatetimeType(string $type): bool
-    {
-        \preg_match(self::DEFINITION, $type, $matches);
-
-        return \in_array($matches['type'], self::DATETIME_TYPES, true);
-    }
-
-    public static function isStringType(string $type): bool
-    {
-        \preg_match(self::DEFINITION, $type, $matches);
-
-        return $matches['type'] === 'string';
-    }
-
-    public static function isUuidType(string $type): bool
-    {
-        \preg_match(self::DEFINITION, $type, $matches);
-
-        return $matches['type'] === 'uuid';
     }
 }

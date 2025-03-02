@@ -9,6 +9,40 @@ use PHPUnit\Framework\TestCase;
 
 final class RegistryModifierTest extends TestCase
 {
+    public static function integerDataProvider(): \Traversable
+    {
+        yield ['int'];
+        yield ['smallint'];
+        yield ['tinyint'];
+        yield ['bigint'];
+        yield ['integer'];
+        yield ['tinyInteger'];
+        yield ['smallInteger'];
+        yield ['bigInteger'];
+        yield ['integer(4)'];
+    }
+
+    public static function datetimeDataProvider(): \Traversable
+    {
+        yield ['datetime'];
+        yield ['datetime2'];
+        yield ['datetime2(7)'];
+    }
+
+    public static function stringDataProvider(): \Traversable
+    {
+        yield ['string'];
+        yield ['string(32)'];
+    }
+
+    public static function invalidDataProvider(): \Traversable
+    {
+        yield ['text'];
+        yield ['json'];
+        yield ['foo'];
+        yield ['bar(32)'];
+    }
+
     /**
      * @dataProvider integerDataProvider
      */
@@ -77,39 +111,5 @@ final class RegistryModifierTest extends TestCase
     public function testIsUuidTypeFalse(mixed $type): void
     {
         $this->assertFalse(RegistryModifier::isUuidType($type));
-    }
-
-    public static function integerDataProvider(): \Traversable
-    {
-        yield ['int'];
-        yield ['smallint'];
-        yield ['tinyint'];
-        yield ['bigint'];
-        yield ['integer'];
-        yield ['tinyInteger'];
-        yield ['smallInteger'];
-        yield ['bigInteger'];
-        yield ['integer(4)'];
-    }
-
-    public static function datetimeDataProvider(): \Traversable
-    {
-        yield ['datetime'];
-        yield ['datetime2'];
-        yield ['datetime2(7)'];
-    }
-
-    public static function stringDataProvider(): \Traversable
-    {
-        yield ['string'];
-        yield ['string(32)'];
-    }
-
-    public static function invalidDataProvider(): \Traversable
-    {
-        yield ['text'];
-        yield ['json'];
-        yield ['foo'];
-        yield ['bar(32)'];
     }
 }

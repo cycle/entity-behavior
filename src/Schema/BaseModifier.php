@@ -13,23 +13,9 @@ abstract class BaseModifier implements SchemaModifierInterface
 {
     protected string $role;
 
-    /**
-     * @return class-string
-     */
-    abstract protected function getListenerClass(): string;
+    public function compute(Registry $registry): void {}
 
-    /**
-     * @return array<string, mixed>
-     */
-    abstract protected function getListenerArgs(): array;
-
-    public function compute(Registry $registry): void
-    {
-    }
-
-    public function render(Registry $registry): void
-    {
-    }
+    public function render(Registry $registry): void {}
 
     final public function withRole(string $role): static
     {
@@ -51,4 +37,14 @@ abstract class BaseModifier implements SchemaModifierInterface
             ListenerProvider::DEFINITION_ARGS => $args,
         ];
     }
+
+    /**
+     * @return class-string
+     */
+    abstract protected function getListenerClass(): string;
+
+    /**
+     * @return array<string, mixed>
+     */
+    abstract protected function getListenerArgs(): array;
 }

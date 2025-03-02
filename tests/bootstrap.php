@@ -5,21 +5,21 @@ declare(strict_types=1);
 use Cycle\Database;
 
 // phpcs:disable
-define('SPIRAL_INITIAL_TIME', microtime(true));
+\define('SPIRAL_INITIAL_TIME', \microtime(true));
 
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', '1');
-mb_internal_encoding('UTF-8');
+\error_reporting(E_ALL | E_STRICT);
+\ini_set('display_errors', '1');
+\mb_internal_encoding('UTF-8');
 
 //Composer
-require dirname(__DIR__) . '/vendor/autoload.php';
+require \dirname(__DIR__) . '/vendor/autoload.php';
 
 $drivers = [
     'sqlite'    => new Database\Config\SQLiteDriverConfig(
         queryCache: true,
         options: [
             'logInterpolatedQueries' => true,
-        ]
+        ],
     ),
     'mysql'     => new Database\Config\MySQLDriverConfig(
         connection: new Database\Config\MySQL\TcpConnectionConfig(
@@ -55,7 +55,7 @@ $drivers = [
             port: 11433,
             trustServerCertificate: true,
             user: 'SA',
-            password: 'YourStrong!Passw0rd'
+            password: 'YourStrong!Passw0rd',
         ),
         queryCache: true,
         options: [
@@ -64,10 +64,11 @@ $drivers = [
     ),
 ];
 
-$db = getenv('DB') ?: null;
+$db = \getenv('DB') ?: null;
 \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest::$config = [
-        'debug' => getenv('DB_DEBUG') ?: false,
-    ] + ($db === null
-        ? $drivers
-        : array_intersect_key($drivers, array_flip((array)$db))
-    );
+    'debug' => \getenv('DB_DEBUG') ?: false,
+] + (
+    $db === null
+    ? $drivers
+    : \array_intersect_key($drivers, \array_flip((array) $db))
+);

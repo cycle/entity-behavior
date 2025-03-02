@@ -12,16 +12,6 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class CreatedAtTest extends BaseSchemaTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
-            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/CreatedAt'],
-            'exclude' => [],
-        ])));
-    }
-
     public function testExistenceColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
@@ -43,5 +33,15 @@ abstract class CreatedAtTest extends BaseSchemaTest
         $this->assertTrue($fields->hasColumn('new_field'));
         $this->assertSame('datetime', $fields->get('newField')->getType());
         $this->assertSame(GeneratedField::BEFORE_INSERT, $fields->get('newField')->getGenerated());
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/CreatedAt'],
+            'exclude' => [],
+        ])));
     }
 }

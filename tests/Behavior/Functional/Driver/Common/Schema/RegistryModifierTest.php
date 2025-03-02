@@ -21,19 +21,6 @@ abstract class RegistryModifierTest extends BaseTest
     protected RegistryModifier $modifier;
     protected Registry $registry;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->registry = new Registry($this->dbal);
-
-        $entity = (new Entity())->setRole(self::ROLE_TEST);
-        $this->registry->register($entity);
-        $this->registry->linkTable($entity, 'default', 'tests');
-
-        $this->modifier = new RegistryModifier($this->registry, self::ROLE_TEST);
-    }
-
     public function testAddDatetimeField(): void
     {
         $this->modifier->addDatetimeColumn('created_at', 'createdAt');
@@ -99,7 +86,7 @@ abstract class RegistryModifierTest extends BaseTest
         // entity has default typecast
         $this->assertSame(
             [Typecast::class, CustomTypecast::class],
-            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
+            $this->registry->getEntity(self::ROLE_TEST)->getTypecast(),
         );
     }
 
@@ -118,7 +105,7 @@ abstract class RegistryModifierTest extends BaseTest
         // entity has default typecast and custom typecast
         $this->assertSame(
             [CustomTypecast::class, Typecast::class],
-            $this->registry->getEntity(self::ROLE_TEST)->getTypecast()
+            $this->registry->getEntity(self::ROLE_TEST)->getTypecast(),
         );
     }
 
@@ -151,5 +138,18 @@ abstract class RegistryModifierTest extends BaseTest
         $this->modifier->setTypecast($field, [Uuid::class, 'fromString']);
 
         $this->assertSame(['foo', 'bar'], $field->getTypecast());
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registry = new Registry($this->dbal);
+
+        $entity = (new Entity())->setRole(self::ROLE_TEST);
+        $this->registry->register($entity);
+        $this->registry->linkTable($entity, 'default', 'tests');
+
+        $this->modifier = new RegistryModifier($this->registry, self::ROLE_TEST);
     }
 }

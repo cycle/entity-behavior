@@ -17,60 +17,6 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable(
-            'posts',
-            [
-                'id' => 'primary',
-                'updated_at' => 'datetime,nullable',
-                'custom_updated_at' => 'datetime,nullable',
-                'not_nullable_updated_at' => 'datetime',
-                'content' => 'string,nullable'
-            ]
-        );
-
-        $this->withSchema(new Schema([
-            Post::class => [
-                SchemaInterface::ROLE => 'post',
-                SchemaInterface::DATABASE => 'default',
-                SchemaInterface::TABLE => 'posts',
-                SchemaInterface::PRIMARY_KEY => 'id',
-                SchemaInterface::COLUMNS => [
-                    'id' => 'id',
-                    'updatedAt' => 'updated_at',
-                    'customUpdatedAt' => 'custom_updated_at',
-                    'notNullableUpdatedAt' => 'not_nullable_updated_at',
-                    'content' => 'content'
-                ],
-                SchemaInterface::LISTENERS => [
-                    [
-                        UpdatedAt::class,
-                        ['nullable' => true]
-                    ],
-                    [
-                        UpdatedAt::class,
-                        ['field' => 'customUpdatedAt', 'nullable' => true]
-                    ],
-                    [
-                        UpdatedAt::class,
-                        ['field' => 'notNullableUpdatedAt', 'nullable' => false]
-                    ]
-                ],
-                SchemaInterface::TYPECAST => [
-                    'id' => 'int',
-                    'updatedAt' => 'datetime',
-                    'customUpdatedAt' => 'datetime',
-                    'notNullableUpdatedAt' => 'datetime'
-                ],
-                SchemaInterface::SCHEMA => [],
-                SchemaInterface::RELATIONS => [],
-            ],
-        ]));
-    }
-
     public function testCreate(): void
     {
         $post = new Post();
@@ -117,5 +63,59 @@ abstract class ListenerTest extends BaseListenerTest
         $this->assertGreaterThan(0, $data->updatedAt <=> $updatedAt);
         $this->assertGreaterThan(0, $data->customUpdatedAt <=> $customUpdatedAt);
         $this->assertSame('test', $data->content);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable(
+            'posts',
+            [
+                'id' => 'primary',
+                'updated_at' => 'datetime,nullable',
+                'custom_updated_at' => 'datetime,nullable',
+                'not_nullable_updated_at' => 'datetime',
+                'content' => 'string,nullable',
+            ],
+        );
+
+        $this->withSchema(new Schema([
+            Post::class => [
+                SchemaInterface::ROLE => 'post',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'posts',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'updatedAt' => 'updated_at',
+                    'customUpdatedAt' => 'custom_updated_at',
+                    'notNullableUpdatedAt' => 'not_nullable_updated_at',
+                    'content' => 'content',
+                ],
+                SchemaInterface::LISTENERS => [
+                    [
+                        UpdatedAt::class,
+                        ['nullable' => true],
+                    ],
+                    [
+                        UpdatedAt::class,
+                        ['field' => 'customUpdatedAt', 'nullable' => true],
+                    ],
+                    [
+                        UpdatedAt::class,
+                        ['field' => 'notNullableUpdatedAt', 'nullable' => false],
+                    ],
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => 'int',
+                    'updatedAt' => 'datetime',
+                    'customUpdatedAt' => 'datetime',
+                    'notNullableUpdatedAt' => 'datetime',
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [],
+            ],
+        ]));
     }
 }

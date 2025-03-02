@@ -6,6 +6,4 @@ namespace Cycle\ORM\Entity\Behavior\Event\Mapper\Command;
 
 use Cycle\ORM\Entity\Behavior\Event\Mapper\QueueCommand;
 
-final class OnDelete extends QueueCommand
-{
-}
+final class OnDelete extends QueueCommand {}

@@ -39,27 +39,6 @@ abstract class InquiredRelationTest extends BaseListenerTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $schema = $this->compileSchema(new Tokenizer(new TokenizerConfig([
-            'directories' => [dirname(__DIR__, 4) . '/Fixtures/OptimisticLock/InquiredRelations'],
-            'exclude' => [],
-        ])));
-
-        $this->orm = new ORM(
-            new Factory(
-                $this->dbal,
-                RelationConfig::getDefault(),
-                null,
-                new ArrayCollectionFactory(),
-            ),
-            $schema,
-            new EventDrivenCommandGenerator($schema, new SimpleContainer()),
-        );
-    }
-
     public function testUpdateWithSelectCollection(): void
     {
         $repo = $this->orm->getRepository(Product::class);
@@ -99,6 +78,27 @@ abstract class InquiredRelationTest extends BaseListenerTest
         $products = $repo->findAll();
         $this->save($product1);
         $this->assertEquals(3, $product1->revision);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $schema = $this->compileSchema(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/OptimisticLock/InquiredRelations'],
+            'exclude' => [],
+        ])));
+
+        $this->orm = new ORM(
+            new Factory(
+                $this->dbal,
+                RelationConfig::getDefault(),
+                null,
+                new ArrayCollectionFactory(),
+            ),
+            $schema,
+            new EventDrivenCommandGenerator($schema, new SimpleContainer()),
+        );
     }
 
     private function compileSchema(Tokenizer $tokenizer): SchemaInterface

@@ -13,8 +13,15 @@ final class UpdatedAt
 {
     public function __construct(
         private string $field = 'updatedAt',
-        private bool $nullable = false
-    ) {
+        private bool $nullable = false,
+    ) {}
+
+    #[Listen(OnCreate::class)]
+    public function onCreate(OnCreate $event): void
+    {
+        if (!$this->nullable) {
+            $event->state->register($this->field, $event->timestamp);
+        }
     }
 
     #[Listen(OnUpdate::class)]
@@ -22,14 +29,6 @@ final class UpdatedAt
     {
         if ($event->command instanceof StoreCommandInterface) {
             $event->command->registerAppendix($this->field, $event->timestamp);
-        }
-    }
-
-    #[Listen(OnCreate::class)]
-    public function onCreate(OnCreate $event): void
-    {
-        if (!$this->nullable) {
-            $event->state->register($this->field, $event->timestamp);
         }
     }
 }

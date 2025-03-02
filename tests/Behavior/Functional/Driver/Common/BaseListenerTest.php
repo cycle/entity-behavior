@@ -17,13 +17,6 @@ abstract class BaseListenerTest extends BaseTest
 {
     protected ?ORM $orm = null;
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->orm = null;
-    }
-
     public function withSchema(SchemaInterface $schema): ORM
     {
         $this->orm = new ORM(
@@ -31,13 +24,20 @@ abstract class BaseListenerTest extends BaseTest
                 $this->dbal,
                 RelationConfig::getDefault(),
                 null,
-                new ArrayCollectionFactory()
+                new ArrayCollectionFactory(),
             ),
             $schema,
-            new EventDrivenCommandGenerator($schema, new SimpleContainer())
+            new EventDrivenCommandGenerator($schema, new SimpleContainer()),
         );
 
         return $this->orm;
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->orm = null;
     }
 
     protected function save(object ...$entities): void

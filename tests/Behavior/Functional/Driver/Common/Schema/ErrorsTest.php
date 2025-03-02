@@ -11,11 +11,13 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class ErrorsTest extends BaseSchemaTest
 {
-    /** @dataProvider errorsProvider */
+    /**
+     * @dataProvider errorsProvider
+     */
     public function testErrors(Tokenizer $tokenizer, string $message): void
     {
         $this->expectException(BehaviorCompilationException::class);
-        $this->expectExceptionMessageMatches(sprintf('/%s/', $message));
+        $this->expectExceptionMessageMatches(\sprintf('/%s/', $message));
 
         $this->compileWithTokenizer($tokenizer);
     }
@@ -25,18 +27,18 @@ abstract class ErrorsTest extends BaseSchemaTest
         return [
             'Field type' => [
                 new Tokenizer(new TokenizerConfig([
-                    'directories' => [dirname(__DIR__, 4) . '/Fixtures/Wrong/FieldType'],
+                    'directories' => [\dirname(__DIR__, 4) . '/Fixtures/Wrong/FieldType'],
                     'exclude' => [],
                 ])),
-                'Field wrongCreatedAt must be of type datetime.'
+                'Field wrongCreatedAt must be of type datetime.',
             ],
             'Column name' => [
                 new Tokenizer(new TokenizerConfig([
-                    'directories' => [dirname(__DIR__, 4) . '/Fixtures/Wrong/ColumnName'],
+                    'directories' => [\dirname(__DIR__, 4) . '/Fixtures/Wrong/ColumnName'],
                     'exclude' => [],
                 ])),
-                'Ambiguous column name definition. The `updatedAt` field already linked with the `custom_updated_at`'
-            ]
+                'Ambiguous column name definition. The `updatedAt` field already linked with the `custom_updated_at`',
+            ],
         ];
     }
 }

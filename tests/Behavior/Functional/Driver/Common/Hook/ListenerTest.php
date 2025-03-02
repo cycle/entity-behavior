@@ -20,64 +20,6 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable(
-            'posts',
-            [
-                'id' => 'primary',
-                'title' => 'string,nullable',
-                'content' => 'string,nullable',
-                'slug' => 'string,nullable',
-                'last_event' => 'string,nullable',
-                'created_at' => 'datetime,nullable',
-                'updated_at' => 'datetime,nullable'
-            ]
-        );
-
-        $this->withSchema(new Schema([
-            Post::class => [
-                SchemaInterface::ROLE => 'post',
-                SchemaInterface::DATABASE => 'default',
-                SchemaInterface::TABLE => 'posts',
-                SchemaInterface::PRIMARY_KEY => 'id',
-                SchemaInterface::COLUMNS => [
-                    'id' => 'id',
-                    'title' => 'title',
-                    'content' => 'content',
-                    'slug' => 'slug',
-                    'lastEvent' => 'last_event',
-                    'createdAt' => 'created_at',
-                    'updatedAt' => 'updated_at',
-                ],
-                // listeners for different events
-                SchemaInterface::LISTENERS => [
-                    [
-                        Hook::class,
-                        ['callable' => PostService::class . '::update', 'events' => [OnUpdate::class]]
-                    ],
-                    [
-                        Hook::class,
-                        ['callable' => [Post::class, 'onCreate'], 'events' => [OnCreate::class]]
-                    ],
-                    [
-                        Hook::class,
-                        ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]]
-                    ]
-                ],
-                SchemaInterface::TYPECAST => [
-                    'id' => 'int',
-                    'createdAt' => 'datetime',
-                    'updatedAt' => 'datetime'
-                ],
-                SchemaInterface::SCHEMA => [],
-                SchemaInterface::RELATIONS => [],
-            ],
-        ]));
-    }
-
     public function testCreate(): void
     {
         $post = $this->createPost();
@@ -119,6 +61,64 @@ abstract class ListenerTest extends BaseListenerTest
         $this->assertNotNull($data->updatedAt);
         $this->assertNotNull($data->createdAt);
         $this->assertSame(OnUpdate::class, $data->lastEvent);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable(
+            'posts',
+            [
+                'id' => 'primary',
+                'title' => 'string,nullable',
+                'content' => 'string,nullable',
+                'slug' => 'string,nullable',
+                'last_event' => 'string,nullable',
+                'created_at' => 'datetime,nullable',
+                'updated_at' => 'datetime,nullable',
+            ],
+        );
+
+        $this->withSchema(new Schema([
+            Post::class => [
+                SchemaInterface::ROLE => 'post',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'posts',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'content' => 'content',
+                    'slug' => 'slug',
+                    'lastEvent' => 'last_event',
+                    'createdAt' => 'created_at',
+                    'updatedAt' => 'updated_at',
+                ],
+                // listeners for different events
+                SchemaInterface::LISTENERS => [
+                    [
+                        Hook::class,
+                        ['callable' => PostService::class . '::update', 'events' => [OnUpdate::class]],
+                    ],
+                    [
+                        Hook::class,
+                        ['callable' => [Post::class, 'onCreate'], 'events' => [OnCreate::class]],
+                    ],
+                    [
+                        Hook::class,
+                        ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]],
+                    ],
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => 'int',
+                    'createdAt' => 'datetime',
+                    'updatedAt' => 'datetime',
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [],
+            ],
+        ]));
     }
 
     private function createPost(): Post

@@ -8,8 +8,6 @@ use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Relation\HasMany;
 use Cycle\ORM\Entity\Behavior\OptimisticLock;
-use Modules\Catalog\Domain\Entity\BoxItem;
-use Shared\Infrastructure\ValueObject\Sort;
 
 #[Entity(table: 'products')]
 #[OptimisticLock(field: 'revision', rule: OptimisticLock::RULE_INCREMENT)]
@@ -19,7 +17,7 @@ class Product
     public int $id;
 
     #[Column(type: 'string', nullable: true)]
-    public ?string $name=null;
+    public ?string $name = null;
 
     #[Column(type: 'integer', name: 'parent_id', nullable: true)]
     public ?int $parentId = null;
@@ -27,7 +25,7 @@ class Product
     #[HasMany(
         target: ProductBox::class,
         innerKey: 'id',
-        outerKey: 'parentId'
+        outerKey: 'parentId',
     )]
     public array $boxItems = [];
 

@@ -16,8 +16,6 @@ use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\OptimisticLockException;
 use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\RecordIsLockedException;
 use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;
-use DateTimeImmutable;
-use DateTimeInterface;
 use JetBrains\PhpStorm\ExpectedValues;
 
 final class OptimisticLock
@@ -28,18 +26,22 @@ final class OptimisticLock
      * Generates current timestamp with microseconds as string
      */
     public const RULE_MICROTIME = 'microtime';
+
     /**
      * Uses `random_bytes(32)` under hood
      */
     public const RULE_RAND_STR = 'random-string';
+
     /**
      * Only for the numeric column
      */
     public const RULE_INCREMENT = 'increment';
+
     /**
      * Only for the column of the `datetime` type
      */
     public const RULE_DATETIME = 'datetime';
+
     /**
      * This means that the user manually sets a new version and defines the field
      */
@@ -53,7 +55,7 @@ final class OptimisticLock
     public function __construct(
         private string $field = 'version',
         #[ExpectedValues(valuesFromClass: self::class)]
-        private string $rule = self::DEFAULT_RULE
+        private string $rule = self::DEFAULT_RULE,
     ) {
         $this->isKnownRule = $this->rule !== self::RULE_MANUAL;
     }
@@ -108,13 +110,13 @@ final class OptimisticLock
             });
     }
 
-    private function getLockingValue(mixed $previousValue): int|string|DateTimeInterface
+    private function getLockingValue(mixed $previousValue): int|string|\DateTimeInterface
     {
         return match ($this->rule) {
-            self::RULE_INCREMENT => (int)$previousValue + 1,
-            self::RULE_DATETIME => new DateTimeImmutable(),
+            self::RULE_INCREMENT => (int) $previousValue + 1,
+            self::RULE_DATETIME => new \DateTimeImmutable(),
             self::RULE_RAND_STR => \bin2hex(\random_bytes(16)),
-            default => \number_format(\microtime(true), 6, '.', '')
+            default => \number_format(\microtime(true), 6, '.', ''),
         };
     }
 }

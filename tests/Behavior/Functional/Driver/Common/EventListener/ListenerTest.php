@@ -17,6 +17,19 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    public function testApply(): void
+    {
+        $post = new Post();
+
+        $this->save($post);
+
+        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
+        $data = $select->fetchOne();
+
+        $this->assertSame('modified by EventListener', $data->title);
+        $this->assertSame('baz', $data->content);
+    }
+
     public function setUp(): void
     {
         parent::setUp();
@@ -26,8 +39,8 @@ abstract class ListenerTest extends BaseListenerTest
             [
                 'id' => 'primary',
                 'title' => 'string,nullable',
-                'content' => 'string,nullable'
-            ]
+                'content' => 'string,nullable',
+            ],
         );
 
         $this->withSchema(new Schema([
@@ -40,26 +53,13 @@ abstract class ListenerTest extends BaseListenerTest
                 SchemaInterface::LISTENERS => [
                     [
                         PostService::class,
-                        ['foo' => 'modified by EventListener', 'bar' => ['baz']]
-                    ]
+                        ['foo' => 'modified by EventListener', 'bar' => ['baz']],
+                    ],
                 ],
                 SchemaInterface::TYPECAST => ['id' => 'int'],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
             ],
         ]));
-    }
-
-    public function testApply(): void
-    {
-        $post = new Post();
-
-        $this->save($post);
-
-        $select = new Select($this->orm->with(heap: new Heap()), Post::class);
-        $data = $select->fetchOne();
-
-        $this->assertSame('modified by EventListener', $data->title);
-        $this->assertSame('baz', $data->content);
     }
 }

@@ -14,7 +14,7 @@ final class Hook
 
     public function __construct(
         callable $callable,
-        private array $events
+        private array $events,
     ) {
         $this->callable = $callable;
     }

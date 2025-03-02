@@ -10,7 +10,7 @@ class RecordIsLockedException extends OptimisticLockException
 {
     public function __construct(Node $node)
     {
-        $message = sprintf('The `%s` record is locked.', $node->getRole());
+        $message = \sprintf('The `%s` record is locked.', $node->getRole());
 
         parent::__construct($message);
     }
