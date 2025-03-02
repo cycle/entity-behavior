@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\OptimisticLock;
 
+use Cycle\Database\ColumnInterface;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\News;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Post;
-use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Product;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Item;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\WithAllParameters;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
 use Cycle\ORM\Schema\GeneratedField;
@@ -46,7 +47,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
 
         $this->assertTrue($fields->has('version'));
         $this->assertTrue($fields->hasColumn('version'));
-        $this->assertSame(AbstractColumn::STRING, $fields->get('version')->getType());
+        $this->assertSame(ColumnInterface::STRING, $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
             $fields->get('version')->getGenerated()
@@ -68,7 +69,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
 
     public function testExistColumn(): void
     {
-        $fields = $this->registry->getEntity(Product::class)->getFields();
+        $fields = $this->registry->getEntity(Item::class)->getFields();
 
         $this->assertTrue($fields->has('revision'));
         $this->assertTrue($fields->hasColumn('revision_field'));

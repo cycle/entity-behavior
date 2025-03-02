@@ -10,7 +10,7 @@ use Cycle\ORM\Entity\Behavior\OptimisticLock;
 
 #[Entity]
 #[OptimisticLock(field: 'revision')]
-class Product
+class Item
 {
     #[Column(type: 'primary')]
     public int $id;
