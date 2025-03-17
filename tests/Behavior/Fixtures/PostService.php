@@ -12,9 +12,8 @@ class PostService
 {
     public function __construct(
         private string $foo,
-        private array $bar
-    ) {
-    }
+        private array $bar,
+    ) {}
 
     public static function update(OnUpdate $event): void
     {

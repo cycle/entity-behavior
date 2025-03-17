@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\OptimisticLock;
 
-use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\ColumnInterface;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\News;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Post;
-use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Product;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Item;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\WithAllParameters;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
 use Cycle\ORM\Schema\GeneratedField;
@@ -18,16 +18,6 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class OptimisticLockTest extends BaseSchemaTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
-            'directories' => [dirname(__DIR__, 4) . '/Fixtures/OptimisticLock'],
-            'exclude' => [],
-        ])));
-    }
-
     public function testAddIntColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
@@ -37,7 +27,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
     }
 
@@ -47,10 +37,10 @@ abstract class OptimisticLockTest extends BaseSchemaTest
 
         $this->assertTrue($fields->has('version'));
         $this->assertTrue($fields->hasColumn('version'));
-        $this->assertSame(AbstractColumn::STRING, $fields->get('version')->getType());
+        $this->assertSame(ColumnInterface::STRING, $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
     }
 
@@ -63,20 +53,20 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('datetime', $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
     }
 
     public function testExistColumn(): void
     {
-        $fields = $this->registry->getEntity(Product::class)->getFields();
+        $fields = $this->registry->getEntity(Item::class)->getFields();
 
         $this->assertTrue($fields->has('revision'));
         $this->assertTrue($fields->hasColumn('revision_field'));
         $this->assertSame('integer', $fields->get('revision')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('revision')->getGenerated()
+            $fields->get('revision')->getGenerated(),
         );
 
         // not added new columns
@@ -92,7 +82,7 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('revision')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('revision')->getGenerated()
+            $fields->get('revision')->getGenerated(),
         );
 
         // not added new columns
@@ -108,9 +98,19 @@ abstract class OptimisticLockTest extends BaseSchemaTest
         $this->assertSame('integer', $fields->get('version')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated()
+            $fields->get('version')->getGenerated(),
         );
 
         $this->assertSame(2, $fields->count());
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/OptimisticLock'],
+            'exclude' => [],
+        ])));
     }
 }

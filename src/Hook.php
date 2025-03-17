@@ -35,7 +35,7 @@ final class Hook extends BaseModifier
      */
     public function __construct(
         callable $callable,
-        private array|string $events
+        private array|string $events,
     ) {
         $this->callable = $callable;
 
@@ -54,7 +54,7 @@ final class Hook extends BaseModifier
     {
         return [
             'callable' => $this->callable,
-            'events' => $this->events
+            'events' => $this->events,
         ];
     }
 }

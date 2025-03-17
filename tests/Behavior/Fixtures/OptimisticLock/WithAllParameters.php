@@ -12,7 +12,7 @@ use Cycle\ORM\Entity\Behavior\OptimisticLock;
 #[OptimisticLock(
     field: 'revision',
     column: 'revision_field',
-    rule: OptimisticLock::RULE_INCREMENT
+    rule: OptimisticLock::RULE_INCREMENT,
 )]
 final class WithAllParameters
 {

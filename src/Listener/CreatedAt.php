@@ -10,9 +10,8 @@ use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnCreate;
 final class CreatedAt
 {
     public function __construct(
-        private string $field = 'createdAt'
-    ) {
-    }
+        private string $field = 'createdAt',
+    ) {}
 
     #[Listen(OnCreate::class)]
     public function __invoke(OnCreate $event): void

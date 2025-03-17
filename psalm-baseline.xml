@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.8.8@1361cd33008feb3ae2b4a93f1860e14e538ec8c2">
+  <file src="src/CreatedAt.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[CreatedAt]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Dispatcher/ListenerProvider.php">
+    <DocblockTypeContradiction>
+      <code><![CDATA[!\is_array($event)]]></code>
+    </DocblockTypeContradiction>
+    <MixedArgument>
+      <code><![CDATA[$arguments]]></code>
+      <code><![CDATA[$definition]]></code>
+      <code><![CDATA[$definition[self::DEFINITION_CLASS]]]></code>
+      <code><![CDATA[$role]]></code>
+    </MixedArgument>
+    <MixedArrayAccess>
+      <code><![CDATA[$definition[self::DEFINITION_CLASS]]]></code>
+    </MixedArrayAccess>
+    <MixedAssignment>
+      <code><![CDATA[$arguments]]></code>
+      <code><![CDATA[$role]]></code>
+    </MixedAssignment>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[\assert($listen instanceof Listen)]]></code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/Event/Mapper/Command/OnCreate.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[OnCreate]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Event/Mapper/Command/OnDelete.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[OnDelete]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Event/Mapper/Command/OnUpdate.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[OnUpdate]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/EventDrivenCommandGenerator.php">
+    <MixedReturnStatement>
+      <code><![CDATA[$event->command]]></code>
+      <code><![CDATA[$event->command]]></code>
+      <code><![CDATA[$event->command]]></code>
+    </MixedReturnStatement>
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[$timestamp]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/EventListener.php">
+    <MixedArrayAssignment>
+      <code><![CDATA[$schema[SchemaInterface::LISTENERS][]]]></code>
+    </MixedArrayAssignment>
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[$role]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Exception/OptimisticLock/ChangedVersionException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ChangedVersionException]]></code>
+    </ClassMustBeFinal>
+    <MixedArgument>
+      <code><![CDATA[$new]]></code>
+      <code><![CDATA[$old]]></code>
+    </MixedArgument>
+  </file>
+  <file src="src/Exception/OptimisticLock/RecordIsLockedException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[RecordIsLockedException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Hook.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[Hook]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Listener/OptimisticLock.php">
+    <MixedAssignment>
+      <code><![CDATA[$nodeValue]]></code>
+      <code><![CDATA[$stateValue]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/OptimisticLock.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[OptimisticLock]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Schema/BaseModifier.php">
+    <MixedArrayAssignment>
+      <code><![CDATA[$schema[SchemaInterface::LISTENERS][]]]></code>
+      <code><![CDATA[$schema[SchemaInterface::LISTENERS][]]]></code>
+    </MixedArrayAssignment>
+  </file>
+  <file src="src/Schema/RegistryModifier.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$columnName]]></code>
+      <code><![CDATA[$rule]]></code>
+    </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[RegistryModifier]]></code>
+    </ClassMustBeFinal>
+    <MixedAssignment>
+      <code><![CDATA[$defaultHandlers]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/SoftDelete.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[SoftDelete]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/UpdatedAt.php">
+    <PropertyNotSetInConstructor>
+      <code><![CDATA[UpdatedAt]]></code>
+    </PropertyNotSetInConstructor>
+  </file>
+</files>

@@ -45,7 +45,6 @@ final class OptimisticLock extends BaseModifier
     public const RULE_INCREMENT = Listener::RULE_INCREMENT;
     public const RULE_DATETIME = Listener::RULE_DATETIME;
     public const RULE_MANUAL = Listener::RULE_MANUAL;
-
     private const DEFAULT_INT_VERSION = 1;
     private const STRING_COLUMN_LENGTH = 32;
 
@@ -61,23 +60,9 @@ final class OptimisticLock extends BaseModifier
         ?string $column = null,
         /** @Enum({"microtime", "random-string", "increment", "datetime"}) */
         #[ExpectedValues(valuesFromClass: Listener::class)]
-        private ?string $rule = null
+        private ?string $rule = null,
     ) {
         $this->column = $column;
-    }
-
-    protected function getListenerClass(): string
-    {
-        return Listener::class;
-    }
-
-    #[ArrayShape(['field' => 'string', 'rule' => 'null|string'])]
-    protected function getListenerArgs(): array
-    {
-        return [
-            'field' => $this->field,
-            'rule' => $this->rule
-        ];
     }
 
     public function compute(Registry $registry): void
@@ -93,10 +78,24 @@ final class OptimisticLock extends BaseModifier
     public function render(Registry $registry): void
     {
         $this->column = (new RegistryModifier($registry, $this->role))
-                ->findColumnName($this->field, $this->column)
+            ->findColumnName($this->field, $this->column)
             ?? $this->field;
 
         $this->addField($registry);
+    }
+
+    protected function getListenerClass(): string
+    {
+        return Listener::class;
+    }
+
+    #[ArrayShape(['field' => 'string', 'rule' => 'null|string'])]
+    protected function getListenerArgs(): array
+    {
+        return [
+            'field' => $this->field,
+            'rule' => $this->rule,
+        ];
     }
 
     /**
@@ -114,7 +113,7 @@ final class OptimisticLock extends BaseModifier
             RegistryModifier::isIntegerType($type) => self::RULE_INCREMENT,
             RegistryModifier::isStringType($type) => self::RULE_MICROTIME,
             RegistryModifier::isDatetimeType($type) => self::RULE_DATETIME,
-            default => throw new BehaviorCompilationException('Failed to compute rule based on column type.')
+            default => throw new BehaviorCompilationException('Failed to compute rule based on column type.'),
         };
     }
 
@@ -122,7 +121,7 @@ final class OptimisticLock extends BaseModifier
     {
         $fields = $registry->getEntity($this->role)->getFields();
 
-        assert($this->column !== null);
+        \assert($this->column !== null);
 
         $this->rule ??= $fields->has($this->field)
             ? $this->computeRule($fields->get($this->field))
@@ -137,7 +136,7 @@ final class OptimisticLock extends BaseModifier
                     ->addIntegerColumn(
                         $this->column,
                         $this->field,
-                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
                     )
                     ->nullable(false)
                     ->defaultValue(self::DEFAULT_INT_VERSION);
@@ -148,7 +147,7 @@ final class OptimisticLock extends BaseModifier
                     ->addStringColumn(
                         $this->column,
                         $this->field,
-                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+                        GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
                     )
                     ->nullable(false)
                     ->string(self::STRING_COLUMN_LENGTH);
@@ -157,18 +156,18 @@ final class OptimisticLock extends BaseModifier
                 $modifier->addDatetimeColumn(
                     $this->column,
                     $this->field,
-                    GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+                    GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
                 );
                 break;
             default:
                 throw new BehaviorCompilationException(
-                    sprintf(
+                    \sprintf(
                         'Wrong rule `%s` for the %s behavior in the `%s.%s` field.',
                         $this->rule,
                         self::class,
                         $this->role,
-                        $this->field
-                    )
+                        $this->field,
+                    ),
                 );
         }
     }

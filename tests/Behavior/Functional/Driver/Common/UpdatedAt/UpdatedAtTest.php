@@ -12,16 +12,6 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class UpdatedAtTest extends BaseSchemaTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
-            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/UpdatedAt'],
-            'exclude' => [],
-        ])));
-    }
-
     public function testExistenceColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
@@ -31,7 +21,7 @@ abstract class UpdatedAtTest extends BaseSchemaTest
         $this->assertSame('datetime', $fields->get('updatedAt')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('updatedAt')->getGenerated()
+            $fields->get('updatedAt')->getGenerated(),
         );
 
         // No new fields added
@@ -47,7 +37,17 @@ abstract class UpdatedAtTest extends BaseSchemaTest
         $this->assertSame('datetime', $fields->get('newField')->getType());
         $this->assertSame(
             GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('newField')->getGenerated()
+            $fields->get('newField')->getGenerated(),
         );
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/UpdatedAt'],
+            'exclude' => [],
+        ])));
     }
 }

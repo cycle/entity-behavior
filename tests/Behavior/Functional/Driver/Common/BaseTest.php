@@ -23,33 +23,6 @@ abstract class BaseTest extends TestCase
     protected ?DriverInterface $driver = null;
     private static array $driverCache = [];
 
-    public function setUp(): void
-    {
-        if (self::$config['debug'] ?? false) {
-            $this->enableProfiling();
-        }
-
-        $this->dbal = new DatabaseManager(new DatabaseConfig());
-        $this->dbal->addDatabase(
-            new Database(
-                'default',
-                '',
-                $this->getDriver()
-            )
-        );
-    }
-
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->dbal->database('default'));
-
-        $this->dbal = null;
-
-        if (\function_exists('gc_collect_cycles')) {
-            gc_collect_cycles();
-        }
-    }
-
     public function getDriver(): DriverInterface
     {
         if (isset(static::$driverCache[static::DRIVER])) {
@@ -64,7 +37,37 @@ abstract class BaseTest extends TestCase
         return static::$driverCache[static::DRIVER] = $this->driver;
     }
 
-    protected function dropDatabase(Database $database = null): void
+    public function setUp(): void
+    {
+        $this->setUpLogger($this->getDriver());
+        if (self::$config['debug'] ?? false) {
+            $this->enableProfiling();
+        } else {
+            $this->disableProfiling();
+        }
+
+        $this->dbal = new DatabaseManager(new DatabaseConfig());
+        $this->dbal->addDatabase(
+            new Database(
+                'default',
+                '',
+                $this->getDriver(),
+            ),
+        );
+    }
+
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->dbal->database('default'));
+
+        $this->dbal = null;
+
+        if (\function_exists('gc_collect_cycles')) {
+            \gc_collect_cycles();
+        }
+    }
+
+    protected function dropDatabase(?Database $database = null): void
     {
         if ($database === null) {
             return;

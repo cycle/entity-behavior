@@ -13,8 +13,7 @@ final class SoftDelete
 {
     public function __construct(
         private string $field = 'deletedAt',
-    ) {
-    }
+    ) {}
 
     #[Listen(OnDelete::class)]
     public function __invoke(OnDelete $event): void

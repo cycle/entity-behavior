@@ -16,16 +16,6 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class HookTest extends BaseSchemaTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
-            'directories' => [dirname(__DIR__, 4) . '/Fixtures/Hook'],
-            'exclude' => [],
-        ])));
-    }
-
     public function testAddListener(): void
     {
         $listeners = $this->schema->define(Post::class, SchemaInterface::LISTENERS);
@@ -38,13 +28,23 @@ abstract class HookTest extends BaseSchemaTest
         $this->assertSame(Hook::class, $listeners[0][0]);
         $this->assertSame(
             ['callable' => [PostService::class, 'update'], 'events' => [OnUpdate::class]],
-            $listeners[0][1]
+            $listeners[0][1],
         );
 
         $this->assertSame(Hook::class, $listeners[1][0]);
         $this->assertSame(
             ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]],
-            $listeners[1][1]
+            $listeners[1][1],
         );
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/Hook'],
+            'exclude' => [],
+        ])));
     }
 }

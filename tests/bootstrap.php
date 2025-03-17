@@ -5,18 +5,21 @@ declare(strict_types=1);
 use Cycle\Database;
 
 // phpcs:disable
-define('SPIRAL_INITIAL_TIME', microtime(true));
+\define('SPIRAL_INITIAL_TIME', \microtime(true));
 
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', '1');
-mb_internal_encoding('UTF-8');
+\error_reporting(E_ALL | E_STRICT);
+\ini_set('display_errors', '1');
+\mb_internal_encoding('UTF-8');
 
 //Composer
-require dirname(__DIR__) . '/vendor/autoload.php';
+require \dirname(__DIR__) . '/vendor/autoload.php';
 
 $drivers = [
     'sqlite'    => new Database\Config\SQLiteDriverConfig(
         queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
     'mysql'     => new Database\Config\MySQLDriverConfig(
         connection: new Database\Config\MySQL\TcpConnectionConfig(
@@ -24,9 +27,12 @@ $drivers = [
             host: '127.0.0.1',
             port: 13306,
             user: 'root',
-            password: 'root',
+            password: 'YourStrong!Passw0rd',
         ),
-        queryCache: true
+        queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
     'postgres' => new Database\Config\PostgresDriverConfig(
         connection: new Database\Config\Postgres\TcpConnectionConfig(
@@ -34,27 +40,35 @@ $drivers = [
             host: '127.0.0.1',
             port: 15432,
             user: 'postgres',
-            password: 'postgres',
+            password: 'YourStrong!Passw0rd',
         ),
         schema: 'public',
         queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
     'sqlserver' => new Database\Config\SQLServerDriverConfig(
         connection: new Database\Config\SQLServer\TcpConnectionConfig(
             database: 'tempdb',
             host: '127.0.0.1',
             port: 11433,
+            trustServerCertificate: true,
             user: 'SA',
-            password: 'SSpaSS__1'
+            password: 'YourStrong!Passw0rd',
         ),
-        queryCache: true
+        queryCache: true,
+        options: [
+            'logInterpolatedQueries' => true,
+        ],
     ),
 ];
 
-$db = getenv('DB') ?: null;
+$db = \getenv('DB') ?: null;
 \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest::$config = [
-        'debug' => getenv('DB_DEBUG') ?: false,
-    ] + ($db === null
-        ? $drivers
-        : array_intersect_key($drivers, array_flip((array)$db))
-    );
+    'debug' => \getenv('DB_DEBUG') ?: false,
+] + (
+    $db === null
+    ? $drivers
+    : \array_intersect_key($drivers, \array_flip((array) $db))
+);

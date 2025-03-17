@@ -27,21 +27,21 @@ final class ListenerProvider implements ListenerProviderInterface
 
     public function __construct(
         SchemaInterface $schema,
-        ContainerInterface $container
+        ContainerInterface $container,
     ) {
         $this->configure($schema, new Injector($container));
     }
 
     public function getListenersForEvent(object $event): iterable
     {
-        assert($event instanceof MapperEvent);
+        \assert($event instanceof MapperEvent);
 
         $role = $event->role;
-        if (!array_key_exists($role, $this->listeners)) {
+        if (!\array_key_exists($role, $this->listeners)) {
             return [];
         }
 
-        if (!array_key_exists($event::class, $this->listeners[$role])) {
+        if (!\array_key_exists($event::class, $this->listeners[$role])) {
             return [];
         }
 
@@ -52,7 +52,7 @@ final class ListenerProvider implements ListenerProviderInterface
     {
         foreach ($schema->getRoles() as $role) {
             $config = $schema->define($role, SchemaInterface::LISTENERS);
-            if (!is_array($config) || $config === []) {
+            if (!\is_array($config) || $config === []) {
                 continue;
             }
             $this->resolveListeners($role, $config, $injector);
@@ -62,9 +62,9 @@ final class ListenerProvider implements ListenerProviderInterface
     private function resolveListeners(string $role, array $config, Injector $injector): void
     {
         foreach ($config as $definition) {
-            assert(is_array($definition) || is_string($definition));
+            \assert(\is_array($definition) || \is_string($definition));
 
-            $definition = (array)$definition;
+            $definition = (array) $definition;
 
             if (!$this->validateBehaviorDefinition($definition)) {
                 continue;
@@ -102,12 +102,12 @@ final class ListenerProvider implements ListenerProviderInterface
 
     private function validateBehaviorDefinition(mixed $definition): bool
     {
-        if (!class_exists($definition[self::DEFINITION_CLASS], true)) {
+        if (!\class_exists($definition[self::DEFINITION_CLASS], true)) {
             return false;
         }
         if (
-            array_key_exists(self::DEFINITION_ARGS, $definition) &&
-            !is_array($definition[self::DEFINITION_ARGS])
+            \array_key_exists(self::DEFINITION_ARGS, $definition) &&
+            !\is_array($definition[self::DEFINITION_ARGS])
         ) {
             return false;
         }
@@ -122,23 +122,23 @@ final class ListenerProvider implements ListenerProviderInterface
         $events = $listener->getEventsList();
         foreach ($events as $event) {
             // validate
-            if (!is_array($event) || array_keys($event) !== [0, 1]) {
+            if (!\is_array($event) || \array_keys($event) !== [0, 1]) {
                 throw new RuntimeException(
-                    sprintf(
+                    \sprintf(
                         'The method %s::getEventsList() should return list of tuples [event-class, listener-method].',
-                        $listener::class
-                    )
+                        $listener::class,
+                    ),
                 );
             }
             $method = $event[1];
             $callable = [$listener, $method];
             if (!\is_callable($callable)) {
                 throw new RuntimeException(
-                    sprintf(
+                    \sprintf(
                         'Cann\'t build callable from instance of `%s` and `%s` method name.',
                         $listener::class,
-                        $method
-                    )
+                        $method,
+                    ),
                 );
             }
         }
@@ -158,13 +158,13 @@ final class ListenerProvider implements ListenerProviderInterface
             foreach ($method->getAttributes(Listen::class) as $attribute) {
                 try {
                     $listen = $attribute->newInstance();
-                    assert($listen instanceof Listen);
+                    \assert($listen instanceof Listen);
                 } catch (\Throwable $e) {
-                    throw new RuntimeException(sprintf(
+                    throw new RuntimeException(\sprintf(
                         "Cann't instantiate attribute %s in the %s::%s method.",
                         Listen::class,
                         $class,
-                        $method->getName()
+                        $method->getName(),
                     ), 0, $e);
                 }
                 $result[] = [$listen->event, $method->getName()];

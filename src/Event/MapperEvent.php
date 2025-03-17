@@ -21,7 +21,6 @@ abstract class MapperEvent
         public Node $node,
         public State $state,
         public SourceInterface $source,
-        public \DateTimeImmutable $timestamp
-    ) {
-    }
+        public \DateTimeImmutable $timestamp,
+    ) {}
 }

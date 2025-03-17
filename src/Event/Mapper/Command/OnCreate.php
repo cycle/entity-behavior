@@ -6,6 +6,4 @@ namespace Cycle\ORM\Entity\Behavior\Event\Mapper\Command;
 
 use Cycle\ORM\Entity\Behavior\Event\Mapper\QueueCommand;
 
-final class OnCreate extends QueueCommand
-{
-}
+final class OnCreate extends QueueCommand {}

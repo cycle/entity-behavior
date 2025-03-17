@@ -22,7 +22,12 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
+          - "8.4"
     steps:
+      - name: Install ODBC driver.
+        run: |
+            sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+            sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup DB services
@@ -36,21 +41,21 @@ jobs:
           php-version: ${{ matrix.php-version }}
           coverage: pcov
           tools: pecl
-          extensions: mbstring, pdo, pdo_sqlite, pdo_pgsql, pdo_sqlsrv-5.10.0beta2, pdo_mysql
+          extensions: mbstring, pdo, pdo_sqlite, pdo_pgsql, pdo_sqlsrv-5.11, pdo_mysql
       - name: Get Composer Cache Directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
       - name: Restore Composer Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies with composer
-        if: matrix.php-version != '8.4'
+        if: matrix.php-version != '8.5'
         run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
-      - name: Install dependencies with composer php 8.4
-        if: matrix.php-version == '8.4'
+      - name: Install dependencies with composer php 8.5
+        if: matrix.php-version == '8.5'
         run: composer update --ignore-platform-reqs --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
       - name: Execute Tests
         run: |
@@ -80,6 +85,7 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
+          - "8.4"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -94,18 +100,18 @@ jobs:
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
       - name: Restore Composer Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies with composer
-        if: matrix.php-version != '8.4'
+        if: matrix.php-version != '8.5'
         run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
-      - name: Install dependencies with composer php 8.4
-        if: matrix.php-version == '8.4'
+      - name: Install dependencies with composer php 8.5
+        if: matrix.php-version == '8.5'
         run: composer update --ignore-platform-reqs --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Execute Tests

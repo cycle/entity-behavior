@@ -43,22 +43,9 @@ final class UpdatedAt extends BaseModifier
     public function __construct(
         private string $field = 'updatedAt',
         ?string $column = null,
-        private bool $nullable = false
+        private bool $nullable = false,
     ) {
         $this->column = $column;
-    }
-
-    protected function getListenerClass(): string
-    {
-        return Listener::class;
-    }
-
-    protected function getListenerArgs(): array
-    {
-        return [
-            'field' => $this->field,
-            'nullable' => $this->nullable
-        ];
     }
 
     public function compute(Registry $registry): void
@@ -80,7 +67,20 @@ final class UpdatedAt extends BaseModifier
         $modifier->addDatetimeColumn(
             $this->column,
             $this->field,
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE
+            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
         );
+    }
+
+    protected function getListenerClass(): string
+    {
+        return Listener::class;
+    }
+
+    protected function getListenerArgs(): array
+    {
+        return [
+            'field' => $this->field,
+            'nullable' => $this->nullable,
+        ];
     }
 }

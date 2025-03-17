@@ -17,50 +17,6 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable(
-            'posts',
-            [
-                'id' => 'primary',
-                'created_at' => 'datetime,nullable',
-                'custom_created_at' => 'datetime,nullable',
-                'content' => 'string,nullable'
-            ]
-        );
-
-        $this->withSchema(new Schema([
-            Post::class => [
-                SchemaInterface::ROLE => 'post',
-                SchemaInterface::DATABASE => 'default',
-                SchemaInterface::TABLE => 'posts',
-                SchemaInterface::PRIMARY_KEY => 'id',
-                SchemaInterface::COLUMNS => [
-                    'id' => 'id',
-                    'createdAt' => 'created_at',
-                    'customCreatedAt' => 'custom_created_at',
-                    'content' => 'content'
-                ],
-                SchemaInterface::LISTENERS => [
-                    CreatedAt::class,
-                    [
-                        CreatedAt::class,
-                        ['field' => 'customCreatedAt']
-                    ]
-                ],
-                SchemaInterface::TYPECAST => [
-                    'id' => 'int',
-                    'createdAt' => 'datetime',
-                    'customCreatedAt' => 'datetime'
-                ],
-                SchemaInterface::SCHEMA => [],
-                SchemaInterface::RELATIONS => [],
-            ],
-        ]));
-    }
-
     public function testCreate(): void
     {
         $post = new Post();
@@ -95,5 +51,49 @@ abstract class ListenerTest extends BaseListenerTest
         $this->assertSame(0, $data->createdAt <=> $createdAt);
         $this->assertSame(0, $data->customCreatedAt <=> $customCreatedAt);
         $this->assertSame('test', $data->content);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable(
+            'posts',
+            [
+                'id' => 'primary',
+                'created_at' => 'datetime,nullable',
+                'custom_created_at' => 'datetime,nullable',
+                'content' => 'string,nullable',
+            ],
+        );
+
+        $this->withSchema(new Schema([
+            Post::class => [
+                SchemaInterface::ROLE => 'post',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'posts',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'createdAt' => 'created_at',
+                    'customCreatedAt' => 'custom_created_at',
+                    'content' => 'content',
+                ],
+                SchemaInterface::LISTENERS => [
+                    CreatedAt::class,
+                    [
+                        CreatedAt::class,
+                        ['field' => 'customCreatedAt'],
+                    ],
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => 'int',
+                    'createdAt' => 'datetime',
+                    'customCreatedAt' => 'datetime',
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [],
+            ],
+        ]));
     }
 }

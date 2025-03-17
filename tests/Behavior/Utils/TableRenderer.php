@@ -34,10 +34,6 @@ final class TableRenderer
      *      ]
      * );
      *
-     * @param AbstractTable $table
-     * @param array         $columns
-     * @param array         $defaults
-     *
      * @throws SchemaException
      */
     public function renderColumns(AbstractTable $table, array $columns, array $defaults): void
@@ -53,12 +49,12 @@ final class TableRenderer
             $this->renderColumn(
                 $table->column($name),
                 $type,
-                array_key_exists($name, $defaults),
-                $defaults[$name] ?? null
+                \array_key_exists($name, $defaults),
+                $defaults[$name] ?? null,
             );
         }
 
-        if (count($primaryKeys)) {
+        if (\count($primaryKeys)) {
             $table->setPrimaryKeys($primaryKeys);
         }
     }
@@ -82,8 +78,6 @@ final class TableRenderer
      *
      * Attention, column state will be affected!
      *
-     * @param AbstractColumn $column
-     * @param array          $type
      * @param bool           $hasDefault Must be set to true if default value was set by user.
      * @param mixed          $default    Default value declared by record schema.
      *
@@ -103,16 +97,16 @@ final class TableRenderer
 
         try {
             // bypassing call to AbstractColumn->__call method (or specialized column method)
-            call_user_func_array([$column, $type['type']], $type['options']);
+            \call_user_func_array([$column, $type['type']], $type['options']);
         } catch (\Throwable $e) {
             throw new SchemaException(
                 "Invalid column type definition in '{$column->getTable()}'.'{$column->getName()}'",
                 $e->getCode(),
-                $e
+                $e,
             );
         }
 
-        if (in_array($column->getAbstractType(), ['primary', 'bigPrimary'])) {
+        if (\in_array($column->getAbstractType(), ['primary', 'bigPrimary'])) {
             // no default value can be set of primary keys
             return;
         }
@@ -126,7 +120,7 @@ final class TableRenderer
             return;
         }
 
-        if (null === $default) {
+        if ($default === null) {
             // default value is stated and NULL, clear what to do
             $column->nullable(true);
         }
@@ -134,20 +128,13 @@ final class TableRenderer
         $column->defaultValue($default);
     }
 
-    /**
-     * @param string $table
-     * @param string $column
-     * @param string $definition
-     *
-     * @return array
-     */
     protected function parse(string $table, string $column, string $definition): array
     {
         if (
-            !preg_match(
+            !\preg_match(
                 '/(?P<type>[a-z]+)(?: *\((?P<options>[^\)]+)\))?(?: *, *(?P<flags>.+))?/i',
                 $definition,
-                $type
+                $type,
             )
         ) {
             throw new SchemaException("Invalid column type definition in '{$table}'.'{$column}'");
@@ -156,13 +143,13 @@ final class TableRenderer
         if (empty($type['options'])) {
             $type['options'] = [];
         } else {
-            $type['options'] = array_map('trim', explode(',', $type['options'] ?? ''));
+            $type['options'] = \array_map('trim', \explode(',', $type['options'] ?? ''));
         }
 
         if (empty($type['flags'])) {
             $type['flags'] = [];
         } else {
-            $type['flags'] = array_map('trim', explode(',', $type['flags'] ?? ''));
+            $type['flags'] = \array_map('trim', \explode(',', $type['flags'] ?? ''));
         }
 
         unset($type[0], $type[1], $type[2], $type[3]);
@@ -170,28 +157,20 @@ final class TableRenderer
         return $type;
     }
 
-    /**
-     * @param array  $type
-     * @param string $flag
-     *
-     * @return bool
-     */
     protected function hasFlag(array $type, string $flag): bool
     {
-        return in_array($flag, $type['flags'], true);
+        return \in_array($flag, $type['flags'], true);
     }
 
     /**
      * Cast default value based on column type. Required to prevent conflicts when not nullable
      * column added to existed table with data in.
      *
-     * @param AbstractColumn $column
-     *
      * @return mixed
      */
     protected function castDefault(AbstractColumn $column)
     {
-        if (in_array($column->getAbstractType(), ['timestamp', 'datetime', 'time', 'date'])) {
+        if (\in_array($column->getAbstractType(), ['timestamp', 'datetime', 'time', 'date'])) {
             return 0;
         }
 

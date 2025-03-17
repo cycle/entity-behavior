@@ -18,6 +18,7 @@ class Post
 {
     #[Column(type: 'primary')]
     public int $id;
+
     public ?string $title = null;
     public ?string $content = null;
     public ?string $slug = null;
@@ -28,7 +29,7 @@ class Post
     public static function onCreate(OnCreate $event): void
     {
         $event->state->register('createdAt', new \DateTimeImmutable('now', new \DateTimeZone('UTC')));
-        $event->state->register('slug', strtolower($event->entity->title));
+        $event->state->register('slug', \strtolower($event->entity->title));
     }
 
     public static function touch(OnCreate|OnUpdate $event): void

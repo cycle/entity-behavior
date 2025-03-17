@@ -29,6 +29,28 @@ final class EventDrivenCommandGenerator extends CommandGenerator
         $this->eventDispatcher = new Dispatcher($listenerProvider);
     }
 
+    public function generateStoreCommand(ORMInterface $orm, Tuple $tuple): ?CommandInterface
+    {
+        $this->timestamp = new \DateTimeImmutable();
+
+        $command = parent::generateStoreCommand($orm, $tuple);
+
+        unset($this->timestamp);
+
+        return $command;
+    }
+
+    public function generateDeleteCommand(ORMInterface $orm, Tuple $tuple): ?CommandInterface
+    {
+        $this->timestamp = new \DateTimeImmutable();
+
+        $command = parent::generateDeleteCommand($orm, $tuple);
+
+        unset($this->timestamp);
+
+        return $command;
+    }
+
     protected function storeEntity(ORMInterface $orm, Tuple $tuple, bool $isNew): ?CommandInterface
     {
         $role = $tuple->node->getRole();
@@ -52,7 +74,7 @@ final class EventDrivenCommandGenerator extends CommandGenerator
         ORMInterface $orm,
         Tuple $tuple,
         string $parentRole,
-        bool $isNew
+        bool $isNew,
     ): ?CommandInterface {
         $mapper = $orm->getMapper($parentRole);
         $source = $orm->getSource($parentRole);
@@ -81,7 +103,7 @@ final class EventDrivenCommandGenerator extends CommandGenerator
             $tuple->node,
             $tuple->state,
             $source,
-            $this->timestamp
+            $this->timestamp,
         );
 
         $event->command = parent::deleteEntity($orm, $tuple);
@@ -89,27 +111,5 @@ final class EventDrivenCommandGenerator extends CommandGenerator
         $event = $this->eventDispatcher->dispatch($event);
 
         return $event->command;
-    }
-
-    public function generateStoreCommand(ORMInterface $orm, Tuple $tuple): ?CommandInterface
-    {
-        $this->timestamp = new \DateTimeImmutable();
-
-        $command = parent::generateStoreCommand($orm, $tuple);
-
-        unset($this->timestamp);
-
-        return $command;
-    }
-
-    public function generateDeleteCommand(ORMInterface $orm, Tuple $tuple): ?CommandInterface
-    {
-        $this->timestamp = new \DateTimeImmutable();
-
-        $command = parent::generateDeleteCommand($orm, $tuple);
-
-        unset($this->timestamp);
-
-        return $command;
     }
 }

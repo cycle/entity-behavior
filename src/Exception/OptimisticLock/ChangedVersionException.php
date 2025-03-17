@@ -8,6 +8,6 @@ class ChangedVersionException extends OptimisticLockException
 {
     public function __construct(mixed $old, mixed $new)
     {
-        parent::__construct(sprintf('Record version change detected. Old value `%s`, a new value `%s`.', $old, $new));
+        parent::__construct(\sprintf('Record version change detected. Old value `%s`, a new value `%s`.', $old, $new));
     }
 }

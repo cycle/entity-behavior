@@ -40,17 +40,12 @@ final class EventListener implements SchemaModifierInterface
      */
     public function __construct(
         private string $listener,
-        private array $args = []
-    ) {
-    }
+        private array $args = [],
+    ) {}
 
-    public function compute(Registry $registry): void
-    {
-    }
+    public function compute(Registry $registry): void {}
 
-    public function render(Registry $registry): void
-    {
-    }
+    public function render(Registry $registry): void {}
 
     public function modifySchema(array &$schema): void
     {

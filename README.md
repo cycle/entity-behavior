@@ -34,9 +34,9 @@ $container = new Container();
 $commandGenerator = new EventDrivenCommandGenerator($schema, $container);
 
 $orm = new ORM(
-  factory: $factory, 
-  schema: $schema, 
-  commandGenerator: $commandGenerator
+    factory: $factory,
+    schema: $schema,
+    commandGenerator: $commandGenerator,
 );
 ```
 

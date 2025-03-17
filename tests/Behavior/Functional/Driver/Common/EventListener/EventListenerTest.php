@@ -15,16 +15,6 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class EventListenerTest extends BaseSchemaTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
-            'directories' => [dirname(__DIR__, 4) . '/Fixtures/EventListener'],
-            'exclude' => [],
-        ])));
-    }
-
     public function testSchemaWithArgs(): void
     {
         $listeners = $this->schema->define(Post::class, SchemaInterface::LISTENERS);
@@ -42,5 +32,15 @@ abstract class EventListenerTest extends BaseSchemaTest
         $this->assertIsArray($listeners);
         $this->assertSame(CommentService::class, $listeners[0]);
         $this->assertCount(1, $listeners);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+            'directories' => [\dirname(__DIR__, 4) . '/Fixtures/EventListener'],
+            'exclude' => [],
+        ])));
     }
 }

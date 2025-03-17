@@ -13,11 +13,7 @@ class Author
     public function __construct(
         #[Column(type: 'string', name: 'author_first_name')]
         public string $firstName,
-
         #[Column(type: 'string', name: 'author_last_name')]
         public string $lastName,
-    )
-    {
-        
-    }
+    ) {}
 }

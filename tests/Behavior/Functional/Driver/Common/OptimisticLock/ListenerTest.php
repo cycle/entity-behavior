@@ -22,92 +22,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable(
-            'comments',
-            [
-                'id' => 'primary',
-                'version_int' => 'int',
-                'version_str' => 'string',
-                'version_datetime' => 'datetime',
-                'version_microtime' => 'string',
-                'version_custom' => 'int,nullable',
-                'content' => 'string,nullable',
-                'author_first_name' => 'string',
-                'author_last_name' => 'string',
-            ]
-        );
-
-        $this->withSchema(new Schema([
-            Comment::class => [
-                SchemaInterface::ROLE => 'comment',
-                SchemaInterface::DATABASE => 'default',
-                SchemaInterface::TABLE => 'comments',
-                SchemaInterface::PRIMARY_KEY => 'id',
-                SchemaInterface::COLUMNS => [
-                    'id' => 'id',
-                    'versionInt' => 'version_int',
-                    'versionStr' => 'version_str',
-                    'versionDatetime' => 'version_datetime',
-                    'versionMicrotime' => 'version_microtime',
-                    'versionCustom' => 'version_custom',
-                    'content' => 'content'
-                ],
-                SchemaInterface::LISTENERS => [
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionInt']
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionStr', 'rule' => OptimisticLock::RULE_RAND_STR]
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionDatetime', 'rule' => OptimisticLock::RULE_DATETIME]
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionMicrotime', 'rule' => OptimisticLock::RULE_MICROTIME]
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_MANUAL]
-                    ]
-                ],
-                SchemaInterface::TYPECAST => [
-                    'id' => 'int',
-                    'versionInt' => 'int',
-                    'versionCustom' => 'int',
-                    'versionDatetime' => 'datetime'
-                ],
-                SchemaInterface::SCHEMA => [],
-                SchemaInterface::RELATIONS => [
-                    'author' => [
-                        Relation::TYPE => Relation::EMBEDDED,
-                        Relation::TARGET => Author::class,
-                        Relation::LOAD => Relation::LOAD_EAGER,
-                        Relation::SCHEMA => [],
-                    ]
-                ],
-            ],
-            Author::class => [
-                SchemaInterface::ENTITY => Author::class,
-                SchemaInterface::DATABASE => 'default',
-                SchemaInterface::TABLE => 'comments',
-                SchemaInterface::PRIMARY_KEY => ['id'],
-                SchemaInterface::COLUMNS => [
-                    'first_name' => 'author_first_name',
-                    'last_name' => 'author_last_name',
-                ],
-            ]
-        ]));
-    }
-
-    public function testAddVersionOnCreate()
+    public function testAddVersionOnCreate(): void
     {
         $comment = new Comment();
         $comment->content = 'test';
@@ -116,7 +31,7 @@ abstract class ListenerTest extends BaseListenerTest
 
         $this->orm = $this->orm->with(heap: new Heap());
         $select = new Select($this->orm, Comment::class);
-        
+
         $comment = $select->fetchOne();
 
         $this->assertSame(1, $comment->versionInt);
@@ -125,7 +40,7 @@ abstract class ListenerTest extends BaseListenerTest
         $this->assertIsString($comment->versionStr);
     }
 
-    public function testManualAddVersionOnCreate()
+    public function testManualAddVersionOnCreate(): void
     {
         $comment = new Comment();
         $comment->content = 'test';
@@ -147,7 +62,7 @@ abstract class ListenerTest extends BaseListenerTest
         $this->assertSame('b0b55bb7237bb75611f7df8175e926d1', $comment->versionStr);
     }
 
-    public function testManualVersionControl()
+    public function testManualVersionControl(): void
     {
         $comment = new Comment();
         $comment->content = 'test';
@@ -167,7 +82,7 @@ abstract class ListenerTest extends BaseListenerTest
         $this->assertSame(2, $comment->versionCustom);
     }
 
-    public function testExceptionOnChangeVersion()
+    public function testExceptionOnChangeVersion(): void
     {
         $comment = new Comment();
         $comment->content = 'test';
@@ -234,5 +149,90 @@ abstract class ListenerTest extends BaseListenerTest
         $this->expectException(RecordIsLockedException::class);
         $this->expectExceptionMessage('The `comment` record is locked.');
         (new Transaction($orm2))->persist($data2)->run();
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable(
+            'comments',
+            [
+                'id' => 'primary',
+                'version_int' => 'int',
+                'version_str' => 'string',
+                'version_datetime' => 'datetime',
+                'version_microtime' => 'string',
+                'version_custom' => 'int,nullable',
+                'content' => 'string,nullable',
+                'author_first_name' => 'string',
+                'author_last_name' => 'string',
+            ],
+        );
+
+        $this->withSchema(new Schema([
+            Comment::class => [
+                SchemaInterface::ROLE => 'comment',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'comments',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'versionInt' => 'version_int',
+                    'versionStr' => 'version_str',
+                    'versionDatetime' => 'version_datetime',
+                    'versionMicrotime' => 'version_microtime',
+                    'versionCustom' => 'version_custom',
+                    'content' => 'content',
+                ],
+                SchemaInterface::LISTENERS => [
+                    [
+                        OptimisticLock::class,
+                        ['field' => 'versionInt'],
+                    ],
+                    [
+                        OptimisticLock::class,
+                        ['field' => 'versionStr', 'rule' => OptimisticLock::RULE_RAND_STR],
+                    ],
+                    [
+                        OptimisticLock::class,
+                        ['field' => 'versionDatetime', 'rule' => OptimisticLock::RULE_DATETIME],
+                    ],
+                    [
+                        OptimisticLock::class,
+                        ['field' => 'versionMicrotime', 'rule' => OptimisticLock::RULE_MICROTIME],
+                    ],
+                    [
+                        OptimisticLock::class,
+                        ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_MANUAL],
+                    ],
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => 'int',
+                    'versionInt' => 'int',
+                    'versionCustom' => 'int',
+                    'versionDatetime' => 'datetime',
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [
+                    'author' => [
+                        Relation::TYPE => Relation::EMBEDDED,
+                        Relation::TARGET => Author::class,
+                        Relation::LOAD => Relation::LOAD_EAGER,
+                        Relation::SCHEMA => [],
+                    ],
+                ],
+            ],
+            Author::class => [
+                SchemaInterface::ENTITY => Author::class,
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'comments',
+                SchemaInterface::PRIMARY_KEY => ['id'],
+                SchemaInterface::COLUMNS => [
+                    'first_name' => 'author_first_name',
+                    'last_name' => 'author_last_name',
+                ],
+            ],
+        ]));
     }
 }
