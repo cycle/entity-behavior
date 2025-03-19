@@ -35,7 +35,7 @@ use Spiral\Attributes\AttributeReader;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 
-class BaseTest extends \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest
+abstract class BaseTest extends \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest
 {
     protected SchemaInterface $schema;
     protected ORMInterface $orm;
@@ -61,7 +61,7 @@ class BaseTest extends \Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common
 
         $classLocator = $tokenizer->classLocator();
 
-        $this->schema = new Schema((new Compiler())->compile($this->registry = new Registry($this->dbal), [
+        $this->schema = new Schema((new Compiler())->compile(new Registry($this->dbal), [
             new ResetTables(),
             new Embeddings($classLocator, $reader),
             new Entities($classLocator, $reader),
