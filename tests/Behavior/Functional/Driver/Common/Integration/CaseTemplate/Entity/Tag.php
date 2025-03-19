@@ -24,7 +24,7 @@ class Tag
     public \DateTimeImmutable $createdAt;
 
     /** @var iterable<Post> */
-    #[ManyToMany(target: Post::class, innerKey: 'id', outerKey: 'id', throughInnerKey: 'tagId', throughOuterKey: 'postId', through: PostTag::class, fkCreate: false)]
+    #[ManyToMany(target: Post::class, innerKey: 'id', outerKey: 'id', throughInnerKey: 'tagId', throughOuterKey: 'postId', through: PostTag::class)]
     public iterable $posts = [];
 
     private function __construct() {}

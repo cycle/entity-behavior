@@ -30,11 +30,11 @@ class User
     public \DateTimeImmutable $updatedAt;
 
     /** @var iterable<Post> */
-    #[HasMany(target: Post::class, innerKey: 'id', outerKey: 'userId')]
+    #[HasMany(target: Post::class, innerKey: 'id', outerKey: 'userId', fkCreate: false)]
     public iterable $posts = [];
 
     /** @var iterable<Comment> */
-    #[HasMany(target: Comment::class, innerKey: 'id', outerKey: 'userId')]
+    #[HasMany(target: Comment::class, innerKey: 'id', outerKey: 'userId', fkCreate: false)]
     public iterable $comments = [];
 
     private function __construct() {}

@@ -46,7 +46,7 @@ class Post
     public \DateTimeImmutable $updated_at;
     public ?\DateTimeImmutable $deleted_at = null;
 
-    #[BelongsTo(target: User::class, innerKey: 'userId', fkCreate: false)]
+    #[BelongsTo(target: User::class, innerKey: 'userId', fkAction: 'NO ACTION')]
     public User $user;
 
     #[Column(type: 'bigInteger', name: 'user_id')]
@@ -57,7 +57,7 @@ class Post
     public iterable $tags = [];
 
     /** @var iterable<Comment> */
-    #[HasMany(target: Comment::class, innerKey: 'id', outerKey: 'postId')]
+    #[HasMany(target: Comment::class, innerKey: 'id', outerKey: 'postId', fkCreate: false)]
     public iterable $comments = [];
 
     private function __construct() {}

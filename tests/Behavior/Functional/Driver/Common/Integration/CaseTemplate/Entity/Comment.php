@@ -35,10 +35,10 @@ class Comment
     public \DateTimeImmutable $updatedAt;
     public ?\DateTimeImmutable $deletedAt = null;
 
-    #[BelongsTo(target: User::class, innerKey: 'userId', fkCreate: false)]
+    #[BelongsTo(target: User::class, innerKey: 'userId')]
     public User $user;
 
-    #[BelongsTo(target: Post::class, innerKey: 'postId', fkCreate: false)]
+    #[BelongsTo(target: Post::class, innerKey: 'postId')]
     public ?Post $post = null;
 
     #[Column(type: 'bigInteger', name: 'user_id')]
