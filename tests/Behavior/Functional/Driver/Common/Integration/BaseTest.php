@@ -18,7 +18,6 @@ use Cycle\ORM\ORM;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
-use Cycle\ORM\Transaction;
 use Cycle\ORM\Transaction\UnitOfWork;
 use Cycle\Schema\Compiler;
 use Cycle\Schema\Generator\ForeignKeys;
