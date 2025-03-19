@@ -37,7 +37,7 @@ abstract class BaseTest extends TestCase
         return static::$driverCache[static::DRIVER] = $this->driver;
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->setUpLogger($this->getDriver());
         if (self::$config['debug'] ?? false) {

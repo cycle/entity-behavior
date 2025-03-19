@@ -59,7 +59,7 @@ final class OptimisticLock extends BaseModifier
         private string $field = 'version',
         ?string $column = null,
         /** @Enum({"microtime", "random-string", "increment", "datetime"}) */
-        #[ExpectedValues(valuesFromClass: Listener::class)]
+        #[ExpectedValues(valuesFromClass: self::class)]
         private ?string $rule = null,
     ) {
         $this->column = $column;
