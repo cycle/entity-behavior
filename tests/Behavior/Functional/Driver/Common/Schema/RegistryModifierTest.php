@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\ColumnInterface;
+use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CustomTypecast;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseTest;
@@ -57,6 +58,28 @@ abstract class RegistryModifierTest extends BaseTest
         $this->assertSame('version_int', $fields->get('version')->getColumn());
     }
 
+    public function testAddBigIntegerField(): void
+    {
+        $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
+
+        $entity = $this->registry->getEntity(self::ROLE_TEST);
+        $fields = $entity->getFields();
+
+        $this->assertTrue($fields->has('snowflake'));
+        $this->assertSame('bigInteger', $fields->get('snowflake')->getType());
+        $this->assertSame('snowflake_column', $fields->get('snowflake')->getColumn());
+    }
+
+    public function testAddBigIntegerFieldThrowsException(): void
+    {
+        $this->modifier->addIntegerColumn('snowflake_column', 'snowflake');
+
+        $this->expectException(BehaviorCompilationException::class);
+        $this->expectExceptionMessage('Field snowflake must be of type big integer.');
+
+        $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
+    }
+
     public function testAddUuidField(): void
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
@@ -73,15 +96,19 @@ abstract class RegistryModifierTest extends BaseTest
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
         $this->modifier->addIntegerColumn('counter_column', 'counter');
+        $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
         $field1 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid');
         $field2 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('counter');
+        $field3 = $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('snowflake');
 
         $this->modifier->setTypecast($field1, [Uuid::class, 'fromString']);
         $this->modifier->setTypecast($field2, 'int', CustomTypecast::class);
+        $this->modifier->setTypecast($field3, 'int', CustomTypecast::class);
 
         // field has custom UUID typecast
         $this->assertSame([Uuid::class, 'fromString'], $field1->getTypecast());
         $this->assertSame('int', $field2->getTypecast());
+        $this->assertSame('int', $field3->getTypecast());
 
         // entity has default typecast
         $this->assertSame(

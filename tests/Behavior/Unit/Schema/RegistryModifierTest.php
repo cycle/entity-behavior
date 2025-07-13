@@ -22,6 +22,12 @@ final class RegistryModifierTest extends TestCase
         yield ['integer(4)'];
     }
 
+    public static function bigIntegerDataProvider(): \Traversable
+    {
+        yield ['bigint'];
+        yield ['bigInteger'];
+    }
+
     public static function datetimeDataProvider(): \Traversable
     {
         yield ['datetime'];
@@ -59,6 +65,24 @@ final class RegistryModifierTest extends TestCase
     public function testIsIntegerTypeFalse(mixed $type): void
     {
         $this->assertFalse(RegistryModifier::isIntegerType($type));
+    }
+
+    /**
+     * @dataProvider bigIntegerDataProvider
+     */
+    public function testIsBigIntegerTypeTrue(mixed $type): void
+    {
+        $this->assertTrue(RegistryModifier::isBigIntegerType($type));
+    }
+
+    /**
+     * @dataProvider datetimeDataProvider
+     * @dataProvider stringDataProvider
+     * @dataProvider invalidDataProvider
+     */
+    public function testIsBigIntegerTypeFalse(mixed $type): void
+    {
+        $this->assertFalse(RegistryModifier::isBigIntegerType($type));
     }
 
     /**
