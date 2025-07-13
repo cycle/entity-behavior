@@ -32,9 +32,14 @@ class RegistryModifier
         'smallInteger',
         'bigInteger',
     ];
+    protected const BIG_INTEGER_TYPES = [
+        'bigint',
+        'bigInteger',
+    ];
     protected const DATETIME_TYPES = ['datetime', 'datetime2'];
     protected const INT_COLUMN = AbstractColumn::INT;
     protected const STRING_COLUMN = AbstractColumn::STRING;
+    protected const BIG_INTEGER_COLUMN = 'bigInteger';
     protected const DATETIME_COLUMN = 'datetime';
     protected const UUID_COLUMN = 'uuid';
 
@@ -56,6 +61,13 @@ class RegistryModifier
         \preg_match(self::DEFINITION, $type, $matches);
 
         return \in_array($matches['type'], self::INTEGER_TYPES, true);
+    }
+
+    public static function isBigIntegerType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return \in_array($matches['type'], self::BIG_INTEGER_TYPES, true);
     }
 
     public static function isDatetimeType(string $type): bool
@@ -121,6 +133,32 @@ class RegistryModifier
         $this->fields->set($fieldName, $field);
 
         return $this->table->column($columnName)->type(self::INT_COLUMN);
+    }
+
+    public function addBigIntegerColumn(
+        string $columnName,
+        string $fieldName,
+        int|null $generated = null,
+    ): AbstractColumn {
+        if ($this->fields->has($fieldName)) {
+            if (! static::isBigIntegerType($this->fields->get($fieldName)->getType())) {
+                throw new BehaviorCompilationException(\sprintf('Field %s must be of type big integer.', $fieldName));
+            }
+            $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
+
+            return $this->table->column($columnName);
+        }
+
+        $field = (new Field())
+            ->setColumn($columnName)
+            ->setType(self::BIG_INTEGER_COLUMN)
+            ->setTypecast('int')
+            ->setGenerated($generated);
+
+        $this->fields->set($fieldName, $field);
+
+        return $this->table->column($columnName)->type(self::BIG_INTEGER_COLUMN);
     }
 
     public function addStringColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
