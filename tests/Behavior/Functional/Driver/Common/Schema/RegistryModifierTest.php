@@ -80,6 +80,28 @@ abstract class RegistryModifierTest extends BaseTest
         $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
     }
 
+    public function testAddUlidField(): void
+    {
+        $this->modifier->addUlidColumn('ulid_column', 'ulid');
+
+        $entity = $this->registry->getEntity(self::ROLE_TEST);
+        $fields = $entity->getFields();
+
+        $this->assertTrue($fields->has('ulid'));
+        $this->assertSame('ulid', $fields->get('ulid')->getType());
+        $this->assertSame('ulid_column', $fields->get('ulid')->getColumn());
+    }
+
+    public function testAddUlidFieldThrowsException(): void
+    {
+        $this->modifier->addIntegerColumn('ulid_column', 'ulid');
+
+        $this->expectException(BehaviorCompilationException::class);
+        $this->expectExceptionMessage('Field ulid must be of type ulid.');
+
+        $this->modifier->addUlidColumn('ulid_column', 'ulid');
+    }
+
     public function testAddUuidField(): void
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
@@ -90,6 +112,16 @@ abstract class RegistryModifierTest extends BaseTest
         $this->assertTrue($fields->has('uuid'));
         $this->assertSame('uuid', $fields->get('uuid')->getType());
         $this->assertSame('uuid_column', $fields->get('uuid')->getColumn());
+    }
+
+    public function testAddUuidFieldThrowsException(): void
+    {
+        $this->modifier->addIntegerColumn('uuid_column', 'uuid');
+
+        $this->expectException(BehaviorCompilationException::class);
+        $this->expectExceptionMessage('Field uuid must be of type uuid.');
+
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
     }
 
     public function testAddTypecast(): void
