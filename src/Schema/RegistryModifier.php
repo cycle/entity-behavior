@@ -290,6 +290,10 @@ class RegistryModifier
 
     /**
      * @deprecated since v1.2
+     *
+     * @param non-empty-string $type
+     * @param non-empty-string $fieldName
+     * @param non-empty-string $columnName
      */
     protected function isType(string $type, string $fieldName, string $columnName): bool
     {
