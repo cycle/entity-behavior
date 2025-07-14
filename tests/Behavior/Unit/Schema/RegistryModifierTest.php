@@ -121,6 +121,22 @@ final class RegistryModifierTest extends TestCase
         $this->assertFalse(RegistryModifier::isStringType($type));
     }
 
+    public function testIsUlidTypeTrue(): void
+    {
+        $this->assertTrue(RegistryModifier::isUlidType('ulid'));
+    }
+
+    /**
+     * @dataProvider integerDataProvider
+     * @dataProvider datetimeDataProvider
+     * @dataProvider invalidDataProvider
+     * @dataProvider stringDataProvider
+     */
+    public function testIsUlidTypeFalse(mixed $type): void
+    {
+        $this->assertFalse(RegistryModifier::isUlidType($type));
+    }
+
     public function testIsUuidTypeTrue(): void
     {
         $this->assertTrue(RegistryModifier::isUuidType('uuid'));

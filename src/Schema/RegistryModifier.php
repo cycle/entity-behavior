@@ -41,6 +41,7 @@ class RegistryModifier
     protected const STRING_COLUMN = AbstractColumn::STRING;
     protected const BIG_INTEGER_COLUMN = 'bigInteger';
     protected const DATETIME_COLUMN = 'datetime';
+    protected const ULID_COLUMN = 'ulid';
     protected const UUID_COLUMN = 'uuid';
 
     protected FieldMap $fields;
@@ -84,11 +85,18 @@ class RegistryModifier
         return $matches['type'] === 'string';
     }
 
+    public static function isUlidType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return $matches['type'] === self::ULID_COLUMN;
+    }
+
     public static function isUuidType(string $type): bool
     {
         \preg_match(self::DEFINITION, $type, $matches);
 
-        return $matches['type'] === 'uuid';
+        return $matches['type'] === self::UUID_COLUMN;
     }
 
     public function addDatetimeColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
@@ -182,11 +190,13 @@ class RegistryModifier
     /**
      * @throws BehaviorCompilationException
      */
-    public function addUuidColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
+    public function addUlidColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
     {
         if ($this->fields->has($fieldName)) {
-            if (!static::isUuidType($this->fields->get($fieldName)->getType())) {
-                throw new BehaviorCompilationException(\sprintf('Field %s must be of type uuid.', $fieldName));
+            if (!static::isUlidType($this->fields->get($fieldName)->getType())) {
+                throw new BehaviorCompilationException(
+                    \sprintf('Field %s must be of type %s.', $fieldName, self::ULID_COLUMN),
+                );
             }
             $this->validateColumnName($fieldName, $columnName);
             $this->fields->get($fieldName)->setGenerated($generated);
@@ -194,7 +204,30 @@ class RegistryModifier
             return $this->table->column($columnName);
         }
 
-        $field = (new Field())->setColumn($columnName)->setType('uuid')->setGenerated($generated);
+        $field = (new Field())->setColumn($columnName)->setType(self::ULID_COLUMN)->setGenerated($generated);
+        $this->fields->set($fieldName, $field);
+
+        return $this->table->column($columnName)->type(self::ULID_COLUMN);
+    }
+
+    /**
+     * @throws BehaviorCompilationException
+     */
+    public function addUuidColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
+    {
+        if ($this->fields->has($fieldName)) {
+            if (!static::isUuidType($this->fields->get($fieldName)->getType())) {
+                throw new BehaviorCompilationException(
+                    \sprintf('Field %s must be of type %s.', $fieldName, self::UUID_COLUMN),
+                );
+            }
+            $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
+
+            return $this->table->column($columnName);
+        }
+
+        $field = (new Field())->setColumn($columnName)->setType(self::UUID_COLUMN)->setGenerated($generated);
         $this->fields->set($fieldName, $field);
 
         return $this->table->column($columnName)->type(self::UUID_COLUMN);
@@ -257,6 +290,10 @@ class RegistryModifier
 
     /**
      * @deprecated since v1.2
+     *
+     * @param non-empty-string $type
+     * @param non-empty-string $fieldName
+     * @param non-empty-string $columnName
      */
     protected function isType(string $type, string $fieldName, string $columnName): bool
     {
