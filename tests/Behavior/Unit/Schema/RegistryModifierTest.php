@@ -121,6 +121,22 @@ final class RegistryModifierTest extends TestCase
         $this->assertFalse(RegistryModifier::isStringType($type));
     }
 
+    public function testIsSnowflakeTypeTrue(): void
+    {
+        $this->assertTrue(RegistryModifier::isSnowflakeType('snowflake'));
+    }
+
+    /**
+     * @dataProvider integerDataProvider
+     * @dataProvider datetimeDataProvider
+     * @dataProvider invalidDataProvider
+     * @dataProvider stringDataProvider
+     */
+    public function testIsSnowflakeTypeFalse(mixed $type): void
+    {
+        $this->assertFalse(RegistryModifier::isSnowflakeType($type));
+    }
+
     public function testIsUlidTypeTrue(): void
     {
         $this->assertTrue(RegistryModifier::isUlidType('ulid'));

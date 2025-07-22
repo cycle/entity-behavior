@@ -41,6 +41,7 @@ class RegistryModifier
     protected const STRING_COLUMN = AbstractColumn::STRING;
     protected const BIG_INTEGER_COLUMN = 'bigInteger';
     protected const DATETIME_COLUMN = 'datetime';
+    protected const SNOWFLAKE_COLUMN = 'snowflake';
     protected const ULID_COLUMN = 'ulid';
     protected const UUID_COLUMN = 'uuid';
 
@@ -83,6 +84,13 @@ class RegistryModifier
         \preg_match(self::DEFINITION, $type, $matches);
 
         return $matches['type'] === 'string';
+    }
+
+    public static function isSnowflakeType(string $type): bool
+    {
+        \preg_match(self::DEFINITION, $type, $matches);
+
+        return $matches['type'] === self::SNOWFLAKE_COLUMN;
     }
 
     public static function isUlidType(string $type): bool
@@ -188,6 +196,31 @@ class RegistryModifier
     }
 
     /**
+     * @param non-empty-string $columnName
+     * @throws BehaviorCompilationException
+     */
+    public function addSnowflakeColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
+    {
+        if ($this->fields->has($fieldName)) {
+            if (!static::isSnowflakeType($this->fields->get($fieldName)->getType())) {
+                throw new BehaviorCompilationException(
+                    \sprintf('Field %s must be of type %s.', $fieldName, self::SNOWFLAKE_COLUMN),
+                );
+            }
+            $this->validateColumnName($fieldName, $columnName);
+            $this->fields->get($fieldName)->setGenerated($generated);
+
+            return $this->table->column($columnName);
+        }
+
+        $field = (new Field())->setColumn($columnName)->setType(self::SNOWFLAKE_COLUMN)->setGenerated($generated);
+        $this->fields->set($fieldName, $field);
+
+        return $this->table->column($columnName)->type(self::SNOWFLAKE_COLUMN);
+    }
+
+    /**
+     * @param non-empty-string $columnName
      * @throws BehaviorCompilationException
      */
     public function addUlidColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn
@@ -211,6 +244,7 @@ class RegistryModifier
     }
 
     /**
+     * @param non-empty-string $columnName
      * @throws BehaviorCompilationException
      */
     public function addUuidColumn(string $columnName, string $fieldName, int|null $generated = null): AbstractColumn

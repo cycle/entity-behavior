@@ -80,6 +80,28 @@ abstract class RegistryModifierTest extends BaseTest
         $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
     }
 
+    public function testAddSnowflakeField(): void
+    {
+        $this->modifier->addSnowflakeColumn('snowflake_column', 'snowflake');
+
+        $entity = $this->registry->getEntity(self::ROLE_TEST);
+        $fields = $entity->getFields();
+
+        $this->assertTrue($fields->has('snowflake'));
+        $this->assertSame('snowflake', $fields->get('snowflake')->getType());
+        $this->assertSame('snowflake_column', $fields->get('snowflake')->getColumn());
+    }
+
+    public function testAddSnowflakeFieldThrowsException(): void
+    {
+        $this->modifier->addStringColumn('snowflake_column', 'snowflake');
+
+        $this->expectException(BehaviorCompilationException::class);
+        $this->expectExceptionMessage('Field snowflake must be of type snowflake.');
+
+        $this->modifier->addSnowflakeColumn('snowflake_column', 'snowflake');
+    }
+
     public function testAddUlidField(): void
     {
         $this->modifier->addUlidColumn('ulid_column', 'ulid');
