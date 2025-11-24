@@ -80,10 +80,9 @@ final class OptimisticLock
 
     private function lock(Node $node, State $state, ScopeCarrierInterface $command): WrappedStoreCommand
     {
-        $nodeValue = $node->getData()[$this->field] ?? null;
-        if ($nodeValue === null) {
-            throw new OptimisticLockException(\sprintf('The `%s` field is not set.', $this->field));
-        }
+        $nodeValue = $state->getTransactionData()[$this->field] ?? throw new OptimisticLockException(
+            \sprintf('The field %s.%s is not set.', $node->getRole(), $this->field),
+        );
 
         // Process known rule
         if ($this->isKnownRule) {
