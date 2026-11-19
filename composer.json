@@ -45,9 +45,12 @@
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.8",
+        "buggregator/trap": "^1.20",
         "cycle/annotated": "^4.6",
+        "llm/skills": "^1.20",
         "phpunit/phpunit": "^11.5",
         "ramsey/uuid": "^4.9",
+        "roxblnfk/unpoly": "^1.8",
         "spiral/tokenizer": "^3.18"
     },
     "autoload": {
@@ -63,7 +66,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "bamarni/composer-bin-plugin": true
+            "bamarni/composer-bin-plugin": true,
+            "llm/skills": true
         }
     },
     "minimum-stability": "dev",
