@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Dispatcher;
 
-use Cycle\ORM\Entity\Behavior\Event\MapperEvent;
+use Cycle\ORM\Entity\Behavior\Attribute\Listen;
 use Cycle\ORM\Entity\Behavior\Event\Mapper\Command;
 use Cycle\ORM\Entity\Behavior\Event\Mapper\QueueCommand;
-use Cycle\ORM\SchemaInterface;
-use Cycle\ORM\Entity\Behavior\Attribute\Listen;
+use Cycle\ORM\Entity\Behavior\Event\MapperEvent;
 use Cycle\ORM\Entity\Behavior\Exception\Dispatcher\RuntimeException;
-use Yiisoft\Injector\Injector;
+use Cycle\ORM\SchemaInterface;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use Yiisoft\Injector\Injector;
 
 // todo: how to replace listener resolver
 final class ListenerProvider implements ListenerProviderInterface

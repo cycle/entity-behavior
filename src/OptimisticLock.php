@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior;
 
-use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
-use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock as Listener;
+use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
+use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Schema\GeneratedField;
 use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
