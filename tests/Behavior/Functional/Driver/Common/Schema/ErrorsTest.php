@@ -22,7 +22,7 @@ abstract class ErrorsTest extends BaseSchemaTest
         $this->compileWithTokenizer($tokenizer);
     }
 
-    public function errorsProvider(): array
+    public static function errorsProvider(): array
     {
         return [
             'Field type' => [

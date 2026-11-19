@@ -6,6 +6,8 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common;
 
 use Cycle\Annotated\Entities;
 use Cycle\Annotated\Embeddings;
+use Cycle\Annotated\Locator\TokenizerEmbeddingLocator;
+use Cycle\Annotated\Locator\TokenizerEntityLocator;
 use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
 use Cycle\ORM\Schema;
@@ -35,8 +37,8 @@ abstract class BaseSchemaTest extends BaseTest
         $classLocator = $tokenizer->classLocator();
 
         $this->schema = new Schema((new Compiler())->compile($this->registry = new Registry($this->dbal), [
-            new Embeddings($classLocator, $reader),
-            new Entities($classLocator, $reader),
+            new Embeddings(new TokenizerEmbeddingLocator($classLocator, $reader), $reader),
+            new Entities(new TokenizerEntityLocator($classLocator, $reader), $reader),
             new ResetTables(),
             new MergeColumns($reader),
             new MergeIndexes($reader),

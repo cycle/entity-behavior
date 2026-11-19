@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\OptimisticLock;
 
 use Cycle\Annotated\Embeddings;
+use Cycle\Annotated\Locator\TokenizerEmbeddingLocator;
+use Cycle\Annotated\Locator\TokenizerEntityLocator;
 use Cycle\Annotated\Entities;
 use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
@@ -110,8 +112,8 @@ abstract class InquiredRelationTest extends BaseListenerTest
                 ->compile(
                     new Registry($this->dbal),
                     [
-                        new Embeddings($classLocator, $reader),
-                        new Entities($classLocator, $reader),
+                        new Embeddings(new TokenizerEmbeddingLocator($classLocator, $reader), $reader),
+                        new Entities(new TokenizerEntityLocator($classLocator, $reader), $reader),
                         new ResetTables(),
                         new MergeColumns($reader),
                         new MergeIndexes($reader),

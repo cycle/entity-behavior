@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\Integration;
 
 use Cycle\Annotated\Embeddings;
+use Cycle\Annotated\Locator\TokenizerEmbeddingLocator;
+use Cycle\Annotated\Locator\TokenizerEntityLocator;
 use Cycle\Annotated\Entities;
 use Cycle\Annotated\MergeColumns;
 use Cycle\Annotated\MergeIndexes;
@@ -63,8 +65,8 @@ abstract class BaseTest extends \Cycle\ORM\Entity\Behavior\Tests\Functional\Driv
 
         $this->schema = new Schema((new Compiler())->compile(new Registry($this->dbal), [
             new ResetTables(),
-            new Embeddings($classLocator, $reader),
-            new Entities($classLocator, $reader),
+            new Embeddings(new TokenizerEmbeddingLocator($classLocator, $reader), $reader),
+            new Entities(new TokenizerEntityLocator($classLocator, $reader), $reader),
             new TableInheritance($reader),
             new MergeColumns($reader),
             new GenerateRelations(),
