@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.12.1@e71404b0465be25cf7f8a631b298c01c5ddd864f">
+<files psalm-version="7.11.0@9e0d0f88bc0a4233357a9aeb4b32da060644e196">
   <file src="src/CreatedAt.php">
     <PropertyNotSetInConstructor>
       <code><![CDATA[CreatedAt]]></code>
@@ -60,18 +60,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Exception/OptimisticLock/ChangedVersionException.php">
-    <ClassMustBeFinal>
-      <code><![CDATA[ChangedVersionException]]></code>
-    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$new]]></code>
       <code><![CDATA[$old]]></code>
     </MixedArgument>
-  </file>
-  <file src="src/Exception/OptimisticLock/RecordIsLockedException.php">
-    <ClassMustBeFinal>
-      <code><![CDATA[RecordIsLockedException]]></code>
-    </ClassMustBeFinal>
   </file>
   <file src="src/Hook.php">
     <PropertyNotSetInConstructor>
@@ -109,11 +101,10 @@
       <code><![CDATA[$columnName]]></code>
       <code><![CDATA[$columnName]]></code>
       <code><![CDATA[$columnName]]></code>
-      <code><![CDATA[$rule]]></code>
     </ArgumentTypeCoercion>
-    <ClassMustBeFinal>
-      <code><![CDATA[RegistryModifier]]></code>
-    </ClassMustBeFinal>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$rule]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$defaultHandlers]]></code>
     </MixedAssignment>

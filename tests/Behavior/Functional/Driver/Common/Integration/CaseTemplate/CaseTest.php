@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\Integration\CaseTemplate;
 
+use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\Integration\BaseTest;
 use Cycle\ORM\Entity\Behavior\Tests\Traits\TableTrait;
 use Cycle\ORM\Select;
-use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\Integration\BaseTest;
 
 abstract class CaseTest extends BaseTest
 {

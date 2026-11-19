@@ -11,18 +11,7 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class ErrorsTest extends BaseSchemaTest
 {
-    /**
-     * @dataProvider errorsProvider
-     */
-    public function testErrors(Tokenizer $tokenizer, string $message): void
-    {
-        $this->expectException(BehaviorCompilationException::class);
-        $this->expectExceptionMessageMatches(\sprintf('/%s/', $message));
-
-        $this->compileWithTokenizer($tokenizer);
-    }
-
-    public function errorsProvider(): array
+    public static function errorsProvider(): array
     {
         return [
             'Field type' => [
@@ -40,5 +29,16 @@ abstract class ErrorsTest extends BaseSchemaTest
                 'Ambiguous column name definition. The `updatedAt` field already linked with the `custom_updated_at`',
             ],
         ];
+    }
+
+    /**
+     * @dataProvider errorsProvider
+     */
+    public function testErrors(Tokenizer $tokenizer, string $message): void
+    {
+        $this->expectException(BehaviorCompilationException::class);
+        $this->expectExceptionMessageMatches(\sprintf('/%s/', $message));
+
+        $this->compileWithTokenizer($tokenizer);
     }
 }

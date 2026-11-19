@@ -6,10 +6,10 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\OptimisticLoc
 
 use Cycle\Database\ColumnInterface;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Item;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\News;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Page;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Post;
-use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Item;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\WithAllParameters;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
 use Cycle\ORM\Schema\GeneratedField;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\EventListener;
 
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CommentService;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\EventListener\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\EventListener\Post;
-use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CommentService;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\PostService;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseSchemaTest;
 use Cycle\ORM\SchemaInterface;

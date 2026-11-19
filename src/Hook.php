@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior;
 
-use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Cycle\ORM\Entity\Behavior\Listener\Hook as Listener;
+use Cycle\ORM\Entity\Behavior\Schema\BaseModifier;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 use Doctrine\Common\Annotations\Annotation\Target;
 use JetBrains\PhpStorm\ArrayShape;

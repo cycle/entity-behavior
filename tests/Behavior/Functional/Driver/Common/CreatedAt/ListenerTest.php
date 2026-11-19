@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\CreatedAt;
 
-use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest;
-use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CreatedAt\Post;
-use Cycle\ORM\Entity\Behavior\Tests\Traits\TableTrait;
 use Cycle\ORM\Entity\Behavior\Listener\CreatedAt;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CreatedAt\Post;
+use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest;
+use Cycle\ORM\Entity\Behavior\Tests\Traits\TableTrait;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;

@@ -7,14 +7,14 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\OptimisticLoc
 use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\ChangedVersionException;
 use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\RecordIsLockedException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock;
-use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Author;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest;
 use Cycle\ORM\Entity\Behavior\Tests\Traits\TableTrait;
 use Cycle\ORM\Heap\Heap;
+use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
-use Cycle\ORM\Relation;
 use Cycle\ORM\Select;
 use Cycle\ORM\Transaction;
 

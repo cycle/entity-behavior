@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\SoftDelete;
 
 use Cycle\ORM\Entity\Behavior\Listener\SoftDelete;
-use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\SoftDelete\Post;
+use Cycle\ORM\Entity\Behavior\Tests\Functional\Driver\Common\BaseListenerTest;
 use Cycle\ORM\Entity\Behavior\Tests\Traits\TableTrait;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;

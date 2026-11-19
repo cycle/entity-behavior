@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Fixtures\Hook;
 
 use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Entity;
 use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnCreate;
 use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnUpdate;
 use Cycle\ORM\Entity\Behavior\Hook;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\PostService;
-use Cycle\Annotated\Annotation\Entity;
 
 #[Entity]
 #[Hook(callable: [PostService::class, 'update'], events: OnUpdate::class)]

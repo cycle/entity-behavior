@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Listener;
 
 use Cycle\ORM\Command\StoreCommand;
-use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Entity\Behavior\Attribute\Listen;
 use Cycle\ORM\Entity\Behavior\Event\Mapper\Command\OnDelete;
+use Cycle\ORM\Heap\Node;
 
 final class SoftDelete
 {
