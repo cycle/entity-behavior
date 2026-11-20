@@ -63,7 +63,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cycle\\ORM\\Entity\\Behavior\\Tests\\": "tests/Behavior"
+            "Cycle\\ORM\\Entity\\Behavior\\Tests\\": "tests/"
         }
     },
     "repositories": [

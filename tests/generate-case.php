@@ -8,13 +8,13 @@
 
 declare(strict_types=1);
 
-\error_reporting(E_ALL | E_STRICT);
+\error_reporting(E_ALL);
 \ini_set('display_errors', '1');
 
 //Composer
 require_once \dirname(__DIR__) . '/vendor/autoload.php';
 
-$integrationDir = __DIR__ . '/Behavior/Functional/Driver/Common/Integration';
+$integrationDir = __DIR__ . '/Regression';
 
 function defaultCaseName(string $integrationDir): string
 {
@@ -32,7 +32,7 @@ function defaultCaseName(string $integrationDir): string
 
 function copyTemplateFiles(string $copyDir, string $caseTemplateDirName): void
 {
-    $caseTemplateDir = __DIR__ . '/Behavior/Functional/Driver/Common/Integration/' . $caseTemplateDirName;
+    $caseTemplateDir = __DIR__ . '/Regression/' . $caseTemplateDirName;
     if (!\file_exists($caseTemplateDir) || !\is_dir($caseTemplateDir)) {
         echo "Error. template folder '$caseTemplateDir' does not exists\n";
         exit(1);
@@ -78,7 +78,5 @@ echo \sprintf("Generating new test case '%s'... \n", \basename($copyDir));
 $copyDir = \realpath($copyDir);
 
 copyTemplateFiles($copyDir, $options['template'] ?? 'CaseTemplate');
-
-require 'generate.php';
 
 echo "Done. New test case is here:\n$copyDir\n";
