@@ -47,11 +47,13 @@
         "bamarni/composer-bin-plugin": "^1.8",
         "buggregator/trap": "^1.20",
         "cycle/annotated": "^4.6",
+        "cycle/testing": "1.x-dev",
         "llm/skills": "^1.20",
         "phpunit/phpunit": "^11.5",
         "ramsey/uuid": "^4.9",
         "roxblnfk/unpoly": "^1.8",
-        "spiral/tokenizer": "^3.18"
+        "spiral/tokenizer": "^3.18",
+        "testo/testo": "^0.10.60"
     },
     "autoload": {
         "psr-4": {
@@ -63,6 +65,15 @@
             "Cycle\\ORM\\Entity\\Behavior\\Tests\\": "tests/Behavior"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../testing",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "config": {
         "sort-packages": true,
         "allow-plugins": {
