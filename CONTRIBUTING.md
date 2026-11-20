@@ -10,23 +10,25 @@ Please make sure that the following requirements are satisfied before submitting
 > Use our discord server to check for the advice or suggestion https://discord.gg/FZ9BCWg
 
 ## Testing Cycle ORM Entity Behavior
-To test Cycle ORM Entity Behavior locally, download the `cycle/entity-behavior` repository and start docker containers inside the tests folder:
+Tests run on [Testo](https://github.com/php-testo/testo) through the `cycle/testing` harness: `tests/Unit` needs no
+database, `tests/Feature` runs once per database driver.
+Reproductions of reported issues go to `tests/Regression/Issue<N>/`; `composer test:new-case -- <N>` writes a runnable
+case there to start from.
+
+Unit and SQLite tests need no docker:
 
 ```bash
-$ cd tests/
-$ docker-composer up
+composer test:unit
+composer test:sqlite
 ```
 
-To run full test suite:
+The other drivers run against the shared test databases:
 
 ```bash
-$ ./vendor/bin/phpunit
-```
-
-To run quick test suite:
-
-```bash
-$ ./vendor/bin/phpunit --group driver-sqlite
+composer db:up              # or: composer db:up -- mysql
+composer test               # every suite; drivers whose server is down are skipped
+composer test:mysql         # also test:postgres, test:sqlserver
+composer db:down
 ```
 
 ## Help Needed In
