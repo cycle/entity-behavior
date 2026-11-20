@@ -16,6 +16,7 @@ use Cycle\Schema\Registry;
 use Cycle\Testing\Database\DatabaseTestCase;
 use Ramsey\Uuid\Uuid;
 use Testo\Assert;
+use Testo\Data\DataSet;
 use Testo\Expect;
 use Testo\Lifecycle\BeforeTest;
 use Testo\Test;
@@ -250,6 +251,39 @@ final class RegistryModifierTest extends DatabaseTestCase
             $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('title')->getGenerated(),
             GeneratedField::BEFORE_INSERT,
         );
+    }
+
+    #[Test]
+    #[DataSet(['addIntegerColumn'], 'integer')]
+    #[DataSet(['addBigIntegerColumn'], 'big integer')]
+    #[DataSet(['addDatetimeColumn'], 'datetime')]
+    #[DataSet(['addStringColumn'], 'string')]
+    #[DataSet(['addSnowflakeColumn'], 'snowflake')]
+    #[DataSet(['addUlidColumn'], 'ulid')]
+    #[DataSet(['addUuidColumn'], 'uuid')]
+    public function testExistingFieldOfSameTypeIsReused(string $method): void
+    {
+        $this->modifier->{$method}('value_column', 'value');
+
+        $column = $this->modifier->{$method}('value_column', 'value', GeneratedField::BEFORE_INSERT);
+
+        $fields = $this->registry->getEntity(self::ROLE_TEST)->getFields();
+        Assert::same($fields->count(), 1);
+        Assert::same($fields->get('value')->getGenerated(), GeneratedField::BEFORE_INSERT);
+        Assert::same($column->getName(), 'value_column');
+    }
+
+    #[Test]
+    #[DataSet(['addIntegerColumn', 'Field value must be of type integer.'], 'integer')]
+    #[DataSet(['addStringColumn', 'Field value must be of type string.'], 'string')]
+    #[DataSet(['addDatetimeColumn', 'Field value must be of type datetime.'], 'datetime')]
+    public function testExistingFieldOfOtherTypeIsRejected(string $method, string $message): void
+    {
+        $this->modifier->addUuidColumn('value_column', 'value');
+
+        Expect::exception(BehaviorCompilationException::class)->withMessage($message);
+
+        $this->modifier->{$method}('value_column', 'value');
     }
 
     #[Test]

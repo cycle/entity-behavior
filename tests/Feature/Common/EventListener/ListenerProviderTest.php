@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Feature\Common\EventListener;
 
+use Cycle\ORM\Entity\Behavior\Attribute\Listen;
 use Cycle\ORM\Entity\Behavior\Exception\Dispatcher\RuntimeException;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\AuditService;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\BrokenAttributeService;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\BrokenEventListService;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\EventListener\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\PostService;
+use Cycle\ORM\Entity\Behavior\Tests\Fixtures\UncallableEventListService;
 use Cycle\ORM\Entity\Behavior\Tests\Support\ListenerTestCase;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
@@ -63,6 +66,56 @@ final class ListenerProviderTest extends ListenerTestCase
             );
 
         $this->withListeners(BrokenEventListService::class);
+    }
+
+    #[Test]
+    public function testDefinitionOfMissingClassIsSkipped(): void
+    {
+        $this->withListeners('Cycle\ORM\Entity\Behavior\Tests\Fixtures\MissingListener', AuditService::class);
+
+        $this->save(new Post());
+
+        Assert::same($this->fetchPost()->title, 'created');
+    }
+
+    #[Test]
+    public function testListenerWithoutEventsIsSkipped(): void
+    {
+        $this->withListeners(\ArrayObject::class);
+
+        $this->save(new Post());
+
+        Assert::null($this->fetchPost()->title);
+    }
+
+    #[Test]
+    public function testProvidedListenerMustBeCallable(): never
+    {
+        Expect::exception(\Exception::class)
+            ->withMessage(\sprintf("Cann't create listener `%s` for the `post` role.", UncallableEventListService::class))
+            ->withPrevious(
+                RuntimeException::class,
+                static fn(ExpectedException $previous) => $previous->withMessage(\sprintf(
+                    "Cann't build callable from instance of `%s` and `missing` method name.",
+                    UncallableEventListService::class,
+                )),
+            );
+
+        $this->withListeners(UncallableEventListService::class);
+    }
+
+    #[Test]
+    public function testBrokenListenAttributeIsReported(): never
+    {
+        Expect::exception(RuntimeException::class)
+            ->withMessage(\sprintf(
+                "Cann't instantiate attribute %s in the %s::onCreate method.",
+                Listen::class,
+                BrokenAttributeService::class,
+            ))
+            ->withPrevious(\ArgumentCountError::class);
+
+        $this->withListeners(BrokenAttributeService::class);
     }
 
     #[BeforeTest]
