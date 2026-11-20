@@ -275,6 +275,26 @@ final class RegistryModifierTest extends DatabaseTestCase
     }
 
     #[Test]
+    #[DataSet(['addIntegerColumn'], 'integer')]
+    #[DataSet(['addBigIntegerColumn'], 'big integer')]
+    #[DataSet(['addDatetimeColumn'], 'datetime')]
+    #[DataSet(['addStringColumn'], 'string')]
+    #[DataSet(['addSnowflakeColumn'], 'snowflake')]
+    #[DataSet(['addUlidColumn'], 'ulid')]
+    #[DataSet(['addUuidColumn'], 'uuid')]
+    public function testExistingFieldOfSameTypeOnOtherColumnIsRejected(string $method): void
+    {
+        $this->modifier->{$method}('value_column', 'value');
+
+        Expect::exception(BehaviorCompilationException::class)->withMessage(
+            'Ambiguous column name definition. '
+            . 'The `value` field already linked with the `value_column` column but the behavior expects `other_column`.',
+        );
+
+        $this->modifier->{$method}('other_column', 'value');
+    }
+
+    #[Test]
     #[DataSet(['addIntegerColumn', 'Field value must be of type integer.'], 'integer')]
     #[DataSet(['addStringColumn', 'Field value must be of type string.'], 'string')]
     #[DataSet(['addDatetimeColumn', 'Field value must be of type datetime.'], 'datetime')]
