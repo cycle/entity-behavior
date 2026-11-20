@@ -55,4 +55,21 @@ abstract class SchemaTestCase extends DatabaseTestCase
             new GenerateTypecast(),
         ]));
     }
+
+    /**
+     * Stops after the modifiers' compute phase, before render can fill in what compute left out.
+     */
+    protected function computeWithTokenizer(Tokenizer $tokenizer): void
+    {
+        $reader = new AttributeReader();
+        $classLocator = $tokenizer->classLocator();
+
+        (new Compiler())->compile($this->registry = new Registry($this->dbal), [
+            new Embeddings(new TokenizerEmbeddingLocator($classLocator, $reader), $reader),
+            new Entities(new TokenizerEntityLocator($classLocator, $reader), $reader),
+            new ResetTables(),
+            new MergeColumns($reader),
+            new GenerateModifiers(),
+        ]);
+    }
 }

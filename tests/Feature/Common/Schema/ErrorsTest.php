@@ -31,6 +31,13 @@ final class ErrorsTest extends SchemaTestCase
                 ])),
                 'Ambiguous column name definition. The `updatedAt` field already linked with the `custom_updated_at`',
             ],
+            'Lock column type' => [
+                new Tokenizer(new TokenizerConfig([
+                    'directories' => [\dirname(__DIR__, 3) . '/Fixtures/Wrong/LockType'],
+                    'exclude' => [],
+                ])),
+                'Failed to compute rule based on column type.',
+            ],
         ];
     }
 

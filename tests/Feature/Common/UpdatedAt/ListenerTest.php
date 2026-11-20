@@ -37,6 +37,7 @@ final class ListenerTest extends ListenerTestCase
 
         $this->save($post);
 
+        Assert::instanceOf($post->notNullableUpdatedAt, \DateTimeImmutable::class);
         $this->orm->getHeap()->clean();
         $select = new Select($this->orm, Post::class);
         $data = $select->fetchOne();

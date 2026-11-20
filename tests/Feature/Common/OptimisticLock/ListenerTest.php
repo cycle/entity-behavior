@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Feature\Common\OptimisticLock;
 
 use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\ChangedVersionException;
+use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\OptimisticLockException;
 use Cycle\ORM\Entity\Behavior\Exception\OptimisticLock\RecordIsLockedException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Author;
@@ -38,8 +39,26 @@ final class ListenerTest extends ListenerTestCase
 
         Assert::same($comment->versionInt, 1);
         Assert::instanceOf($comment->versionDatetime, \DateTimeImmutable::class);
-        Assert::string($comment->versionMicrotime);
-        Assert::string($comment->versionStr);
+        Assert::string($comment->versionMicrotime)->matchesRegex('/^\d+\.\d{6}$/');
+        Assert::string($comment->versionStr)->matchesRegex('/^[0-9a-f]{32}$/');
+    }
+
+    #[Test]
+    public function testUpdateWithoutManualVersion(): void
+    {
+        $this->withLocks([[OptimisticLock::class, ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_MANUAL]]]);
+        $comment = new Comment();
+        $comment->content = 'test';
+        $comment->versionInt = 1;
+        $comment->versionStr = 'str';
+        $comment->versionMicrotime = 'microtime';
+        $comment->versionDatetime = new \DateTimeImmutable();
+        $this->save($comment);
+
+        $comment->content = 'changed';
+
+        Expect::exception(OptimisticLockException::class)->withMessage('The field comment.versionCustom is not set.');
+        $this->save($comment);
     }
 
     #[Test]
@@ -174,6 +193,17 @@ final class ListenerTest extends ListenerTestCase
             ],
         );
 
+        $this->withLocks([
+            [OptimisticLock::class, ['field' => 'versionInt']],
+            [OptimisticLock::class, ['field' => 'versionStr', 'rule' => OptimisticLock::RULE_RAND_STR]],
+            [OptimisticLock::class, ['field' => 'versionDatetime', 'rule' => OptimisticLock::RULE_DATETIME]],
+            [OptimisticLock::class, ['field' => 'versionMicrotime', 'rule' => OptimisticLock::RULE_MICROTIME]],
+            [OptimisticLock::class, ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_MANUAL]],
+        ]);
+    }
+
+    private function withLocks(array $listeners): void
+    {
         $this->withSchema(new Schema([
             Comment::class => [
                 SchemaInterface::ROLE => 'comment',
@@ -189,28 +219,7 @@ final class ListenerTest extends ListenerTestCase
                     'versionCustom' => 'version_custom',
                     'content' => 'content',
                 ],
-                SchemaInterface::LISTENERS => [
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionInt'],
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionStr', 'rule' => OptimisticLock::RULE_RAND_STR],
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionDatetime', 'rule' => OptimisticLock::RULE_DATETIME],
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionMicrotime', 'rule' => OptimisticLock::RULE_MICROTIME],
-                    ],
-                    [
-                        OptimisticLock::class,
-                        ['field' => 'versionCustom', 'rule' => OptimisticLock::RULE_MANUAL],
-                    ],
-                ],
+                SchemaInterface::LISTENERS => $listeners,
                 SchemaInterface::TYPECAST => [
                     'id' => 'int',
                     'versionInt' => 'int',

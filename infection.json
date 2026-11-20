@@ -12,5 +12,18 @@
         "stryker": {
             "report": "1.x"
         }
+    },
+    "mutators": {
+        "@default": true,
+        "Spaceship": {
+            "ignore": [
+                "Cycle\\ORM\\Entity\\Behavior\\Listener\\OptimisticLock::lock"
+            ]
+        },
+        "CastInt": {
+            "ignore": [
+                "Cycle\\ORM\\Entity\\Behavior\\Listener\\OptimisticLock::getLockingValue"
+            ]
+        }
     }
 }
