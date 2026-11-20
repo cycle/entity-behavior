@@ -12,6 +12,7 @@ use Cycle\ORM\ORM;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
+use Cycle\Testing\Container\SimpleContainer;
 use Cycle\Testing\ORM\OrmTestCase;
 
 /**
