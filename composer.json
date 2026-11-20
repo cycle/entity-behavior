@@ -88,7 +88,7 @@
             "Composer\\Config::disableProcessTimeout",
             "@putenv XDEBUG_MODE=coverage",
             "@putenv DB_DRIVERS=sqlite",
-            "infection --ansi --configuration=infection.json --logger-github --threads=max --show-mutations=0 --min-msi=75 --min-covered-msi=75"
+            "infection --ansi --configuration=infection.json --logger-github --threads=max --show-mutations=0 --min-msi=97 --min-covered-msi=97"
         ],
         "psalm": "psalm -c vendor-bin/psalm/psalm.xml",
         "psalm:baseline": "psalm -c vendor-bin/psalm/psalm.xml --set-baseline=vendor-bin/psalm/psalm-baseline.xml",
