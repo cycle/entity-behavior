@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\Entity\Behavior\Tests\Feature\Common\UpdatedAt;
 
+use Cycle\ORM\Entity\Behavior\Listener\UpdatedAt as Listener;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\UpdatedAt\Post;
 use Cycle\ORM\Entity\Behavior\Tests\Support\SchemaTestCase;
 use Cycle\ORM\Schema\GeneratedField;
+use Cycle\ORM\SchemaInterface;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 use Testo\Assert;
@@ -40,12 +42,37 @@ final class UpdatedAtTest extends SchemaTestCase
         Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
     }
 
+    #[Test]
+    public function testListenerReceivesFieldAndNullable(): void
+    {
+        Assert::same($this->schema->define(Post::class, SchemaInterface::LISTENERS), [
+            [Listener::class, ['field' => 'updatedAt', 'nullable' => false]],
+            [Listener::class, ['field' => 'newField', 'nullable' => false]],
+        ]);
+    }
+
+    #[Test]
+    public function testComputeAddsFieldWithKnownColumn(): void
+    {
+        $this->computeWithTokenizer(self::tokenizer());
+
+        $fields = $this->registry->getEntity(Post::class)->getFields();
+
+        Assert::true($fields->has('newField'));
+        Assert::same($fields->get('newField')->getColumn(), 'new_field');
+    }
+
     #[BeforeTest]
     protected function setUp(): void
     {
-        $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
+        $this->compileWithTokenizer(self::tokenizer());
+    }
+
+    private static function tokenizer(): Tokenizer
+    {
+        return new Tokenizer(new TokenizerConfig([
             'directories' => [\dirname(__DIR__, 3) . '/Fixtures/UpdatedAt'],
             'exclude' => [],
-        ])));
+        ]));
     }
 }
