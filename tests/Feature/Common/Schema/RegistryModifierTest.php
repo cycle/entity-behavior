@@ -9,6 +9,7 @@ use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CustomTypecast;
 use Cycle\ORM\Parser\Typecast;
+use Cycle\ORM\Schema\GeneratedField;
 use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Registry;
@@ -216,6 +217,67 @@ final class RegistryModifierTest extends DatabaseTestCase
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
 
         Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), CustomTypecast::class);
+    }
+
+    #[Test]
+    public function testAddIntegerFieldWithOtherColumnThrowsException(): void
+    {
+        $this->modifier->addIntegerColumn('counter_column', 'counter');
+
+        Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Ambiguous column name definition.');
+
+        $this->modifier->addIntegerColumn('other_column', 'counter');
+    }
+
+    #[Test]
+    public function testAddStringFieldWithOtherColumnThrowsException(): void
+    {
+        $this->modifier->addStringColumn('title_column', 'title');
+
+        Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Ambiguous column name definition.');
+
+        $this->modifier->addStringColumn('other_column', 'title');
+    }
+
+    #[Test]
+    public function testAddExistingStringFieldSetsGenerated(): void
+    {
+        $this->modifier->addStringColumn('title_column', 'title');
+
+        $this->modifier->addStringColumn('title_column', 'title', GeneratedField::BEFORE_INSERT);
+
+        Assert::same(
+            $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('title')->getGenerated(),
+            GeneratedField::BEFORE_INSERT,
+        );
+    }
+
+    #[Test]
+    public function testDefaultTypecastHandlerIsNotAddedToEntity(): void
+    {
+        $this->registry->getDefaults()->offsetSet(SchemaInterface::TYPECAST_HANDLER, Typecast::class);
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $this->modifier->setTypecast(
+            $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid'),
+            [Uuid::class, 'fromString'],
+        );
+
+        Assert::null($this->registry->getEntity(self::ROLE_TEST)->getTypecast());
+    }
+
+    #[Test]
+    public function testDefaultTypecastHandlerListIsNotAddedToEntity(): void
+    {
+        $this->registry->getDefaults()->offsetSet(SchemaInterface::TYPECAST_HANDLER, [Typecast::class]);
+        $this->modifier->addUuidColumn('uuid_column', 'uuid');
+
+        $this->modifier->setTypecast(
+            $this->registry->getEntity(self::ROLE_TEST)->getFields()->get('uuid'),
+            [Uuid::class, 'fromString'],
+        );
+
+        Assert::null($this->registry->getEntity(self::ROLE_TEST)->getTypecast());
     }
 
     #[Test]
