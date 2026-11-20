@@ -12,6 +12,7 @@ use Cycle\ORM\Parser\Typecast;
 use Cycle\ORM\Schema\GeneratedField;
 use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Definition\Entity;
+use Cycle\Schema\Definition\Field;
 use Cycle\Schema\Registry;
 use Cycle\Testing\Database\DatabaseTestCase;
 use Ramsey\Uuid\Uuid;
@@ -274,6 +275,26 @@ final class RegistryModifierTest extends DatabaseTestCase
     }
 
     #[Test]
+    #[DataSet(['addIntegerColumn'], 'integer')]
+    #[DataSet(['addBigIntegerColumn'], 'big integer')]
+    #[DataSet(['addDatetimeColumn'], 'datetime')]
+    #[DataSet(['addStringColumn'], 'string')]
+    #[DataSet(['addSnowflakeColumn'], 'snowflake')]
+    #[DataSet(['addUlidColumn'], 'ulid')]
+    #[DataSet(['addUuidColumn'], 'uuid')]
+    public function testExistingFieldOfSameTypeOnOtherColumnIsRejected(string $method): void
+    {
+        $this->modifier->{$method}('value_column', 'value');
+
+        Expect::exception(BehaviorCompilationException::class)->withMessage(
+            'Ambiguous column name definition. '
+            . 'The `value` field already linked with the `value_column` column but the behavior expects `other_column`.',
+        );
+
+        $this->modifier->{$method}('other_column', 'value');
+    }
+
+    #[Test]
     #[DataSet(['addIntegerColumn', 'Field value must be of type integer.'], 'integer')]
     #[DataSet(['addStringColumn', 'Field value must be of type string.'], 'string')]
     #[DataSet(['addDatetimeColumn', 'Field value must be of type datetime.'], 'datetime')]
@@ -327,6 +348,28 @@ final class RegistryModifierTest extends DatabaseTestCase
         Assert::same($field->getTypecast(), ['foo', 'bar']);
     }
 
+    #[Test]
+    #[DataSet(['datetime', 'datetime', 'datetime'], 'datetime field over a datetime column')]
+    #[DataSet(['datetime', 'string', 'datetime'], 'datetime field over a string column')]
+    #[DataSet(['int', 'integer', 'int'], 'integer column')]
+    #[DataSet(['uuid', 'uuid', 'uuid'], 'uuid field over a uuid column')]
+    #[DataSet(['uuid', 'string', 'uuid'], 'uuid field over a string column')]
+    #[DataSet(['string', 'string', 'string'], 'any other type')]
+    public function testDeprecatedIsTypeMatches(string $type, string $columnType, string $fieldType): void
+    {
+        Assert::true($this->checkType($type, $columnType, $fieldType));
+    }
+
+    #[Test]
+    #[DataSet(['datetime', 'string', 'string'], 'datetime')]
+    #[DataSet(['int', 'string', 'int'], 'integer')]
+    #[DataSet(['uuid', 'string', 'string'], 'uuid')]
+    #[DataSet(['string', 'integer', 'string'], 'any other type')]
+    public function testDeprecatedIsTypeMismatches(string $type, string $columnType, string $fieldType): void
+    {
+        Assert::false($this->checkType($type, $columnType, $fieldType));
+    }
+
     #[BeforeTest]
     protected function setUp(): void
     {
@@ -337,5 +380,24 @@ final class RegistryModifierTest extends DatabaseTestCase
         $this->registry->linkTable($entity, 'default', 'tests');
 
         $this->modifier = new RegistryModifier($this->registry, self::ROLE_TEST);
+    }
+
+    /**
+     * Calls the deprecated protected `isType()` the way a subclass would, on a field linked to a column of its name.
+     */
+    private function checkType(string $type, string $columnType, string $fieldType): bool
+    {
+        $entity = $this->registry->getEntity(self::ROLE_TEST);
+        $this->registry->getTableSchema($entity)->column('value')->type($columnType);
+        $entity->getFields()->set('value', (new Field())->setColumn('value')->setType($fieldType));
+
+        $modifier = new class($this->registry, self::ROLE_TEST) extends RegistryModifier {
+            public function check(string $type, string $fieldName, string $columnName): bool
+            {
+                return $this->isType($type, $fieldName, $columnName);
+            }
+        };
+
+        return $modifier->check($type, 'value', 'value');
     }
 }
