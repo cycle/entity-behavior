@@ -18,6 +18,7 @@
 [![Psalm Level](https://shepherd.dev/github/cycle/entity-behavior/level.svg)](https://shepherd.dev/github/cycle/entity-behavior)
 [![Type Coverage](https://shepherd.dev/github/cycle/entity-behavior/coverage.svg)](https://shepherd.dev/github/cycle/entity-behavior)
 [![Codecov](https://codecov.io/gh/cycle/entity-behavior/branch/1.x/graph/badge.svg)](https://codecov.io/gh/cycle/entity-behavior)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fcycle%2Fentity-behavior%2F1.x)](https://dashboard.stryker-mutator.io/reports/github.com/cycle/entity-behavior/1.x)
 
 </div>
 
