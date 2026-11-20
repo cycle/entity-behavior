@@ -6,10 +6,13 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Regression\CaseTemplate;
 
 use Cycle\ORM\Entity\Behavior\Tests\Support\IntegrationTestCase;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class CaseTest extends IntegrationTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testPreparedData(): void
     {
         // Get entity
@@ -20,21 +23,21 @@ final class CaseTest extends IntegrationTestCase
         \assert($user instanceof Entity\User);
 
         // Check results
-        \Testo\Assert::notNull($user->createdAt);
-        \Testo\Assert::notNull($user->updatedAt);
-        \Testo\Assert::same($user->createdAt <=> $user->updatedAt, 0);
+        Assert::notNull($user->createdAt);
+        Assert::notNull($user->updatedAt);
+        Assert::same($user->createdAt <=> $user->updatedAt, 0);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testCreatedAt(): void
     {
         // Get entity
         $user = $this->orm->make(Entity\User::class, ['login' => 'new-user', 'passwordHash' => '123456789']);
 
-        \Testo\Assert::false(isset($user->createdAt));
+        Assert::false(isset($user->createdAt));
         $this->save($user);
 
-        \Testo\Assert::notNull($user->createdAt);
+        Assert::notNull($user->createdAt);
 
         // Reload entity
         $id = $user->id;
@@ -42,10 +45,10 @@ final class CaseTest extends IntegrationTestCase
         $user = (new Select($this->orm, Entity\User::class))
             ->wherePK($id)
             ->fetchOne();
-        \Testo\Assert::notNull($user->createdAt);
+        Assert::notNull($user->createdAt);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testUpdatedAt(): void
     {
         // Get entity
@@ -60,10 +63,10 @@ final class CaseTest extends IntegrationTestCase
         $this->save($user);
 
         // Check results
-        \Testo\Assert::same($user->updatedAt <=> $updatedAt, 1);
+        Assert::same($user->updatedAt <=> $updatedAt, 1);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->prepareOrm(__DIR__ . '/Entity');

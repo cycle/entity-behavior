@@ -9,35 +9,38 @@ use Cycle\ORM\Entity\Behavior\Tests\Support\SchemaTestCase;
 use Cycle\ORM\Schema\GeneratedField;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class UpdatedAtTest extends SchemaTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testExistenceColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        \Testo\Assert::true($fields->has('updatedAt'));
-        \Testo\Assert::true($fields->hasColumn('updated_at'));
-        \Testo\Assert::same($fields->get('updatedAt')->getType(), 'datetime');
-        \Testo\Assert::same($fields->get('updatedAt')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
+        Assert::true($fields->has('updatedAt'));
+        Assert::true($fields->hasColumn('updated_at'));
+        Assert::same($fields->get('updatedAt')->getType(), 'datetime');
+        Assert::same($fields->get('updatedAt')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
 
         // No new fields added
-        \Testo\Assert::same($fields->count(), 3);
+        Assert::same($fields->count(), 3);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddedColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        \Testo\Assert::true($fields->has('newField'));
-        \Testo\Assert::true($fields->hasColumn('new_field'));
-        \Testo\Assert::same($fields->get('newField')->getType(), 'datetime');
-        \Testo\Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
+        Assert::true($fields->has('newField'));
+        Assert::true($fields->hasColumn('new_field'));
+        Assert::same($fields->get('newField')->getType(), 'datetime');
+        Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([

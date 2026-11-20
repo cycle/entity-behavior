@@ -11,10 +11,13 @@ use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class ListenerTest extends ListenerTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testApply(): void
     {
         $post = new Post();
@@ -24,11 +27,11 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        \Testo\Assert::same($data->title, 'modified by EventListener');
-        \Testo\Assert::same($data->content, 'baz');
+        Assert::same($data->title, 'modified by EventListener');
+        Assert::same($data->content, 'baz');
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable(

@@ -11,10 +11,13 @@ use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class ListenerTest extends ListenerTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testCreate(): void
     {
         $post = new Post();
@@ -23,11 +26,11 @@ final class ListenerTest extends ListenerTestCase
 
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
-        \Testo\Assert::null($data->updatedAt);
-        \Testo\Assert::null($data->customUpdatedAt);
+        Assert::null($data->updatedAt);
+        Assert::null($data->customUpdatedAt);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testCreateNotNullable(): void
     {
         $post = new Post();
@@ -38,10 +41,10 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm, Post::class);
         $data = $select->fetchOne();
 
-        \Testo\Assert::instanceOf($data->notNullableUpdatedAt, \DateTimeImmutable::class);
+        Assert::instanceOf($data->notNullableUpdatedAt, \DateTimeImmutable::class);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testUpdate(): void
     {
         $post = new Post();
@@ -60,12 +63,12 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        \Testo\Assert::numeric($data->updatedAt <=> $updatedAt)->greaterThan(0);
-        \Testo\Assert::numeric($data->customUpdatedAt <=> $customUpdatedAt)->greaterThan(0);
-        \Testo\Assert::same($data->content, 'test');
+        Assert::numeric($data->updatedAt <=> $updatedAt)->greaterThan(0);
+        Assert::numeric($data->customUpdatedAt <=> $customUpdatedAt)->greaterThan(0);
+        Assert::same($data->content, 'test');
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable(

@@ -8,12 +8,16 @@ use Cycle\Database\ColumnInterface;
 use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\CustomTypecast;
-use Cycle\Testing\Database\DatabaseTestCase;
 use Cycle\ORM\Parser\Typecast;
 use Cycle\ORM\SchemaInterface;
 use Cycle\Schema\Definition\Entity;
 use Cycle\Schema\Registry;
+use Cycle\Testing\Database\DatabaseTestCase;
 use Ramsey\Uuid\Uuid;
+use Testo\Assert;
+use Testo\Expect;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class RegistryModifierTest extends DatabaseTestCase
 {
@@ -22,7 +26,7 @@ final class RegistryModifierTest extends DatabaseTestCase
     protected RegistryModifier $modifier;
     protected Registry $registry;
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddDatetimeField(): void
     {
         $this->modifier->addDatetimeColumn('created_at', 'createdAt');
@@ -30,12 +34,12 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('createdAt'));
-        \Testo\Assert::same($fields->get('createdAt')->getType(), 'datetime');
-        \Testo\Assert::same($fields->get('createdAt')->getColumn(), 'created_at');
+        Assert::true($fields->has('createdAt'));
+        Assert::same($fields->get('createdAt')->getType(), 'datetime');
+        Assert::same($fields->get('createdAt')->getColumn(), 'created_at');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddStringField(): void
     {
         $this->modifier->addStringColumn('version_str', 'version');
@@ -43,12 +47,12 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('version'));
-        \Testo\Assert::same($fields->get('version')->getType(), ColumnInterface::STRING);
-        \Testo\Assert::same($fields->get('version')->getColumn(), 'version_str');
+        Assert::true($fields->has('version'));
+        Assert::same($fields->get('version')->getType(), ColumnInterface::STRING);
+        Assert::same($fields->get('version')->getColumn(), 'version_str');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddIntegerField(): void
     {
         $this->modifier->addIntegerColumn('version_int', 'version');
@@ -56,12 +60,12 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('version'));
-        \Testo\Assert::same($fields->get('version')->getType(), 'integer');
-        \Testo\Assert::same($fields->get('version')->getColumn(), 'version_int');
+        Assert::true($fields->has('version'));
+        Assert::same($fields->get('version')->getType(), 'integer');
+        Assert::same($fields->get('version')->getColumn(), 'version_int');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddBigIntegerField(): void
     {
         $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
@@ -69,22 +73,22 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('snowflake'));
-        \Testo\Assert::same($fields->get('snowflake')->getType(), 'bigInteger');
-        \Testo\Assert::same($fields->get('snowflake')->getColumn(), 'snowflake_column');
+        Assert::true($fields->has('snowflake'));
+        Assert::same($fields->get('snowflake')->getType(), 'bigInteger');
+        Assert::same($fields->get('snowflake')->getColumn(), 'snowflake_column');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddBigIntegerFieldThrowsException(): void
     {
         $this->modifier->addIntegerColumn('snowflake_column', 'snowflake');
 
-        \Testo\Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field snowflake must be of type big integer.');
+        Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field snowflake must be of type big integer.');
 
         $this->modifier->addBigIntegerColumn('snowflake_column', 'snowflake');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddSnowflakeField(): void
     {
         $this->modifier->addSnowflakeColumn('snowflake_column', 'snowflake');
@@ -92,22 +96,22 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('snowflake'));
-        \Testo\Assert::same($fields->get('snowflake')->getType(), 'snowflake');
-        \Testo\Assert::same($fields->get('snowflake')->getColumn(), 'snowflake_column');
+        Assert::true($fields->has('snowflake'));
+        Assert::same($fields->get('snowflake')->getType(), 'snowflake');
+        Assert::same($fields->get('snowflake')->getColumn(), 'snowflake_column');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddSnowflakeFieldThrowsException(): void
     {
         $this->modifier->addStringColumn('snowflake_column', 'snowflake');
 
-        \Testo\Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field snowflake must be of type snowflake.');
+        Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field snowflake must be of type snowflake.');
 
         $this->modifier->addSnowflakeColumn('snowflake_column', 'snowflake');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddUlidField(): void
     {
         $this->modifier->addUlidColumn('ulid_column', 'ulid');
@@ -115,22 +119,22 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('ulid'));
-        \Testo\Assert::same($fields->get('ulid')->getType(), 'ulid');
-        \Testo\Assert::same($fields->get('ulid')->getColumn(), 'ulid_column');
+        Assert::true($fields->has('ulid'));
+        Assert::same($fields->get('ulid')->getType(), 'ulid');
+        Assert::same($fields->get('ulid')->getColumn(), 'ulid_column');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddUlidFieldThrowsException(): void
     {
         $this->modifier->addIntegerColumn('ulid_column', 'ulid');
 
-        \Testo\Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field ulid must be of type ulid.');
+        Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field ulid must be of type ulid.');
 
         $this->modifier->addUlidColumn('ulid_column', 'ulid');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddUuidField(): void
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
@@ -138,22 +142,22 @@ final class RegistryModifierTest extends DatabaseTestCase
         $entity = $this->registry->getEntity(self::ROLE_TEST);
         $fields = $entity->getFields();
 
-        \Testo\Assert::true($fields->has('uuid'));
-        \Testo\Assert::same($fields->get('uuid')->getType(), 'uuid');
-        \Testo\Assert::same($fields->get('uuid')->getColumn(), 'uuid_column');
+        Assert::true($fields->has('uuid'));
+        Assert::same($fields->get('uuid')->getType(), 'uuid');
+        Assert::same($fields->get('uuid')->getColumn(), 'uuid_column');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddUuidFieldThrowsException(): void
     {
         $this->modifier->addIntegerColumn('uuid_column', 'uuid');
 
-        \Testo\Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field uuid must be of type uuid.');
+        Expect::exception(BehaviorCompilationException::class)->withMessageContaining('Field uuid must be of type uuid.');
 
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddTypecast(): void
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
@@ -168,15 +172,15 @@ final class RegistryModifierTest extends DatabaseTestCase
         $this->modifier->setTypecast($field3, 'int', CustomTypecast::class);
 
         // field has custom UUID typecast
-        \Testo\Assert::same($field1->getTypecast(), [Uuid::class, 'fromString']);
-        \Testo\Assert::same($field2->getTypecast(), 'int');
-        \Testo\Assert::same($field3->getTypecast(), 'int');
+        Assert::same($field1->getTypecast(), [Uuid::class, 'fromString']);
+        Assert::same($field2->getTypecast(), 'int');
+        Assert::same($field3->getTypecast(), 'int');
 
         // entity has default typecast
-        \Testo\Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), [Typecast::class, CustomTypecast::class]);
+        Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), [Typecast::class, CustomTypecast::class]);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddTypecastEntityWithTypecast(): void
     {
         $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
@@ -187,13 +191,13 @@ final class RegistryModifierTest extends DatabaseTestCase
         $this->modifier->setTypecast($field, [Uuid::class, 'fromString']);
 
         // field has custom UUID typecast
-        \Testo\Assert::same($field->getTypecast(), [Uuid::class, 'fromString']);
+        Assert::same($field->getTypecast(), [Uuid::class, 'fromString']);
 
         // entity has default typecast and custom typecast
-        \Testo\Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), [CustomTypecast::class, Typecast::class]);
+        Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), [CustomTypecast::class, Typecast::class]);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddTypecastShouldBeSkipped(): void
     {
         $this->registry->getEntity(self::ROLE_TEST);
@@ -201,20 +205,20 @@ final class RegistryModifierTest extends DatabaseTestCase
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
         $this->registry->getDefaults()->offsetSet(SchemaInterface::TYPECAST_HANDLER, Typecast::class);
 
-        \Testo\Assert::null($this->registry->getEntity(self::ROLE_TEST)->getTypecast());
+        Assert::null($this->registry->getEntity(self::ROLE_TEST)->getTypecast());
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddTypecastShouldBeDuplicated(): void
     {
         $this->registry->getEntity(self::ROLE_TEST)->setTypecast(CustomTypecast::class);
 
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
 
-        \Testo\Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), CustomTypecast::class);
+        Assert::same($this->registry->getEntity(self::ROLE_TEST)->getTypecast(), CustomTypecast::class);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testCustomTypecastNotOverridden(): void
     {
         $this->modifier->addUuidColumn('uuid_column', 'uuid');
@@ -224,10 +228,10 @@ final class RegistryModifierTest extends DatabaseTestCase
 
         $this->modifier->setTypecast($field, [Uuid::class, 'fromString']);
 
-        \Testo\Assert::same($field->getTypecast(), ['foo', 'bar']);
+        Assert::same($field->getTypecast(), ['foo', 'bar']);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->registry = new Registry($this->dbal);

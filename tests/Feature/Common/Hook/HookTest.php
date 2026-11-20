@@ -13,27 +13,30 @@ use Cycle\ORM\Entity\Behavior\Tests\Support\SchemaTestCase;
 use Cycle\ORM\SchemaInterface;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class HookTest extends SchemaTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testAddListener(): void
     {
         $listeners = $this->schema->define(Post::class, SchemaInterface::LISTENERS);
 
-        \Testo\Assert::array($listeners);
-        \Testo\Assert::count($listeners, 2);
-        \Testo\Assert::array($listeners[0]);
-        \Testo\Assert::array($listeners[1]);
+        Assert::array($listeners);
+        Assert::count($listeners, 2);
+        Assert::array($listeners[0]);
+        Assert::array($listeners[1]);
 
-        \Testo\Assert::same($listeners[0][0], Hook::class);
-        \Testo\Assert::same($listeners[0][1], ['callable' => [PostService::class, 'update'], 'events' => [OnUpdate::class]]);
+        Assert::same($listeners[0][0], Hook::class);
+        Assert::same($listeners[0][1], ['callable' => [PostService::class, 'update'], 'events' => [OnUpdate::class]]);
 
-        \Testo\Assert::same($listeners[1][0], Hook::class);
-        \Testo\Assert::same($listeners[1][1], ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]]);
+        Assert::same($listeners[1][0], Hook::class);
+        Assert::same($listeners[1][1], ['callable' => [Post::class, 'touch'], 'events' => [OnCreate::class, OnUpdate::class]]);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([

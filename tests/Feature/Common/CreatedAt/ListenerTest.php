@@ -11,10 +11,13 @@ use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class ListenerTest extends ListenerTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testCreate(): void
     {
         $post = new Post();
@@ -23,11 +26,11 @@ final class ListenerTest extends ListenerTestCase
 
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
-        \Testo\Assert::notNull($data->createdAt);
-        \Testo\Assert::notNull($data->customCreatedAt);
+        Assert::notNull($data->createdAt);
+        Assert::notNull($data->customCreatedAt);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testUpdate(): void
     {
         $post = new Post();
@@ -47,12 +50,12 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        \Testo\Assert::same($data->createdAt <=> $createdAt, 0);
-        \Testo\Assert::same($data->customCreatedAt <=> $customCreatedAt, 0);
-        \Testo\Assert::same($data->content, 'test');
+        Assert::same($data->createdAt <=> $createdAt, 0);
+        Assert::same($data->customCreatedAt <=> $customCreatedAt, 0);
+        Assert::same($data->content, 'test');
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable(

@@ -12,10 +12,13 @@ use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
 use Cycle\ORM\Transaction;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class ListenerTest extends ListenerTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testDelete(): void
     {
         $this->save(new Post());
@@ -23,8 +26,8 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm, Post::class);
         $post = $select->fetchOne();
 
-        \Testo\Assert::null($post->deletedAt);
-        \Testo\Assert::null($post->customDeletedAt);
+        Assert::null($post->deletedAt);
+        Assert::null($post->customDeletedAt);
 
         $tr = new Transaction($this->orm);
         $tr->delete($post);
@@ -33,12 +36,12 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        \Testo\Assert::instanceOf($data, Post::class);
-        \Testo\Assert::notNull($data->deletedAt);
-        \Testo\Assert::notNull($data->customDeletedAt);
+        Assert::instanceOf($data, Post::class);
+        Assert::notNull($data->deletedAt);
+        Assert::notNull($data->customDeletedAt);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable(

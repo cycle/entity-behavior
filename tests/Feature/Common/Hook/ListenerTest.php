@@ -14,10 +14,13 @@ use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class ListenerTest extends ListenerTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testCreate(): void
     {
         $post = $this->createPost();
@@ -25,14 +28,14 @@ final class ListenerTest extends ListenerTestCase
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        \Testo\Assert::notNull($data->createdAt);
-        \Testo\Assert::notNull($data->updatedAt);
-        \Testo\Assert::null($data->content);
-        \Testo\Assert::same($post->slug, 'test');
-        \Testo\Assert::same($data->lastEvent, OnCreate::class);
+        Assert::notNull($data->createdAt);
+        Assert::notNull($data->updatedAt);
+        Assert::null($data->content);
+        Assert::same($post->slug, 'test');
+        Assert::same($data->lastEvent, OnCreate::class);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testUpdate(): void
     {
         $this->createPost();
@@ -49,20 +52,20 @@ final class ListenerTest extends ListenerTestCase
         $data = $select->fetchOne();
 
         // Triggered OnUpdate event
-        \Testo\Assert::null($content);
-        \Testo\Assert::same($data->content, 'modified by service');
+        Assert::null($content);
+        Assert::same($data->content, 'modified by service');
 
         // Not triggered OnCreate event, slug NOT changed.
-        \Testo\Assert::same($data->slug, 'test');
-        \Testo\Assert::same($data->title, 'TEST 2');
+        Assert::same($data->slug, 'test');
+        Assert::same($data->title, 'TEST 2');
 
         // Triggered union type event OnCreate|OnUpdate
-        \Testo\Assert::notNull($data->updatedAt);
-        \Testo\Assert::notNull($data->createdAt);
-        \Testo\Assert::same($data->lastEvent, OnUpdate::class);
+        Assert::notNull($data->updatedAt);
+        Assert::notNull($data->createdAt);
+        Assert::same($data->lastEvent, OnUpdate::class);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable(

@@ -8,6 +8,9 @@ use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Tests\Support\SchemaTestCase;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
+use Testo\Data\DataProvider;
+use Testo\Expect;
+use Testo\Test;
 
 final class ErrorsTest extends SchemaTestCase
 {
@@ -31,11 +34,11 @@ final class ErrorsTest extends SchemaTestCase
         ];
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('errorsProvider')]
+    #[Test]
+    #[DataProvider('errorsProvider')]
     public function testErrors(Tokenizer $tokenizer, string $message): void
     {
-        \Testo\Expect::exception(BehaviorCompilationException::class)->withMessageMatchingRegex(\sprintf('/%s/', $message));
+        Expect::exception(BehaviorCompilationException::class)->withMessageMatchingRegex(\sprintf('/%s/', $message));
 
         $this->compileWithTokenizer($tokenizer);
     }

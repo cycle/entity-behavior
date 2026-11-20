@@ -29,10 +29,13 @@ use Cycle\Schema\Registry;
 use Spiral\Attributes\AttributeReader;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class InquiredRelationTest extends ListenerTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testUpdateWithSelectCollection(): void
     {
         $repo = $this->orm->getRepository(Product::class);
@@ -58,23 +61,23 @@ final class InquiredRelationTest extends ListenerTestCase
         $this->save($product1, $product2);
 
         // Persist 2 with Fetch all products
-        \Testo\Assert::same($product1->revision, 1);
-        \Testo\Assert::same($product2->revision, 1);
+        Assert::same($product1->revision, 1);
+        Assert::same($product2->revision, 1);
         $product1->name = '222';
 
         // Persist 2
         $this->save($product1);
-        \Testo\Assert::same($product1->revision, 2);
+        Assert::same($product1->revision, 2);
 
         // Persist 3 with Fetch all products
         $product1->name = '333';
 
         $products = $repo->findAll();
         $this->save($product1);
-        \Testo\Assert::equals($product1->revision, 3);
+        Assert::equals($product1->revision, 3);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $schema = $this->compileSchema(new Tokenizer(new TokenizerConfig([

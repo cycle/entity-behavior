@@ -9,35 +9,38 @@ use Cycle\ORM\Entity\Behavior\Tests\Support\SchemaTestCase;
 use Cycle\ORM\Schema\GeneratedField;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class CreatedAtTest extends SchemaTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testExistenceColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        \Testo\Assert::true($fields->has('createdAt'));
-        \Testo\Assert::true($fields->hasColumn('created_at'));
-        \Testo\Assert::same($fields->get('createdAt')->getType(), 'datetime');
-        \Testo\Assert::same($fields->get('createdAt')->getGenerated(), GeneratedField::BEFORE_INSERT);
+        Assert::true($fields->has('createdAt'));
+        Assert::true($fields->hasColumn('created_at'));
+        Assert::same($fields->get('createdAt')->getType(), 'datetime');
+        Assert::same($fields->get('createdAt')->getGenerated(), GeneratedField::BEFORE_INSERT);
 
         // No new fields added
-        \Testo\Assert::same($fields->count(), 3);
+        Assert::same($fields->count(), 3);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddedColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        \Testo\Assert::true($fields->has('newField'));
-        \Testo\Assert::true($fields->hasColumn('new_field'));
-        \Testo\Assert::same($fields->get('newField')->getType(), 'datetime');
-        \Testo\Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_INSERT);
+        Assert::true($fields->has('newField'));
+        Assert::true($fields->hasColumn('new_field'));
+        Assert::same($fields->get('newField')->getType(), 'datetime');
+        Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_INSERT);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->compileWithTokenizer(new Tokenizer(new TokenizerConfig([
