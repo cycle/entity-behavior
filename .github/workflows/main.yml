@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   sqlite:
-    name: SQLite PHP ${{ matrix.php-version }}, ${{ matrix.dependencies }}
+    name: Unit and SQLite, PHP ${{ matrix.php-version }}, ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -45,64 +45,58 @@ jobs:
           extensions: mbstring, pdo, pdo_sqlite
 
       - name: Install dependencies with composer
+        # TODO(cycle/testing): switch to the released package
         uses: ramsey/composer-install@v4
         with:
           dependency-versions: ${{ matrix.dependencies }}
 
-      - name: Execute Tests
+      - name: Unit tests
+        run: composer test:unit
+
+      - name: SQLite tests
         env:
-          DB: sqlite
-        run: vendor/bin/phpunit --group driver-sqlite --colors=always
+          DB_REQUIRED: 1
+        run: composer test:sqlite
 
-  test:
+  coverage:
     needs: sqlite
-    name: Test PHP ${{ matrix.php-version }} with Code Coverage
+    name: Code coverage
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     strategy:
-      fail-fast: false
       matrix:
-        php-version:
-          - "8.2"
-          - "8.3"
-          - "8.4"
-          - "8.5"
+        dependencies:
+          - highest
     steps:
-      - name: Install ODBC driver
-        run: |
-          sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - name: Setup DB services
-        working-directory: tests
-        run: docker compose up -d
-
-      - name: Setup PHP ${{ matrix.php-version }}
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: "8.4"
           coverage: pcov
-          tools: pecl
-          extensions: mbstring, pdo, pdo_sqlite, pdo_pgsql, pdo_sqlsrv, pdo_mysql
+          extensions: mbstring, pdo, pdo_sqlite
 
       - name: Install dependencies with composer
+        # TODO(cycle/testing): switch to the released package
         uses: ramsey/composer-install@v4
         with:
-          dependency-versions: highest
+          dependency-versions: ${{ matrix.dependencies }}
 
-      - name: Execute Tests
-        run: vendor/bin/phpunit --coverage-clover=coverage.clover
+      - name: Unit and SQLite tests with coverage
+        env:
+          DB_DRIVERS: sqlite
+          DB_REQUIRED: 1
+        run: composer test -- --coverage-clover=runtime/clover.xml
 
       - name: Upload coverage to Codecov
         continue-on-error: true  # forks have no token
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.clover
+          files: ./runtime/clover.xml
 
 ...
