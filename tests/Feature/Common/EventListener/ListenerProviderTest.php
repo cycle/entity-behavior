@@ -58,9 +58,9 @@ final class ListenerProviderTest extends ListenerTestCase
             ->withMessage(\sprintf("Cann't create listener `%s` for the `post` role.", BrokenEventListService::class))
             ->withCode(0)
             ->withPrevious(
-            RuntimeException::class,
-            static fn(ExpectedException $previous) => $previous->withMessageContaining('should return list of tuples'),
-        );
+                RuntimeException::class,
+                static fn(ExpectedException $previous) => $previous->withMessageContaining('should return list of tuples'),
+            );
 
         $this->withListeners(BrokenEventListService::class);
     }
