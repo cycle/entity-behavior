@@ -33,6 +33,7 @@ abstract class BaseListenerTest extends BaseTest
         return $this->orm;
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         parent::tearDown();

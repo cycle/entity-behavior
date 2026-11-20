@@ -17,6 +17,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testCreate(): void
     {
         $post = new Post();
@@ -25,10 +26,11 @@ abstract class ListenerTest extends BaseListenerTest
 
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
-        $this->assertNotNull($data->createdAt);
-        $this->assertNotNull($data->customCreatedAt);
+        \Testo\Assert::notNull($data->createdAt);
+        \Testo\Assert::notNull($data->customCreatedAt);
     }
 
+    #[\Testo\Test]
     public function testUpdate(): void
     {
         $post = new Post();
@@ -48,11 +50,12 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        $this->assertSame(0, $data->createdAt <=> $createdAt);
-        $this->assertSame(0, $data->customCreatedAt <=> $customCreatedAt);
-        $this->assertSame('test', $data->content);
+        \Testo\Assert::same($data->createdAt <=> $createdAt, 0);
+        \Testo\Assert::same($data->customCreatedAt <=> $customCreatedAt, 0);
+        \Testo\Assert::same($data->content, 'test');
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

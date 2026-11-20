@@ -20,6 +20,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testCreate(): void
     {
         $post = $this->createPost();
@@ -27,13 +28,14 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        $this->assertNotNull($data->createdAt);
-        $this->assertNotNull($data->updatedAt);
-        $this->assertNull($data->content);
-        $this->assertSame('test', $post->slug);
-        $this->assertSame(OnCreate::class, $data->lastEvent);
+        \Testo\Assert::notNull($data->createdAt);
+        \Testo\Assert::notNull($data->updatedAt);
+        \Testo\Assert::null($data->content);
+        \Testo\Assert::same($post->slug, 'test');
+        \Testo\Assert::same($data->lastEvent, OnCreate::class);
     }
 
+    #[\Testo\Test]
     public function testUpdate(): void
     {
         $this->createPost();
@@ -50,19 +52,20 @@ abstract class ListenerTest extends BaseListenerTest
         $data = $select->fetchOne();
 
         // Triggered OnUpdate event
-        $this->assertNull($content);
-        $this->assertSame('modified by service', $data->content);
+        \Testo\Assert::null($content);
+        \Testo\Assert::same($data->content, 'modified by service');
 
         // Not triggered OnCreate event, slug NOT changed.
-        $this->assertSame('test', $data->slug);
-        $this->assertSame('TEST 2', $data->title);
+        \Testo\Assert::same($data->slug, 'test');
+        \Testo\Assert::same($data->title, 'TEST 2');
 
         // Triggered union type event OnCreate|OnUpdate
-        $this->assertNotNull($data->updatedAt);
-        $this->assertNotNull($data->createdAt);
-        $this->assertSame(OnUpdate::class, $data->lastEvent);
+        \Testo\Assert::notNull($data->updatedAt);
+        \Testo\Assert::notNull($data->createdAt);
+        \Testo\Assert::same($data->lastEvent, OnUpdate::class);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

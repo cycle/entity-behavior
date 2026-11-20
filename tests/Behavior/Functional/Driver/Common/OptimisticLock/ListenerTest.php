@@ -22,6 +22,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testAddVersionOnCreate(): void
     {
         $comment = new Comment();
@@ -34,12 +35,13 @@ abstract class ListenerTest extends BaseListenerTest
 
         $comment = $select->fetchOne();
 
-        $this->assertSame(1, $comment->versionInt);
-        $this->assertInstanceOf(\DateTimeImmutable::class, $comment->versionDatetime);
-        $this->assertIsString($comment->versionMicrotime);
-        $this->assertIsString($comment->versionStr);
+        \Testo\Assert::same($comment->versionInt, 1);
+        \Testo\Assert::instanceOf($comment->versionDatetime, \DateTimeImmutable::class);
+        \Testo\Assert::string($comment->versionMicrotime);
+        \Testo\Assert::string($comment->versionStr);
     }
 
+    #[\Testo\Test]
     public function testManualAddVersionOnCreate(): void
     {
         $comment = new Comment();
@@ -56,12 +58,13 @@ abstract class ListenerTest extends BaseListenerTest
 
         $comment = $select->fetchOne();
 
-        $this->assertSame(3, $comment->versionInt);
-        $this->assertSame(1638275394, $comment->versionDatetime->getTimestamp());
-        $this->assertSame('1638275263.792011', $comment->versionMicrotime);
-        $this->assertSame('b0b55bb7237bb75611f7df8175e926d1', $comment->versionStr);
+        \Testo\Assert::same($comment->versionInt, 3);
+        \Testo\Assert::same($comment->versionDatetime->getTimestamp(), 1638275394);
+        \Testo\Assert::same($comment->versionMicrotime, '1638275263.792011');
+        \Testo\Assert::same($comment->versionStr, 'b0b55bb7237bb75611f7df8175e926d1');
     }
 
+    #[\Testo\Test]
     public function testManualVersionControl(): void
     {
         $comment = new Comment();
@@ -74,14 +77,15 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm, Comment::class);
 
         $comment = $select->fetchOne();
-        $this->assertSame(1, $comment->versionCustom);
+        \Testo\Assert::same($comment->versionCustom, 1);
 
         $comment->versionCustom = 2;
         $this->save($comment);
 
-        $this->assertSame(2, $comment->versionCustom);
+        \Testo\Assert::same($comment->versionCustom, 2);
     }
 
+    #[\Testo\Test]
     public function testExceptionOnChangeVersion(): void
     {
         $comment = new Comment();
@@ -93,15 +97,15 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm, Comment::class);
 
         $comment = $select->fetchOne();
-        $this->assertSame(1, $comment->versionInt);
+        \Testo\Assert::same($comment->versionInt, 1);
 
         $comment->versionInt = 2;
 
-        $this->expectException(ChangedVersionException::class);
-        $this->expectExceptionMessage('Record version change detected. Old value `1`, a new value `2`');
+        \Testo\Expect::exception(ChangedVersionException::class)->withMessageContaining('Record version change detected. Old value `1`, a new value `2`');
         $this->save($comment);
     }
 
+    #[\Testo\Test]
     public function testUpdate(): void
     {
         $comment = new Comment();
@@ -114,8 +118,8 @@ abstract class ListenerTest extends BaseListenerTest
 
         $comment = $select->fetchOne();
 
-        $this->assertSame(1, $comment->versionInt);
-        $this->assertSame('test', $comment->content);
+        \Testo\Assert::same($comment->versionInt, 1);
+        \Testo\Assert::same($comment->content, 'test');
 
         $comment->content = 'changed';
 
@@ -124,10 +128,11 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm->with(heap: new Heap()), Comment::class);
         $data = $select->fetchOne();
 
-        $this->assertSame('changed', $data->content);
-        $this->assertSame(2, $data->versionInt);
+        \Testo\Assert::same($data->content, 'changed');
+        \Testo\Assert::same($data->versionInt, 2);
     }
 
+    #[\Testo\Test]
     public function testLock(): void
     {
         $comment = new Comment();
@@ -146,11 +151,11 @@ abstract class ListenerTest extends BaseListenerTest
 
         (new Transaction($orm))->persist($data1)->run();
 
-        $this->expectException(RecordIsLockedException::class);
-        $this->expectExceptionMessage('The `comment` record is locked.');
+        \Testo\Expect::exception(RecordIsLockedException::class)->withMessageContaining('The `comment` record is locked.');
         (new Transaction($orm2))->persist($data2)->run();
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

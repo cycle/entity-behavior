@@ -18,92 +18,81 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class OptimisticLockTest extends BaseSchemaTest
 {
+    #[\Testo\Test]
     public function testAddIntColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        $this->assertTrue($fields->has('version'));
-        $this->assertTrue($fields->hasColumn('version'));
-        $this->assertSame('integer', $fields->get('version')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('version'));
+        \Testo\Assert::true($fields->hasColumn('version'));
+        \Testo\Assert::same($fields->get('version')->getType(), 'integer');
+        \Testo\Assert::same($fields->get('version')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
     }
 
+    #[\Testo\Test]
     public function testAddStringColumn(): void
     {
         $fields = $this->registry->getEntity(Comment::class)->getFields();
 
-        $this->assertTrue($fields->has('version'));
-        $this->assertTrue($fields->hasColumn('version'));
-        $this->assertSame(ColumnInterface::STRING, $fields->get('version')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('version'));
+        \Testo\Assert::true($fields->hasColumn('version'));
+        \Testo\Assert::same($fields->get('version')->getType(), ColumnInterface::STRING);
+        \Testo\Assert::same($fields->get('version')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
     }
 
+    #[\Testo\Test]
     public function testAddDatetimeColumn(): void
     {
         $fields = $this->registry->getEntity(Page::class)->getFields();
 
-        $this->assertTrue($fields->has('version'));
-        $this->assertTrue($fields->hasColumn('version'));
-        $this->assertSame('datetime', $fields->get('version')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('version'));
+        \Testo\Assert::true($fields->hasColumn('version'));
+        \Testo\Assert::same($fields->get('version')->getType(), 'datetime');
+        \Testo\Assert::same($fields->get('version')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
     }
 
+    #[\Testo\Test]
     public function testExistColumn(): void
     {
         $fields = $this->registry->getEntity(Item::class)->getFields();
 
-        $this->assertTrue($fields->has('revision'));
-        $this->assertTrue($fields->hasColumn('revision_field'));
-        $this->assertSame('integer', $fields->get('revision')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('revision')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('revision'));
+        \Testo\Assert::true($fields->hasColumn('revision_field'));
+        \Testo\Assert::same($fields->get('revision')->getType(), 'integer');
+        \Testo\Assert::same($fields->get('revision')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
 
         // not added new columns
-        $this->assertSame(2, $fields->count());
+        \Testo\Assert::same($fields->count(), 2);
     }
 
+    #[\Testo\Test]
     public function testExistColumnAndAllOptimisticLockParameters(): void
     {
         $fields = $this->registry->getEntity(WithAllParameters::class)->getFields();
 
-        $this->assertTrue($fields->has('revision'));
-        $this->assertTrue($fields->hasColumn('revision_field'));
-        $this->assertSame('integer', $fields->get('revision')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('revision')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('revision'));
+        \Testo\Assert::true($fields->hasColumn('revision_field'));
+        \Testo\Assert::same($fields->get('revision')->getType(), 'integer');
+        \Testo\Assert::same($fields->get('revision')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
 
         // not added new columns
-        $this->assertSame(2, $fields->count());
+        \Testo\Assert::same($fields->count(), 2);
     }
 
+    #[\Testo\Test]
     public function testAddDefaultColumAndRule(): void
     {
         $fields = $this->registry->getEntity(News::class)->getFields();
 
-        $this->assertTrue($fields->has('version'));
-        $this->assertTrue($fields->hasColumn('version'));
-        $this->assertSame('integer', $fields->get('version')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('version')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('version'));
+        \Testo\Assert::true($fields->hasColumn('version'));
+        \Testo\Assert::same($fields->get('version')->getType(), 'integer');
+        \Testo\Assert::same($fields->get('version')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
 
-        $this->assertSame(2, $fields->count());
+        \Testo\Assert::same($fields->count(), 2);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

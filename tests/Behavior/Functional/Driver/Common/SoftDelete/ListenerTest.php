@@ -18,6 +18,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testDelete(): void
     {
         $this->save(new Post());
@@ -25,8 +26,8 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm, Post::class);
         $post = $select->fetchOne();
 
-        $this->assertNull($post->deletedAt);
-        $this->assertNull($post->customDeletedAt);
+        \Testo\Assert::null($post->deletedAt);
+        \Testo\Assert::null($post->customDeletedAt);
 
         $tr = new Transaction($this->orm);
         $tr->delete($post);
@@ -35,11 +36,12 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        $this->assertInstanceOf(Post::class, $data);
-        $this->assertNotNull($data->deletedAt);
-        $this->assertNotNull($data->customDeletedAt);
+        \Testo\Assert::instanceOf($data, Post::class);
+        \Testo\Assert::notNull($data->deletedAt);
+        \Testo\Assert::notNull($data->customDeletedAt);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

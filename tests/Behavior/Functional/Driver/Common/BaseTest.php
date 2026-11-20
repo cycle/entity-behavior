@@ -12,7 +12,7 @@ use Cycle\Database\Driver\Handler;
 use Cycle\ORM\Entity\Behavior\Tests\Traits\Loggable;
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseTest extends TestCase
+abstract class BaseTest
 {
     use Loggable;
 
@@ -37,6 +37,7 @@ abstract class BaseTest extends TestCase
         return static::$driverCache[static::DRIVER] = $this->driver;
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
         $this->setUpLogger($this->getDriver());
@@ -56,6 +57,7 @@ abstract class BaseTest extends TestCase
         );
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->dropDatabase($this->dbal->database('default'));

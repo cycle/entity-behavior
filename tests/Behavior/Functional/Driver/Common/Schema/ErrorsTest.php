@@ -31,13 +31,11 @@ abstract class ErrorsTest extends BaseSchemaTest
         ];
     }
 
-    /**
-     * @dataProvider errorsProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('errorsProvider')]
     public function testErrors(Tokenizer $tokenizer, string $message): void
     {
-        $this->expectException(BehaviorCompilationException::class);
-        $this->expectExceptionMessageMatches(\sprintf('/%s/', $message));
+        \Testo\Expect::exception(BehaviorCompilationException::class)->withMessageMatchingRegex(\sprintf('/%s/', $message));
 
         $this->compileWithTokenizer($tokenizer);
     }

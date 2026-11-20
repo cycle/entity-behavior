@@ -15,25 +15,28 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class EventListenerTest extends BaseSchemaTest
 {
+    #[\Testo\Test]
     public function testSchemaWithArgs(): void
     {
         $listeners = $this->schema->define(Post::class, SchemaInterface::LISTENERS);
 
-        $this->assertIsArray($listeners);
-        $this->assertIsArray($listeners[0]);
-        $this->assertSame(PostService::class, $listeners[0][0]);
-        $this->assertSame(['foo' => 'modified by EventListener', 'bar' => ['baz']], $listeners[0][1]);
-        $this->assertCount(2, $listeners[0]);
+        \Testo\Assert::array($listeners);
+        \Testo\Assert::array($listeners[0]);
+        \Testo\Assert::same($listeners[0][0], PostService::class);
+        \Testo\Assert::same($listeners[0][1], ['foo' => 'modified by EventListener', 'bar' => ['baz']]);
+        \Testo\Assert::count($listeners[0], 2);
     }
 
+    #[\Testo\Test]
     public function testSchema(): void
     {
         $listeners = $this->schema->define(Comment::class, SchemaInterface::LISTENERS);
-        $this->assertIsArray($listeners);
-        $this->assertSame(CommentService::class, $listeners[0]);
-        $this->assertCount(1, $listeners);
+        \Testo\Assert::array($listeners);
+        \Testo\Assert::same($listeners[0], CommentService::class);
+        \Testo\Assert::count($listeners, 1);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

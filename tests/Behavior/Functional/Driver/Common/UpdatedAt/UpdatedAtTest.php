@@ -12,35 +12,32 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class UpdatedAtTest extends BaseSchemaTest
 {
+    #[\Testo\Test]
     public function testExistenceColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        $this->assertTrue($fields->has('updatedAt'));
-        $this->assertTrue($fields->hasColumn('updated_at'));
-        $this->assertSame('datetime', $fields->get('updatedAt')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('updatedAt')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('updatedAt'));
+        \Testo\Assert::true($fields->hasColumn('updated_at'));
+        \Testo\Assert::same($fields->get('updatedAt')->getType(), 'datetime');
+        \Testo\Assert::same($fields->get('updatedAt')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
 
         // No new fields added
-        $this->assertSame(3, $fields->count());
+        \Testo\Assert::same($fields->count(), 3);
     }
 
+    #[\Testo\Test]
     public function testAddedColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        $this->assertTrue($fields->has('newField'));
-        $this->assertTrue($fields->hasColumn('new_field'));
-        $this->assertSame('datetime', $fields->get('newField')->getType());
-        $this->assertSame(
-            GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE,
-            $fields->get('newField')->getGenerated(),
-        );
+        \Testo\Assert::true($fields->has('newField'));
+        \Testo\Assert::true($fields->hasColumn('new_field'));
+        \Testo\Assert::same($fields->get('newField')->getType(), 'datetime');
+        \Testo\Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

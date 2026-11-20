@@ -52,6 +52,7 @@ abstract class BaseSchemaTest extends BaseTest
         ]));
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         parent::tearDown();

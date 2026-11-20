@@ -17,6 +17,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testCreate(): void
     {
         $post = new Post();
@@ -25,10 +26,11 @@ abstract class ListenerTest extends BaseListenerTest
 
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
-        $this->assertNull($data->updatedAt);
-        $this->assertNull($data->customUpdatedAt);
+        \Testo\Assert::null($data->updatedAt);
+        \Testo\Assert::null($data->customUpdatedAt);
     }
 
+    #[\Testo\Test]
     public function testCreateNotNullable(): void
     {
         $post = new Post();
@@ -39,9 +41,10 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm, Post::class);
         $data = $select->fetchOne();
 
-        $this->assertInstanceOf(\DateTimeImmutable::class, $data->notNullableUpdatedAt);
+        \Testo\Assert::instanceOf($data->notNullableUpdatedAt, \DateTimeImmutable::class);
     }
 
+    #[\Testo\Test]
     public function testUpdate(): void
     {
         $post = new Post();
@@ -60,11 +63,12 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        $this->assertGreaterThan(0, $data->updatedAt <=> $updatedAt);
-        $this->assertGreaterThan(0, $data->customUpdatedAt <=> $customUpdatedAt);
-        $this->assertSame('test', $data->content);
+        \Testo\Assert::numeric($data->updatedAt <=> $updatedAt)->greaterThan(0);
+        \Testo\Assert::numeric($data->customUpdatedAt <=> $customUpdatedAt)->greaterThan(0);
+        \Testo\Assert::same($data->content, 'test');
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

@@ -7,7 +7,7 @@ namespace Cycle\ORM\Entity\Behavior\Tests\Unit\Schema;
 use Cycle\ORM\Entity\Behavior\Schema\RegistryModifier;
 use PHPUnit\Framework\TestCase;
 
-final class RegistryModifierTest extends TestCase
+final class RegistryModifierTest
 {
     public static function integerDataProvider(): \Traversable
     {
@@ -49,123 +49,115 @@ final class RegistryModifierTest extends TestCase
         yield ['bar(32)'];
     }
 
-    /**
-     * @dataProvider integerDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('integerDataProvider')]
     public function testIsIntegerTypeTrue(mixed $type): void
     {
-        $this->assertTrue(RegistryModifier::isIntegerType($type));
+        \Testo\Assert::true(RegistryModifier::isIntegerType($type));
     }
 
-    /**
-     * @dataProvider datetimeDataProvider
-     * @dataProvider stringDataProvider
-     * @dataProvider invalidDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
     public function testIsIntegerTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isIntegerType($type));
+        \Testo\Assert::false(RegistryModifier::isIntegerType($type));
     }
 
-    /**
-     * @dataProvider bigIntegerDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('bigIntegerDataProvider')]
     public function testIsBigIntegerTypeTrue(mixed $type): void
     {
-        $this->assertTrue(RegistryModifier::isBigIntegerType($type));
+        \Testo\Assert::true(RegistryModifier::isBigIntegerType($type));
     }
 
-    /**
-     * @dataProvider datetimeDataProvider
-     * @dataProvider stringDataProvider
-     * @dataProvider invalidDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
     public function testIsBigIntegerTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isBigIntegerType($type));
+        \Testo\Assert::false(RegistryModifier::isBigIntegerType($type));
     }
 
-    /**
-     * @dataProvider datetimeDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
     public function testIsDatetimeTypeTrue(mixed $type): void
     {
-        $this->assertTrue(RegistryModifier::isDatetimeType($type));
+        \Testo\Assert::true(RegistryModifier::isDatetimeType($type));
     }
 
-    /**
-     * @dataProvider integerDataProvider
-     * @dataProvider stringDataProvider
-     * @dataProvider invalidDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('integerDataProvider')]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
     public function testIsDatetimeTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isDatetimeType($type));
+        \Testo\Assert::false(RegistryModifier::isDatetimeType($type));
     }
 
-    /**
-     * @dataProvider stringDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
     public function testIsStringTypeTrue(mixed $type): void
     {
-        $this->assertTrue(RegistryModifier::isStringType($type));
+        \Testo\Assert::true(RegistryModifier::isStringType($type));
     }
 
-    /**
-     * @dataProvider integerDataProvider
-     * @dataProvider datetimeDataProvider
-     * @dataProvider invalidDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('integerDataProvider')]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
     public function testIsStringTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isStringType($type));
+        \Testo\Assert::false(RegistryModifier::isStringType($type));
     }
 
+    #[\Testo\Test]
     public function testIsSnowflakeTypeTrue(): void
     {
-        $this->assertTrue(RegistryModifier::isSnowflakeType('snowflake'));
+        \Testo\Assert::true(RegistryModifier::isSnowflakeType('snowflake'));
     }
 
-    /**
-     * @dataProvider integerDataProvider
-     * @dataProvider datetimeDataProvider
-     * @dataProvider invalidDataProvider
-     * @dataProvider stringDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('integerDataProvider')]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
     public function testIsSnowflakeTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isSnowflakeType($type));
+        \Testo\Assert::false(RegistryModifier::isSnowflakeType($type));
     }
 
+    #[\Testo\Test]
     public function testIsUlidTypeTrue(): void
     {
-        $this->assertTrue(RegistryModifier::isUlidType('ulid'));
+        \Testo\Assert::true(RegistryModifier::isUlidType('ulid'));
     }
 
-    /**
-     * @dataProvider integerDataProvider
-     * @dataProvider datetimeDataProvider
-     * @dataProvider invalidDataProvider
-     * @dataProvider stringDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('integerDataProvider')]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
     public function testIsUlidTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isUlidType($type));
+        \Testo\Assert::false(RegistryModifier::isUlidType($type));
     }
 
+    #[\Testo\Test]
     public function testIsUuidTypeTrue(): void
     {
-        $this->assertTrue(RegistryModifier::isUuidType('uuid'));
+        \Testo\Assert::true(RegistryModifier::isUuidType('uuid'));
     }
 
-    /**
-     * @dataProvider integerDataProvider
-     * @dataProvider datetimeDataProvider
-     * @dataProvider invalidDataProvider
-     * @dataProvider stringDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('integerDataProvider')]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
+    #[\Testo\Data\DataProvider('invalidDataProvider')]
+    #[\Testo\Data\DataProvider('stringDataProvider')]
     public function testIsUuidTypeFalse(mixed $type): void
     {
-        $this->assertFalse(RegistryModifier::isUuidType($type));
+        \Testo\Assert::false(RegistryModifier::isUuidType($type));
     }
 }

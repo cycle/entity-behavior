@@ -41,6 +41,7 @@ abstract class InquiredRelationTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testUpdateWithSelectCollection(): void
     {
         $repo = $this->orm->getRepository(Product::class);
@@ -66,22 +67,23 @@ abstract class InquiredRelationTest extends BaseListenerTest
         $this->save($product1, $product2);
 
         // Persist 2 with Fetch all products
-        $this->assertSame(1, $product1->revision);
-        $this->assertSame(1, $product2->revision);
+        \Testo\Assert::same($product1->revision, 1);
+        \Testo\Assert::same($product2->revision, 1);
         $product1->name = '222';
 
         // Persist 2
         $this->save($product1);
-        $this->assertSame(2, $product1->revision);
+        \Testo\Assert::same($product1->revision, 2);
 
         // Persist 3 with Fetch all products
         $product1->name = '333';
 
         $products = $repo->findAll();
         $this->save($product1);
-        $this->assertEquals(3, $product1->revision);
+        \Testo\Assert::equals($product1->revision, 3);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

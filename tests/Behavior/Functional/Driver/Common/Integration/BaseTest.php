@@ -42,6 +42,7 @@ abstract class BaseTest extends \Cycle\ORM\Entity\Behavior\Tests\Functional\Driv
     protected SchemaInterface $schema;
     protected ORMInterface $orm;
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->disableProfiling();

@@ -12,6 +12,7 @@ abstract class CaseTest extends BaseTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testPreparedData(): void
     {
         // Get entity
@@ -22,20 +23,21 @@ abstract class CaseTest extends BaseTest
         \assert($user instanceof Entity\User);
 
         // Check results
-        self::assertNotNull($user->createdAt);
-        self::assertNotNull($user->updatedAt);
-        self::assertSame(0, $user->createdAt <=> $user->updatedAt);
+        \Testo\Assert::notNull($user->createdAt);
+        \Testo\Assert::notNull($user->updatedAt);
+        \Testo\Assert::same($user->createdAt <=> $user->updatedAt, 0);
     }
 
+    #[\Testo\Test]
     public function testCreatedAt(): void
     {
         // Get entity
         $user = $this->orm->make(Entity\User::class, ['login' => 'new-user', 'passwordHash' => '123456789']);
 
-        self::assertFalse(isset($user->createdAt));
+        \Testo\Assert::false(isset($user->createdAt));
         $this->save($user);
 
-        self::assertNotNull($user->createdAt);
+        \Testo\Assert::notNull($user->createdAt);
 
         // Reload entity
         $id = $user->id;
@@ -43,9 +45,10 @@ abstract class CaseTest extends BaseTest
         $user = (new Select($this->orm, Entity\User::class))
             ->wherePK($id)
             ->fetchOne();
-        self::assertNotNull($user->createdAt);
+        \Testo\Assert::notNull($user->createdAt);
     }
 
+    #[\Testo\Test]
     public function testUpdatedAt(): void
     {
         // Get entity
@@ -60,9 +63,10 @@ abstract class CaseTest extends BaseTest
         $this->save($user);
 
         // Check results
-        self::assertSame(1, $user->updatedAt <=> $updatedAt);
+        \Testo\Assert::same($user->updatedAt <=> $updatedAt, 1);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
         // Init DB

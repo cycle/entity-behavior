@@ -17,6 +17,7 @@ abstract class ListenerTest extends BaseListenerTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testApply(): void
     {
         $post = new Post();
@@ -26,10 +27,11 @@ abstract class ListenerTest extends BaseListenerTest
         $select = new Select($this->orm->with(heap: new Heap()), Post::class);
         $data = $select->fetchOne();
 
-        $this->assertSame('modified by EventListener', $data->title);
-        $this->assertSame('baz', $data->content);
+        \Testo\Assert::same($data->title, 'modified by EventListener');
+        \Testo\Assert::same($data->content, 'baz');
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

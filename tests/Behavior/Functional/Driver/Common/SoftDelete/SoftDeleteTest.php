@@ -12,29 +12,32 @@ use Spiral\Tokenizer\Tokenizer;
 
 abstract class SoftDeleteTest extends BaseSchemaTest
 {
+    #[\Testo\Test]
     public function testExistenceColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        $this->assertTrue($fields->has('deletedAt'));
-        $this->assertTrue($fields->hasColumn('deleted_at'));
-        $this->assertSame('datetime', $fields->get('deletedAt')->getType());
-        $this->assertSame(GeneratedField::BEFORE_UPDATE, $fields->get('deletedAt')->getGenerated());
+        \Testo\Assert::true($fields->has('deletedAt'));
+        \Testo\Assert::true($fields->hasColumn('deleted_at'));
+        \Testo\Assert::same($fields->get('deletedAt')->getType(), 'datetime');
+        \Testo\Assert::same($fields->get('deletedAt')->getGenerated(), GeneratedField::BEFORE_UPDATE);
 
         // No new fields added
-        $this->assertSame(3, $fields->count());
+        \Testo\Assert::same($fields->count(), 3);
     }
 
+    #[\Testo\Test]
     public function testAddedColumn(): void
     {
         $fields = $this->registry->getEntity(Post::class)->getFields();
 
-        $this->assertTrue($fields->has('newField'));
-        $this->assertTrue($fields->hasColumn('new_field'));
-        $this->assertSame('datetime', $fields->get('newField')->getType());
-        $this->assertSame(GeneratedField::BEFORE_UPDATE, $fields->get('newField')->getGenerated());
+        \Testo\Assert::true($fields->has('newField'));
+        \Testo\Assert::true($fields->hasColumn('new_field'));
+        \Testo\Assert::same($fields->get('newField')->getType(), 'datetime');
+        \Testo\Assert::same($fields->get('newField')->getGenerated(), GeneratedField::BEFORE_UPDATE);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();
