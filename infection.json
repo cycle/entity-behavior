@@ -1,0 +1,16 @@
+{
+    "$schema": "vendor-bin/infection/vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "timeout": 10,
+    "testFramework": "testo",
+    "tmpDir": "runtime",
+    "logs": {
+        "stryker": {
+            "report": "1.x"
+        }
+    }
+}
