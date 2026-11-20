@@ -12,8 +12,8 @@ Please make sure that the following requirements are satisfied before submitting
 ## Testing Cycle ORM Entity Behavior
 Tests run on [Testo](https://github.com/php-testo/testo) through the `cycle/testing` harness: `tests/Unit` needs no
 database, `tests/Feature` runs once per database driver.
-Reproductions of reported issues go to `tests/Regression/Issue<N>/`; start from `tests/Regression/CaseTemplate`
-(`php tests/generate-case.php --case-name=Issue<N>` copies it).
+Reproductions of reported issues go to `tests/Regression/Issue<N>/`; `composer test:new-case -- <N>` writes a runnable
+case there to start from.
 
 Unit and SQLite tests need no docker:
 
