@@ -61,7 +61,7 @@ jobs:
     needs: sqlite
     name: Code coverage
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     strategy:
       matrix:
         dependencies:
@@ -72,21 +72,29 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install ODBC driver
+        run: |
+          curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           coverage: pcov
-          extensions: mbstring, pdo, pdo_sqlite
+          extensions: mbstring, pdo, pdo_sqlite, pdo_mysql, pdo_pgsql, sqlsrv, pdo_sqlsrv
 
       - name: Install dependencies with composer
         uses: ramsey/composer-install@v4
         with:
           dependency-versions: ${{ matrix.dependencies }}
 
-      - name: Unit and SQLite tests with coverage
+      - name: Start databases
+        run: composer db:up
+
+      - name: Tests on every driver with coverage
         env:
-          DB_DRIVERS: sqlite
           DB_REQUIRED: 1
         run: composer test -- --coverage-clover=runtime/clover.xml
 
