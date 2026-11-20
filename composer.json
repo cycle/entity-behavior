@@ -47,7 +47,7 @@
         "bamarni/composer-bin-plugin": "^1.8",
         "buggregator/trap": "^1.20",
         "cycle/annotated": "^4.6",
-        "cycle/testing": "^0.1",
+        "cycle/testing": "^0.1.1",
         "llm/skills": "^1.20",
         "ramsey/uuid": "^4.9",
         "roxblnfk/unpoly": "^1.8",
