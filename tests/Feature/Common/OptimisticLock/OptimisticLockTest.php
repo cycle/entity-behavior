@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Cycle\ORM\Entity\Behavior\Tests\Feature\Common\OptimisticLock;
 
 use Cycle\Database\ColumnInterface;
+use Cycle\ORM\Entity\Behavior\Exception\BehaviorCompilationException;
 use Cycle\ORM\Entity\Behavior\Listener\OptimisticLock as Listener;
+use Cycle\ORM\Entity\Behavior\OptimisticLock;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Article;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Comment;
 use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\Item;
@@ -17,9 +19,12 @@ use Cycle\ORM\Entity\Behavior\Tests\Fixtures\OptimisticLock\WithAllParameters;
 use Cycle\ORM\Entity\Behavior\Tests\Support\SchemaTestCase;
 use Cycle\ORM\Schema\GeneratedField;
 use Cycle\ORM\SchemaInterface;
+use Cycle\Schema\Definition\Entity;
+use Cycle\Schema\Registry;
 use Spiral\Tokenizer\Config\TokenizerConfig;
 use Spiral\Tokenizer\Tokenizer;
 use Testo\Assert;
+use Testo\Expect;
 use Testo\Lifecycle\BeforeTest;
 use Testo\Test;
 
@@ -131,6 +136,21 @@ final class OptimisticLockTest extends SchemaTestCase
         $field = $this->registry->getEntity(Item::class)->getFields()->get('revision');
 
         Assert::same($field->getGenerated(), GeneratedField::BEFORE_INSERT | GeneratedField::BEFORE_UPDATE);
+    }
+
+    #[Test]
+    public function testUnknownRuleIsRejected(): never
+    {
+        $registry = new Registry($this->dbal);
+        $entity = (new Entity())->setRole('post');
+        $registry->register($entity);
+        $registry->linkTable($entity, 'default', 'posts');
+
+        Expect::exception(BehaviorCompilationException::class)->withMessage(
+            \sprintf('Wrong rule `unknown` for the %s behavior in the `post.version` field.', OptimisticLock::class),
+        );
+
+        (new OptimisticLock(rule: 'unknown'))->withRole('post')->render($registry);
     }
 
     #[BeforeTest]
