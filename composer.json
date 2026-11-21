@@ -37,17 +37,17 @@
     "require": {
         "php": ">=8.2",
         "psr/event-dispatcher": "^1",
-        "cycle/database": "^2.23",
-        "cycle/orm": "^2.18",
-        "cycle/schema-builder": "^2.12",
+        "cycle/database": "^2.24",
+        "cycle/orm": "^2.19",
+        "cycle/schema-builder": "^2.13",
         "psr/container": "^1.1|^2.0",
         "yiisoft/injector": "^1.2"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.8",
         "buggregator/trap": "^1.20",
-        "cycle/annotated": "^4.6",
-        "cycle/testing": "^0.1.1",
+        "cycle/annotated": "^4.7",
+        "cycle/testing": "^0.1.2",
         "llm/skills": "^1.20",
         "ramsey/uuid": "^4.9",
         "roxblnfk/unpoly": "^1.8",
